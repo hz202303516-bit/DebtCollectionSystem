@@ -801,26 +801,74 @@
                         </div>
 
                         {tab === 'users' && (
-                            <div className="card">
-                                <div className="table-container">
-                                    <table className="table">
-                                        <thead><tr><th>Name</th><th>Email</th><th>Role</th><th>Status</th><th>Address</th><th>GPS</th><th>Action</th></tr></thead>
-                                        <tbody>
-                                            {users.map(u => (
-                                                <tr key={u.user_id}>
-                                                    <td>{u.name}</td><td>{u.email}</td>
-                                                    <td><span className="badge badge-info">{u.role}</span></td>
-                                                    <td><span className={`badge ${u.status === 'approved' ? 'badge-success' : u.status === 'pending' ? 'badge-warning' : 'badge-danger'}`}>{u.status}</span></td>
-                                                    <td style={{fontSize:'0.8rem'}}>{[u.street, u.barangay, u.city].filter(Boolean).join(', ') || 'N/A'}</td>
-                                                    <td>{u.latitude ? <span className="gps-indicator gps-active"><span className="gps-dot active"></span> Yes</span> : <span className="gps-indicator gps-inactive"><span className="gps-dot inactive"></span> No</span>}</td>
-                                                    <td>{u.status === 'pending' && u.role !== 'admin' && <button className="btn btn-success btn-sm" onClick={() => approveUser(u.user_id)}>Approve</button>}</td>
-                                                </tr>
-                                            ))}
-                                        </tbody>
-                                    </table>
+                                <div className="card">
+                                    <div className="table-container">
+                                        <table className="table">
+                                            <thead>
+                                                <tr><th>Name</th><th>Email</th><th>Current Role</th><th>Status</th><th>Address</th><th>GPS</th><th>Action</th></tr>
+                                            </thead>
+                                            <tbody>
+                                                {users.map(u => (
+                                                    <tr key={u.user_id}>
+                                                        <td>{u.name}</td>
+                                                        <td>{u.email}</td>
+                                                        <td>
+                                                            {u.email === 'admin@system.com' ? (
+                                                                <span className="badge badge-purple">{u.role}</span>
+                                                            ) : (
+                                                                <select className="form-select" style={{padding:'4px 8px',fontSize:'0.8rem',width:'120px'}} value={u.role}
+                                                                    onChange={async (e) => {
+                                                                        try { await API.put(`/api/users/${u.user_id}/role`, { role: e.target.value }); setMsg({ success: `Role updated!` }); loadData(); }
+                                                                        catch (err) { setMsg({ error: err.response?.data?.error || 'Failed' }); }
+                                                                    }}>
+                                                                    <option value="pending_user">Pending User</option>
+                                                                    <option value="borrower">Borrower</option>
+                                                                    <option value="collector">Collector</option>
+                                                                    <option value="admin">Admin</option>
+                                                                </select>
+                                                            )}
+                                                        </td>
+                                                        <td><span className={`badge ${u.status==='approved'?'badge-success':u.status==='pending'?'badge-warning':'badge-danger'}`}>{u.status}</span></td>
+                                                        <td style={{fontSize:'0.8rem'}}>{[u.street,u.barangay,u.city].filter(Boolean).join(', ')||'N/A'}</td>
+                                                        <td>{u.latitude?<span className="gps-indicator gps-active"><span className="gps-dot active"></span> Yes</span>:<span className="gps-indicator gps-inactive"><span className="gps-dot inactive"></span> No</span>}</td>
+                                                        <td>
+                                                            {u.email !== 'admin@system.com' && u.status === 'pending' && (
+                                                                <div style={{display:'flex',gap:'5px',flexDirection:'column'}}>
+                                                                    <select id={`role-${u.user_id}`} className="form-select" style={{padding:'4px 8px',fontSize:'0.75rem',width:'120px'}} defaultValue="borrower">
+                                                                        <option value="borrower">As Borrower</option>
+                                                                        <option value="collector">As Collector</option>
+                                                                    </select>
+                                                                    <button className="btn btn-success btn-sm" onClick={async () => {
+                                                                        const sel = document.getElementById(`role-${u.user_id}`);
+                                                                        try {
+                                                                            const res = await API.put(`/api/users/${u.user_id}/status`, { status: 'approved', role: sel?.value || 'borrower' });
+                                                                            setMsg({ success: res.data.message || 'Approved!' });
+                                                                            loadData();
+                                                                        } catch (err) { setMsg({ error: err.response?.data?.error || 'Failed' }); }
+                                                                    }}>✅ Approve</button>
+                                                                    <button className="btn btn-danger btn-sm" onClick={async () => {
+                                                                        try { await API.put(`/api/users/${u.user_id}/status`, { status: 'rejected' }); setMsg({ success: 'Rejected' }); loadData(); }
+                                                                        catch (err) { setMsg({ error: 'Failed' }); }
+                                                                    }}>❌ Reject</button>
+                                                                </div>
+                                                            )}
+                                                            {u.email !== 'admin@system.com' && u.status === 'rejected' && (
+                                                                <button className="btn btn-success btn-sm" onClick={async () => {
+                                                                    const r = prompt('Assign role? (borrower/collector)', 'borrower');
+                                                                    if (r) {
+                                                                        try { await API.put(`/api/users/${u.user_id}/status`, { status: 'approved', role: r }); setMsg({ success: 'Re-approved!' }); loadData(); }
+                                                                        catch (err) { setMsg({ error: 'Failed' }); }
+                                                                    }
+                                                                }}>Re-approve</button>
+                                                            )}
+                                                        </td>
+                                                    </tr>
+                                                ))}
+                                            </tbody>
+                                        </table>
+                                    </div>
                                 </div>
-                            </div>
-                        )}
+                            )}
 
                         {tab === 'borrowers' && (
                             <div className="card">
