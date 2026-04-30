@@ -16,7 +16,6 @@ let db;
 async function initializeDatabase() {
     const SQL = await initSqlJs();
     
-    // Load existing database or create new one
     if (fs.existsSync(dbPath)) {
         const fileBuffer = fs.readFileSync(dbPath);
         db = new SQL.Database(fileBuffer);
@@ -91,18 +90,21 @@ async function initializeDatabase() {
         )
     `);
     
-    // Seed admin user
+    // Seed ONLY ONE admin account if not exists
     const adminCheck = db.exec("SELECT COUNT(*) as count FROM users WHERE email = 'admin@system.com'");
-    const count = adminCheck[0]?.values[0][0] || 0;
+    const adminCount = adminCheck[0]?.values[0][0] || 0;
     
-    if (count === 0) {
+    if (adminCount === 0) {
         const hashedPassword = bcrypt.hashSync('admin123', 10);
         db.run("INSERT INTO users (name, email, password, role, status) VALUES (?, ?, ?, ?, ?)",
-            ['Admin', 'admin@system.com', hashedPassword, 'admin', 'approved']);
-        console.log('✅ Admin user seeded (admin@system.com / admin123)');
+            ['System Admin', 'admin@system.com', hashedPassword, 'admin', 'approved']);
+        console.log('✅ Admin account created: admin@system.com / admin123');
+    } else {
+        // Ensure the existing admin is always approved
+        db.run("UPDATE users SET status = 'approved', role = 'admin' WHERE email = 'admin@system.com'");
+        console.log('✅ Admin account verified');
     }
     
-    // Save database
     saveDatabase();
     console.log('✅ Database initialized');
 }
@@ -113,11 +115,13 @@ function saveDatabase() {
     fs.writeFileSync(dbPath, buffer);
 }
 
-// Helper: Run query and get all rows as array of objects
+// Helper: Get all rows as objects
 function queryAll(sql, params = []) {
     try {
         const stmt = db.prepare(sql);
-        stmt.bind(params);
+        if (params.length > 0) {
+            stmt.bind(params);
+        }
         const rows = [];
         while (stmt.step()) {
             rows.push(stmt.getAsObject());
@@ -125,25 +129,26 @@ function queryAll(sql, params = []) {
         stmt.free();
         return rows;
     } catch (error) {
-        console.error('Query error:', error.message);
-        throw error;
+        console.error('Query error:', error.message, 'SQL:', sql);
+        return [];
     }
 }
 
 // Helper: Get single row
 function queryOne(sql, params = []) {
     const rows = queryAll(sql, params);
-    return rows[0] || null;
+    return rows.length > 0 ? rows[0] : null;
 }
 
-// Helper: Run SQL that modifies data
+// Helper: Run insert/update/delete
 function runQuery(sql, params = []) {
     try {
         db.run(sql, params);
         saveDatabase();
-        return { lastInsertRowid: db.exec("SELECT last_insert_rowid()")[0]?.values[0][0] };
+        const result = db.exec("SELECT last_insert_rowid()");
+        return { lastID: result[0]?.values[0][0] || 0, changes: db.getRowsModified() };
     } catch (error) {
-        console.error('Run error:', error.message);
+        console.error('Run error:', error.message, 'SQL:', sql);
         throw error;
     }
 }
@@ -156,20 +161,20 @@ app.use(express.static(path.join(__dirname)));
 const authenticateToken = (req, res, next) => {
     const authHeader = req.headers['authorization'];
     const token = authHeader && authHeader.split(' ')[1];
-    if (!token) return res.status(401).json({ error: 'Access denied' });
+    if (!token) return res.status(401).json({ error: 'Access denied. Please login.' });
     
     try {
         req.user = jwt.verify(token, process.env.JWT_SECRET || 'default-secret-key-change-me');
         next();
     } catch (error) {
-        return res.status(401).json({ error: 'Invalid token' });
+        return res.status(401).json({ error: 'Invalid or expired token. Please login again.' });
     }
 };
 
 const authorizeRoles = (...roles) => {
     return (req, res, next) => {
         if (!req.user || !roles.includes(req.user.role)) {
-            return res.status(403).json({ error: 'Insufficient permissions' });
+            return res.status(403).json({ error: 'Access denied. Insufficient permissions.' });
         }
         next();
     };
@@ -189,31 +194,108 @@ function calculateRiskScore(data) {
         risk_score: Math.round(score * 100) / 100,
         risk_level: score >= 70 ? 'low' : score >= 40 ? 'medium' : 'high',
         factors: {
-            active_loans: data.activeLoans,
+            active_loans: data.activeLoans || 0,
             payment_history: (data.totalPayments || 0) > 5 ? 'good' : 'poor'
         }
     };
 }
 
 // ==================== AUTH ROUTES ====================
-app.post('/api/auth/login', (req, res) => {
+
+// REGISTER - Fixed and working
+app.post('/api/auth/register', async (req, res) => {
+    try {
+        const { name, email, password, phone, address } = req.body;
+        
+        // Validate required fields
+        if (!name || !email || !password) {
+            return res.status(400).json({ error: 'Name, email, and password are required' });
+        }
+        
+        // Validate email format
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        if (!emailRegex.test(email)) {
+            return res.status(400).json({ error: 'Invalid email format' });
+        }
+        
+        // Validate password length
+        if (password.length < 6) {
+            return res.status(400).json({ error: 'Password must be at least 6 characters' });
+        }
+        
+        // Check if email already exists
+        const existingUser = queryOne("SELECT user_id FROM users WHERE LOWER(email) = LOWER(?)", [email.trim()]);
+        if (existingUser) {
+            return res.status(400).json({ error: 'Email already registered. Please use a different email.' });
+        }
+        
+        // BLOCK admin registration - only one admin allowed
+        if (email.toLowerCase() === 'admin@system.com') {
+            return res.status(400).json({ error: 'Cannot register with admin email.' });
+        }
+        
+        // Hash password
+        const hashedPassword = bcrypt.hashSync(password, 10);
+        
+        // Insert new user as pending_user
+        runQuery(
+            "INSERT INTO users (name, email, password, role, status, phone, address) VALUES (?, ?, ?, 'pending_user', 'pending', ?, ?)",
+            [name.trim(), email.trim().toLowerCase(), hashedPassword, phone || null, address || null]
+        );
+        
+        console.log(`✅ New user registered: ${email} - pending approval`);
+        
+        res.status(201).json({
+            message: 'Registration successful! Please wait for admin approval before logging in.',
+            success: true
+        });
+        
+    } catch (error) {
+        console.error('Registration error:', error.message);
+        res.status(500).json({ error: 'Registration failed. Please try again.' });
+    }
+});
+
+// LOGIN - Fixed
+app.post('/api/auth/login', async (req, res) => {
     try {
         const { email, password } = req.body;
-        if (!email || !password) return res.status(400).json({ error: 'Email and password required' });
-
+        
+        if (!email || !password) {
+            return res.status(400).json({ error: 'Email and password are required' });
+        }
+        
+        console.log(`Login attempt: ${email}`);
+        
         const user = queryOne("SELECT * FROM users WHERE LOWER(email) = LOWER(?)", [email.trim()]);
-        if (!user) return res.status(401).json({ error: 'Invalid email or password' });
-        if (user.status !== 'approved') return res.status(403).json({ error: 'Account pending approval' });
-
+        
+        if (!user) {
+            return res.status(401).json({ error: 'Invalid email or password' });
+        }
+        
+        // Check if user is approved (admin is always approved)
+        if (user.status !== 'approved' && user.role !== 'admin') {
+            return res.status(403).json({ 
+                error: 'Your account is pending approval. Please wait for an admin to approve your account.',
+                status: user.status
+            });
+        }
+        
+        // Verify password
         const validPassword = bcrypt.compareSync(password, user.password);
-        if (!validPassword) return res.status(401).json({ error: 'Invalid email or password' });
-
+        if (!validPassword) {
+            return res.status(401).json({ error: 'Invalid email or password' });
+        }
+        
+        // Generate JWT token
         const token = jwt.sign(
             { userId: user.user_id, role: user.role },
             process.env.JWT_SECRET || 'default-secret-key-change-me',
             { expiresIn: '24h' }
         );
-
+        
+        console.log(`✅ Login successful: ${email} (${user.role})`);
+        
         res.json({
             token,
             user: {
@@ -224,28 +306,28 @@ app.post('/api/auth/login', (req, res) => {
                 status: user.status
             }
         });
+        
     } catch (error) {
-        res.status(500).json({ error: 'Login failed' });
+        console.error('Login error:', error.message);
+        res.status(500).json({ error: 'Login failed. Please try again.' });
     }
 });
 
-app.post('/api/auth/register', (req, res) => {
+// Get current user
+app.get('/api/auth/me', authenticateToken, (req, res) => {
     try {
-        const { name, email, password, phone, address } = req.body;
-        if (!name || !email || !password) return res.status(400).json({ error: 'Name, email, password required' });
-
-        const existing = queryOne("SELECT user_id FROM users WHERE LOWER(email) = LOWER(?)", [email.trim()]);
-        if (existing) return res.status(400).json({ error: 'Email already registered' });
-
-        const hashedPassword = bcrypt.hashSync(password, 10);
-        runQuery(
-            "INSERT INTO users (name, email, password, role, status, phone, address) VALUES (?, ?, ?, 'pending_user', 'pending', ?, ?)",
-            [name, email.trim(), hashedPassword, phone || null, address || null]
+        const user = queryOne(
+            "SELECT user_id, name, email, role, status, phone, address FROM users WHERE user_id = ?",
+            [req.user.userId]
         );
-
-        res.status(201).json({ message: 'Registration successful. Please wait for admin approval.' });
+        
+        if (!user) {
+            return res.status(404).json({ error: 'User not found' });
+        }
+        
+        res.json(user);
     } catch (error) {
-        res.status(500).json({ error: 'Registration failed' });
+        res.status(500).json({ error: 'Failed to get user info' });
     }
 });
 
@@ -255,28 +337,90 @@ app.get('/api/dashboard/stats', authenticateToken, (req, res) => {
         const { role, userId } = req.user;
         
         if (role === 'admin') {
-            const totalLoans = queryOne("SELECT COUNT(*) as count FROM loans")?.count || 0;
-            const totalPayments = queryOne("SELECT COALESCE(SUM(amount), 0) as total FROM payments")?.total || 0;
-            const totalBorrowers = queryOne("SELECT COUNT(*) as count FROM borrowers")?.count || 0;
+            const totalLoans = queryOne("SELECT COUNT(*) as count FROM loans");
+            const totalPayments = queryOne("SELECT COALESCE(SUM(amount), 0) as total FROM payments");
+            const totalBorrowers = queryOne("SELECT COUNT(*) as count FROM borrowers");
+            const pendingUsers = queryOne("SELECT COUNT(*) as count FROM users WHERE status = 'pending'");
             const recentPayments = queryAll(`
                 SELECT p.*, b.full_name as borrower_name, l.loan_amount
-                FROM payments p JOIN loans l ON p.loan_id = l.loan_id
+                FROM payments p 
+                JOIN loans l ON p.loan_id = l.loan_id
                 JOIN borrowers b ON l.borrower_id = b.borrower_id
                 ORDER BY p.payment_date DESC LIMIT 5
             `);
-            res.json({ totalLoans, totalPayments, totalBorrowers, recentPayments });
+            
+            res.json({
+                totalLoans: totalLoans?.count || 0,
+                totalPayments: totalPayments?.total || 0,
+                totalBorrowers: totalBorrowers?.count || 0,
+                pendingUsers: pendingUsers?.count || 0,
+                recentPayments: recentPayments || []
+            });
+        } else if (role === 'collector') {
+            const assignedBorrowers = queryOne(
+                "SELECT COUNT(*) as count FROM borrowers WHERE collector_id = ?",
+                [userId]
+            );
+            const collectedPayments = queryOne(
+                "SELECT COALESCE(SUM(amount), 0) as total FROM payments WHERE collector_id = ?",
+                [userId]
+            );
+            const recentPayments = queryAll(`
+                SELECT p.*, b.full_name as borrower_name, l.loan_amount
+                FROM payments p 
+                JOIN loans l ON p.loan_id = l.loan_id
+                JOIN borrowers b ON l.borrower_id = b.borrower_id
+                WHERE p.collector_id = ?
+                ORDER BY p.payment_date DESC LIMIT 5
+            `, [userId]);
+            
+            res.json({
+                totalBorrowers: assignedBorrowers?.count || 0,
+                totalPayments: collectedPayments?.total || 0,
+                recentPayments: recentPayments || []
+            });
+        } else if (role === 'borrower') {
+            const borrower = queryOne("SELECT borrower_id FROM borrowers WHERE user_id = ?", [userId]);
+            if (!borrower) {
+                return res.json({ totalLoans: 0, totalPayments: 0, recentPayments: [] });
+            }
+            
+            const totalLoans = queryOne(
+                "SELECT COUNT(*) as count FROM loans WHERE borrower_id = ?",
+                [borrower.borrower_id]
+            );
+            const totalBalance = queryOne(
+                "SELECT COALESCE(SUM(balance), 0) as total FROM loans WHERE borrower_id = ? AND status = 'active'",
+                [borrower.borrower_id]
+            );
+            const recentPayments = queryAll(`
+                SELECT p.*, l.loan_amount
+                FROM payments p 
+                JOIN loans l ON p.loan_id = l.loan_id
+                WHERE l.borrower_id = ?
+                ORDER BY p.payment_date DESC LIMIT 5
+            `, [borrower.borrower_id]);
+            
+            res.json({
+                totalLoans: totalLoans?.count || 0,
+                totalBalance: totalBalance?.total || 0,
+                recentPayments: recentPayments || []
+            });
         } else {
             res.json({ totalLoans: 0, totalPayments: 0, recentPayments: [] });
         }
     } catch (error) {
-        res.status(500).json({ error: 'Failed to fetch stats' });
+        console.error('Dashboard error:', error.message);
+        res.status(500).json({ error: 'Failed to fetch dashboard stats' });
     }
 });
 
-// ==================== USER ROUTES ====================
+// ==================== USER MANAGEMENT (ADMIN ONLY) ====================
 app.get('/api/users', authenticateToken, authorizeRoles('admin'), (req, res) => {
     try {
-        const users = queryAll("SELECT user_id, name, email, role, status, phone, address, created_at FROM users ORDER BY created_at DESC");
+        const users = queryAll(
+            "SELECT user_id, name, email, role, status, phone, address, created_at FROM users ORDER BY created_at DESC"
+        );
         res.json(users);
     } catch (error) {
         res.status(500).json({ error: 'Failed to fetch users' });
@@ -289,20 +433,46 @@ app.put('/api/users/:id/status', authenticateToken, authorizeRoles('admin'), (re
         const userId = req.params.id;
         
         if (!['pending', 'approved', 'rejected'].includes(status)) {
-            return res.status(400).json({ error: 'Invalid status' });
+            return res.status(400).json({ error: 'Invalid status. Must be: pending, approved, or rejected.' });
         }
         
-        const user = queryOne("SELECT role FROM users WHERE user_id = ?", [userId]);
-        if (!user) return res.status(404).json({ error: 'User not found' });
+        const user = queryOne("SELECT * FROM users WHERE user_id = ?", [userId]);
+        if (!user) {
+            return res.status(404).json({ error: 'User not found' });
+        }
         
+        // Prevent changing admin status
+        if (user.role === 'admin') {
+            return res.status(403).json({ error: 'Cannot modify admin account status.' });
+        }
+        
+        // If approving a pending_user, change role to borrower
         if (status === 'approved' && user.role === 'pending_user') {
-            runQuery("UPDATE users SET status = ?, role = 'borrower', updated_at = CURRENT_TIMESTAMP WHERE user_id = ?", [status, userId]);
+            runQuery(
+                "UPDATE users SET status = ?, role = 'borrower', updated_at = CURRENT_TIMESTAMP WHERE user_id = ?",
+                [status, userId]
+            );
+            
+            // Auto-create borrower record
+            const existingBorrower = queryOne("SELECT borrower_id FROM borrowers WHERE user_id = ?", [userId]);
+            if (!existingBorrower) {
+                runQuery(
+                    "INSERT INTO borrowers (user_id, full_name, phone, address) VALUES (?, ?, ?, ?)",
+                    [userId, user.name, user.phone, user.address]
+                );
+            }
         } else {
-            runQuery("UPDATE users SET status = ?, updated_at = CURRENT_TIMESTAMP WHERE user_id = ?", [status, userId]);
+            runQuery(
+                "UPDATE users SET status = ?, updated_at = CURRENT_TIMESTAMP WHERE user_id = ?",
+                [status, userId]
+            );
         }
         
-        res.json({ message: 'User updated' });
+        console.log(`✅ User ${userId} status updated to: ${status}`);
+        res.json({ message: `User ${status} successfully` });
+        
     } catch (error) {
+        console.error('Update user error:', error.message);
         res.status(500).json({ error: 'Failed to update user' });
     }
 });
@@ -310,10 +480,27 @@ app.put('/api/users/:id/status', authenticateToken, authorizeRoles('admin'), (re
 // ==================== BORROWER ROUTES ====================
 app.get('/api/borrowers', authenticateToken, (req, res) => {
     try {
-        const borrowers = queryAll(`
-            SELECT b.*, u.name as collector_name FROM borrowers b
-            LEFT JOIN users u ON b.collector_id = u.user_id ORDER BY b.created_at DESC
-        `);
+        let borrowers;
+        if (req.user.role === 'admin') {
+            borrowers = queryAll(`
+                SELECT b.*, u.name as collector_name, u.email as user_email
+                FROM borrowers b
+                LEFT JOIN users u ON b.collector_id = u.user_id
+                ORDER BY b.created_at DESC
+            `);
+        } else if (req.user.role === 'collector') {
+            borrowers = queryAll(`
+                SELECT b.*, u.name as collector_name
+                FROM borrowers b
+                LEFT JOIN users u ON b.collector_id = u.user_id
+                WHERE b.collector_id = ?
+                ORDER BY b.created_at DESC
+            `, [req.user.userId]);
+        } else {
+            borrowers = queryAll(`
+                SELECT b.* FROM borrowers b WHERE b.user_id = ?
+            `, [req.user.userId]);
+        }
         res.json(borrowers);
     } catch (error) {
         res.status(500).json({ error: 'Failed to fetch borrowers' });
@@ -327,12 +514,25 @@ app.get('/api/loans', authenticateToken, (req, res) => {
         if (req.user.role === 'admin') {
             loans = queryAll(`
                 SELECT l.*, b.full_name as borrower_name, u.name as collector_name
-                FROM loans l JOIN borrowers b ON l.borrower_id = b.borrower_id
-                LEFT JOIN users u ON b.collector_id = u.user_id ORDER BY l.created_at DESC
+                FROM loans l
+                JOIN borrowers b ON l.borrower_id = b.borrower_id
+                LEFT JOIN users u ON b.collector_id = u.user_id
+                ORDER BY l.created_at DESC
             `);
+        } else if (req.user.role === 'collector') {
+            loans = queryAll(`
+                SELECT l.*, b.full_name as borrower_name
+                FROM loans l
+                JOIN borrowers b ON l.borrower_id = b.borrower_id
+                WHERE b.collector_id = ?
+                ORDER BY l.created_at DESC
+            `, [req.user.userId]);
         } else {
             const borrower = queryOne("SELECT borrower_id FROM borrowers WHERE user_id = ?", [req.user.userId]);
-            loans = borrower ? queryAll("SELECT * FROM loans WHERE borrower_id = ? ORDER BY created_at DESC", [borrower.borrower_id]) : [];
+            loans = borrower ? queryAll(
+                "SELECT * FROM loans WHERE borrower_id = ? ORDER BY created_at DESC",
+                [borrower.borrower_id]
+            ) : [];
         }
         res.json(loans);
     } catch (error) {
@@ -343,33 +543,124 @@ app.get('/api/loans', authenticateToken, (req, res) => {
 app.post('/api/loans', authenticateToken, authorizeRoles('admin'), (req, res) => {
     try {
         const { borrower_id, loan_amount, interest_rate, due_date } = req.body;
+        
         if (!borrower_id || !loan_amount || !interest_rate || !due_date) {
-            return res.status(400).json({ error: 'All fields required' });
+            return res.status(400).json({ error: 'All fields are required: borrower, amount, interest rate, and due date.' });
+        }
+        
+        // Verify borrower exists
+        const borrower = queryOne("SELECT * FROM borrowers WHERE borrower_id = ?", [borrower_id]);
+        if (!borrower) {
+            return res.status(404).json({ error: 'Borrower not found.' });
         }
         
         runQuery(
             "INSERT INTO loans (borrower_id, loan_amount, interest_rate, due_date, balance, status) VALUES (?, ?, ?, ?, ?, 'active')",
-            [borrower_id, loan_amount, interest_rate, due_date, loan_amount]
+            [borrower_id, parseFloat(loan_amount), parseFloat(interest_rate), due_date, parseFloat(loan_amount)]
         );
         
-        res.status(201).json({ message: 'Loan created' });
+        console.log(`✅ Loan created for borrower ${borrower_id}: ₱${loan_amount}`);
+        res.status(201).json({ message: 'Loan created successfully!' });
+        
     } catch (error) {
-        res.status(500).json({ error: 'Failed to create loan' });
+        console.error('Create loan error:', error.message);
+        res.status(500).json({ error: 'Failed to create loan.' });
     }
 });
 
 // ==================== PAYMENT ROUTES ====================
 app.get('/api/payments', authenticateToken, (req, res) => {
     try {
-        const payments = queryAll(`
-            SELECT p.*, b.full_name as borrower_name, u.name as collector_name, l.loan_amount
-            FROM payments p JOIN loans l ON p.loan_id = l.loan_id
-            JOIN borrowers b ON l.borrower_id = b.borrower_id
-            LEFT JOIN users u ON p.collector_id = u.user_id ORDER BY p.payment_date DESC
-        `);
+        let payments;
+        if (req.user.role === 'admin') {
+            payments = queryAll(`
+                SELECT p.*, b.full_name as borrower_name, u.name as collector_name, l.loan_amount
+                FROM payments p
+                JOIN loans l ON p.loan_id = l.loan_id
+                JOIN borrowers b ON l.borrower_id = b.borrower_id
+                LEFT JOIN users u ON p.collector_id = u.user_id
+                ORDER BY p.payment_date DESC
+            `);
+        } else if (req.user.role === 'collector') {
+            payments = queryAll(`
+                SELECT p.*, b.full_name as borrower_name, l.loan_amount
+                FROM payments p
+                JOIN loans l ON p.loan_id = l.loan_id
+                JOIN borrowers b ON l.borrower_id = b.borrower_id
+                WHERE p.collector_id = ?
+                ORDER BY p.payment_date DESC
+            `, [req.user.userId]);
+        } else {
+            const borrower = queryOne("SELECT borrower_id FROM borrowers WHERE user_id = ?", [req.user.userId]);
+            payments = borrower ? queryAll(`
+                SELECT p.*, l.loan_amount
+                FROM payments p
+                JOIN loans l ON p.loan_id = l.loan_id
+                WHERE l.borrower_id = ?
+                ORDER BY p.payment_date DESC
+            `, [borrower.borrower_id]) : [];
+        }
         res.json(payments);
     } catch (error) {
         res.status(500).json({ error: 'Failed to fetch payments' });
+    }
+});
+
+app.post('/api/payments', authenticateToken, (req, res) => {
+    try {
+        const { loan_id, amount, gps_latitude, gps_longitude } = req.body;
+        
+        if (!loan_id || !amount) {
+            return res.status(400).json({ error: 'Loan ID and amount are required.' });
+        }
+        
+        const loan = queryOne("SELECT * FROM loans WHERE loan_id = ?", [loan_id]);
+        if (!loan) {
+            return res.status(404).json({ error: 'Loan not found.' });
+        }
+        
+        if (loan.status === 'paid') {
+            return res.status(400).json({ error: 'This loan is already fully paid.' });
+        }
+        
+        const paymentAmount = parseFloat(amount);
+        if (paymentAmount <= 0) {
+            return res.status(400).json({ error: 'Payment amount must be greater than 0.' });
+        }
+        
+        if (paymentAmount > parseFloat(loan.balance)) {
+            return res.status(400).json({ 
+                error: `Payment amount exceeds remaining balance of ₱${parseFloat(loan.balance).toFixed(2)}.` 
+            });
+        }
+        
+        const receiptNumber = 'RCP-' + Date.now() + '-' + Math.floor(Math.random() * 1000);
+        
+        runQuery(
+            "INSERT INTO payments (loan_id, collector_id, amount, gps_latitude, gps_longitude, receipt_number) VALUES (?, ?, ?, ?, ?, ?)",
+            [loan_id, req.user.userId, paymentAmount, gps_latitude || null, gps_longitude || null, receiptNumber]
+        );
+        
+        const newBalance = parseFloat(loan.balance) - paymentAmount;
+        const newStatus = newBalance <= 0 ? 'paid' : 'active';
+        
+        runQuery(
+            "UPDATE loans SET balance = ?, status = ?, updated_at = CURRENT_TIMESTAMP WHERE loan_id = ?",
+            [newBalance.toFixed(2), newStatus, loan_id]
+        );
+        
+        console.log(`✅ Payment recorded: ₱${paymentAmount} for loan ${loan_id}`);
+        
+        res.status(201).json({
+            message: 'Payment recorded successfully!',
+            receiptNumber,
+            newBalance: newBalance.toFixed(2),
+            loanStatus: newStatus
+        });
+        
+    } catch (error) {
+        console.error('Payment error:', error.message);
+        res.status(500).json({ error: 'Failed to record payment.' });
     }
 });
 
@@ -381,7 +672,9 @@ app.get('/api/ml/risk-assessment/:borrowerId', authenticateToken, (req, res) => 
         
         const loans = queryAll("SELECT * FROM loans WHERE borrower_id = ?", [req.params.borrowerId]);
         const payments = queryAll(`
-            SELECT p.* FROM payments p JOIN loans l ON p.loan_id = l.loan_id WHERE l.borrower_id = ?
+            SELECT p.* FROM payments p 
+            JOIN loans l ON p.loan_id = l.loan_id 
+            WHERE l.borrower_id = ?
         `, [req.params.borrowerId]);
         
         const riskData = calculateRiskScore({
@@ -396,7 +689,11 @@ app.get('/api/ml/risk-assessment/:borrowerId', authenticateToken, (req, res) => 
         res.json({
             borrower: borrower.full_name,
             ...riskData,
-            loan_summary: { total_loans: loans.length, active_loans: loans.filter(l => l.status === 'active').length }
+            loan_summary: {
+                total_loans: loans.length,
+                active_loans: loans.filter(l => l.status === 'active').length,
+                total_paid: payments.reduce((sum, p) => sum + (p.amount || 0), 0)
+            }
         });
     } catch (error) {
         res.status(500).json({ error: 'Risk assessment failed' });
@@ -414,17 +711,19 @@ app.get('*', (req, res) => {
 
 // ==================== ERROR HANDLER ====================
 app.use((err, req, res, next) => {
-    console.error('Error:', err.message);
-    res.status(500).json({ error: 'Internal server error' });
+    console.error('Server error:', err.message);
+    res.status(500).json({ error: 'Internal server error. Please try again.' });
 });
 
 // ==================== START SERVER ====================
 initializeDatabase().then(() => {
     app.listen(PORT, '0.0.0.0', () => {
-        console.log(`✅ Server running on port ${PORT}`);
-        console.log(`👤 Demo: admin@system.com / admin123`);
+        console.log(`\n✅ Server running on port ${PORT}`);
+        console.log(`🌐 Open http://localhost:${PORT}`);
+        console.log(`👤 Admin login: admin@system.com / admin123`);
+        console.log(`\nReady to accept connections!\n`);
     });
 }).catch(err => {
-    console.error('Failed to initialize database:', err);
+    console.error('Failed to start server:', err);
     process.exit(1);
 });
