@@ -1175,6 +1175,33 @@
 
         // ==================== RENDER ====================
         ReactDOM.createRoot(document.getElementById('root')).render(<App />);
+        // ==================== AUTO-DISMISS ALERTS ====================
+    // This watches for alert messages and auto-dismisses them after 3 seconds
+    const alertObserver = new MutationObserver(() => {
+        const alerts = document.querySelectorAll('.alert');
+        alerts.forEach(alert => {
+            // Only auto-dismiss if not already being dismissed
+            if (!alert.dataset.dismissing) {
+                alert.dataset.dismissing = 'true';
+                setTimeout(() => {
+                    alert.style.transition = 'opacity 0.5s ease, transform 0.5s ease';
+                    alert.style.opacity = '0';
+                    alert.style.transform = 'translateY(-10px)';
+                    setTimeout(() => {
+                        if (alert.parentNode) {
+                            alert.remove();
+                        }
+                    }, 500);
+                }, 3000); // Disappears after 3 seconds
+            }
+        });
+    });
+    
+    // Start observing the document for alert elements
+    alertObserver.observe(document.body, {
+        childList: true,
+        subtree: true
+    });
     </script>
 </body>
 </html>
