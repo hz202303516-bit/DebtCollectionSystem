@@ -1,7 +1,7 @@
 {
-  "name": "debt-collection-system",
+  "name": "gps-debt-collection-system",
   "version": "1.0.0",
-  "description": "GPS Debt Collection System",
+  "description": "GPS Debt Collection System with ML Risk Assessment",
   "main": "server.js",
   "scripts": {
     "start": "node server.js"
