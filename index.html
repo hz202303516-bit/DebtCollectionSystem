@@ -1223,33 +1223,39 @@
 
         // ==================== RENDER ====================
         ReactDOM.createRoot(document.getElementById('root')).render(<App />);
-        // ==================== AUTO-DISMISS ALERTS ====================
-    // This watches for alert messages and auto-dismisses them after 3 seconds
-    const alertObserver = new MutationObserver(() => {
-        const alerts = document.querySelectorAll('.alert');
-        alerts.forEach(alert => {
-            // Only auto-dismiss if not already being dismissed
-            if (!alert.dataset.dismissing) {
-                alert.dataset.dismissing = 'true';
+               // ==================== AUTO-DISMISS ALERTS (SAFE VERSION) ====================
+        const alertObserver = new MutationObserver(() => {
+            const alerts = document.querySelectorAll('.alert:not([data-dismissing])');
+            alerts.forEach(alert => {
+                alert.setAttribute('data-dismissing', 'true');
+                const dismissTime = alert.classList.contains('alert-success') ? 4000 : 5000;
                 setTimeout(() => {
-                    alert.style.transition = 'opacity 0.5s ease, transform 0.5s ease';
-                    alert.style.opacity = '0';
-                    alert.style.transform = 'translateY(-10px)';
-                    setTimeout(() => {
-                        if (alert.parentNode) {
-                            alert.remove();
+                    try {
+                        if (alert && alert.parentNode && document.body.contains(alert)) {
+                            alert.style.transition = 'opacity 0.5s ease, transform 0.5s ease';
+                            alert.style.opacity = '0';
+                            alert.style.transform = 'translateY(-10px)';
+                            setTimeout(() => {
+                                try {
+                                    if (alert && alert.parentNode && document.body.contains(alert)) {
+                                        alert.parentNode.removeChild(alert);
+                                    }
+                                } catch (e) {
+                                    // Ignore if already removed by React
+                                }
+                            }, 500);
                         }
-                    }, 500);
-                }, 3000); // Disappears after 3 seconds
-            }
+                    } catch (e) {
+                        // Ignore errors from React already removing the element
+                    }
+                }, dismissTime);
+            });
         });
-    });
-    
-    // Start observing the document for alert elements
-    alertObserver.observe(document.body, {
-        childList: true,
-        subtree: true
-    });
+        
+        // Start observing only after DOM is ready
+        if (document.body) {
+            alertObserver.observe(document.body, { childList: true, subtree: true });
+        }
     </script>
 </body>
 </html>
