@@ -453,6 +453,11 @@ app.use((err, req, res, next) => {
     console.error(err);
     res.status(500).json({ error: 'Server error' });
 });
+// Debug route - check all users
+app.get('/api/debug/users', (req, res) => {
+    const users = queryAll("SELECT user_id, name, email, role, status FROM users");
+    res.json({ total: users.length, users });
+});
 
 // Start
 initializeDatabase().then(() => {
