@@ -208,21 +208,77 @@ app.get('/api/users', authenticateToken, authorize('admin'), (req, res) => {
 
 app.put('/api/users/:id/status', authenticateToken, authorize('admin'), (req, res) => {
     try {
-        const { status } = req.body;
-        const user = queryOne("SELECT * FROM users WHERE user_id=?", [req.params.id]);
+        const { status, role } = req.body;
+        const userId = parseInt(req.params.id);
+        
+        if (!status || !['pending', 'approved', 'rejected'].includes(status)) {
+            return res.status(400).json({ error: 'Invalid status' });
+        }
+        
+        const user = queryOne("SELECT * FROM users WHERE user_id = ?", [userId]);
         if (!user) return res.status(404).json({ error: 'User not found' });
-        if (user.role === 'admin') return res.status(403).json({ error: 'Cannot modify admin' });
+        if (user.email === 'admin@system.com' || user.role === 'admin') {
+            return res.status(403).json({ error: 'Cannot modify admin account' });
+        }
+        
+        let newRole = user.role;
         
         if (status === 'approved' && user.role === 'pending_user') {
-            runQuery("UPDATE users SET status=?, role='borrower', updated_at=CURRENT_TIMESTAMP WHERE user_id=?", [status, req.params.id]);
-            const addr = [user.street, user.barangay, user.city, user.province, user.zip_code].filter(Boolean).join(', ');
-            runQuery("INSERT OR IGNORE INTO borrowers (user_id, full_name, phone, street, barangay, city, province, zip_code, latitude, longitude) VALUES (?,?,?,?,?,?,?,?,?,?)",
-                [user.user_id, user.name, user.phone, user.street, user.barangay, user.city, user.province, user.zip_code, user.latitude, user.longitude]);
+            newRole = role || 'borrower';
+            if (!['borrower', 'collector'].includes(newRole)) {
+                return res.status(400).json({ error: 'Role must be borrower or collector' });
+            }
+            
+            runQuery("UPDATE users SET status = ?, role = ?, updated_at = CURRENT_TIMESTAMP WHERE user_id = ?",
+                [status, newRole, userId]);
+            
+            if (newRole === 'borrower') {
+                const existing = queryOne("SELECT borrower_id FROM borrowers WHERE user_id = ?", [userId]);
+                if (!existing) {
+                    runQuery("INSERT INTO borrowers (user_id, full_name, phone, street, barangay, city, province, zip_code, latitude, longitude) VALUES (?,?,?,?,?,?,?,?,?,?)",
+                        [userId, user.name, user.phone, user.street, user.barangay, user.city, user.province, user.zip_code, user.latitude, user.longitude]);
+                }
+            }
         } else {
-            runQuery("UPDATE users SET status=?, updated_at=CURRENT_TIMESTAMP WHERE user_id=?", [status, req.params.id]);
+            runQuery("UPDATE users SET status = ?, updated_at = CURRENT_TIMESTAMP WHERE user_id = ?", [status, userId]);
         }
-        res.json({ message: `User ${status}` });
-    } catch (e) { res.status(500).json({ error: 'Update failed' }); }
+        
+        const updated = queryOne("SELECT user_id, name, email, role, status FROM users WHERE user_id = ?", [userId]);
+        res.json({ message: `User ${status} as ${newRole}`, user: updated });
+    } catch (e) {
+        console.error('Update error:', e.message);
+        res.status(500).json({ error: 'Failed to update user' });
+    }
+});
+
+// Add this NEW route right after the one above
+app.put('/api/users/:id/role', authenticateToken, authorize('admin'), (req, res) => {
+    try {
+        const { role } = req.body;
+        const userId = parseInt(req.params.id);
+        
+        if (!role || !['admin', 'collector', 'borrower', 'pending_user'].includes(role)) {
+            return res.status(400).json({ error: 'Invalid role' });
+        }
+        
+        const user = queryOne("SELECT * FROM users WHERE user_id = ?", [userId]);
+        if (!user) return res.status(404).json({ error: 'User not found' });
+        if (user.email === 'admin@system.com') return res.status(403).json({ error: 'Cannot change admin role' });
+        
+        runQuery("UPDATE users SET role = ?, updated_at = CURRENT_TIMESTAMP WHERE user_id = ?", [role, userId]);
+        
+        if (role === 'borrower') {
+            const existing = queryOne("SELECT borrower_id FROM borrowers WHERE user_id = ?", [userId]);
+            if (!existing) {
+                runQuery("INSERT INTO borrowers (user_id, full_name, phone, street, barangay, city, province, zip_code, latitude, longitude) VALUES (?,?,?,?,?,?,?,?,?,?)",
+                    [userId, user.name, user.phone, user.street, user.barangay, user.city, user.province, user.zip_code, user.latitude, user.longitude]);
+            }
+        }
+        
+        res.json({ message: `Role updated to ${role}` });
+    } catch (e) {
+        res.status(500).json({ error: 'Failed to update role' });
+    }
 });
 
 // ==================== BORROWERS ====================
