@@ -31,7 +31,6 @@
             color: var(--text);
         }
 
-        /* Background pattern */
         body::before {
             content: '';
             position: fixed;
@@ -49,7 +48,6 @@
             z-index: 1;
         }
 
-        /* Navbar */
         .navbar {
             background: rgba(255,255,255,0.95);
             backdrop-filter: blur(10px);
@@ -71,7 +69,6 @@
         .navbar-actions { display: flex; gap: 10px; align-items: center; }
         .navbar-user { color: var(--text-secondary); font-size: 0.9rem; }
 
-        /* Cards */
         .card {
             background: rgba(255,255,255,0.95);
             backdrop-filter: blur(10px);
@@ -87,13 +84,11 @@
             color: var(--text);
         }
 
-        /* Grid */
         .grid { display: grid; gap: 20px; }
         .grid-2 { grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); }
         .grid-3 { grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); }
         .grid-4 { grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); }
 
-        /* Stat Card */
         .stat-card {
             background: linear-gradient(135deg, #667eea, #764ba2);
             color: white;
@@ -107,7 +102,6 @@
         .stat-value { font-size: 2.2rem; font-weight: 700; }
         .stat-label { font-size: 0.9rem; opacity: 0.9; margin-top: 5px; }
 
-        /* Buttons */
         .btn {
             padding: 10px 20px;
             border: none;
@@ -132,7 +126,6 @@
         .btn-lg { padding: 14px 28px; font-size: 1rem; }
         .btn-block { width: 100%; justify-content: center; }
 
-        /* Forms */
         .form-group { margin-bottom: 16px; }
         .form-label { display: block; font-weight: 500; margin-bottom: 6px; color: var(--text); font-size: 0.9rem; }
         .form-input, .form-select {
@@ -151,7 +144,6 @@
         }
         .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
 
-        /* Tables */
         .table-container { overflow-x: auto; border-radius: var(--radius); }
         .table { width: 100%; border-collapse: collapse; }
         .table th {
@@ -167,7 +159,6 @@
         .table td { padding: 12px 16px; border-bottom: 1px solid var(--border); font-size: 0.9rem; }
         .table tr:hover td { background: rgba(102,126,234,0.05); }
 
-        /* Badges */
         .badge {
             display: inline-block;
             padding: 4px 12px;
@@ -183,7 +174,6 @@
         .badge-info { background: #e8f0fe; color: #1967d2; }
         .badge-purple { background: #f3e8fd; color: #7b1fa2; }
 
-        /* Alerts */
         .alert {
             padding: 14px 18px;
             border-radius: 8px;
@@ -192,12 +182,16 @@
             display: flex;
             align-items: center;
             gap: 10px;
+            transition: opacity 0.5s ease, transform 0.5s ease;
         }
         .alert-error { background: #fce8e6; color: #c5221f; border-left: 4px solid #c5221f; }
         .alert-success { background: #e6f4ea; color: #137333; border-left: 4px solid #137333; }
         .alert-info { background: #e8f0fe; color: #1967d2; border-left: 4px solid #1967d2; }
+        .alert.dismissing {
+            opacity: 0;
+            transform: translateY(-10px);
+        }
 
-        /* Tabs */
         .tabs { display: flex; gap: 5px; margin-bottom: 20px; flex-wrap: wrap; }
         .tab {
             padding: 10px 20px;
@@ -212,7 +206,6 @@
         .tab:hover { background: rgba(102,126,234,0.08); }
         .tab.active { background: var(--primary); color: white; }
 
-        /* Modal */
         .modal-overlay {
             display: none;
             position: fixed;
@@ -253,7 +246,6 @@
             padding: 5px;
         }
 
-        /* Map placeholder */
         .map-placeholder {
             background: linear-gradient(135deg, #e8f0fe, #f3e8fd);
             border-radius: var(--radius);
@@ -268,7 +260,6 @@
             border: 2px dashed var(--border);
         }
 
-        /* Loading */
         .spinner {
             width: 40px;
             height: 40px;
@@ -280,7 +271,6 @@
         }
         @keyframes spin { to { transform: rotate(360deg); } }
 
-        /* Page centering for auth */
         .auth-container {
             min-height: 100vh;
             display: flex;
@@ -312,7 +302,6 @@
         .risk-medium { color: #b06000; font-weight: 700; }
         .risk-high { color: #c5221f; font-weight: 700; }
 
-        /* Responsive */
         @media (max-width: 768px) {
             .form-row { grid-template-columns: 1fr; }
             .grid-2, .grid-3, .grid-4 { grid-template-columns: 1fr; }
@@ -476,7 +465,7 @@
             );
         }
 
-        // ==================== REGISTER PAGE (FIXED) ====================
+        // ==================== REGISTER PAGE ====================
         function RegisterPage({ onSuccess, onLogin }) {
             const [form, setForm] = useState({
                 name: '', email: '', password: '', confirmPassword: '',
@@ -722,7 +711,7 @@
             );
         }
 
-        // ==================== ADMIN PANEL ====================
+        // ==================== ADMIN PANEL (FIXED AUTO-DISMISS) ====================
         function AdminPanel({ user, onLogout, setPage }) {
             const [tab, setTab] = useState('users');
             const [users, setUsers] = useState([]);
@@ -739,8 +728,25 @@
             const [newLoan, setNewLoan] = useState({ borrower_id: '', loan_amount: '', interest_rate: '', due_date: '' });
             const [assignForm, setAssignForm] = useState({ collector_id: '', borrower_id: '' });
             const [msg, setMsg] = useState({});
+            const [dismissing, setDismissing] = useState(false);
 
             useEffect(() => { loadData(); }, []);
+
+            // Auto-dismiss alert with React state
+            useEffect(() => {
+                if (!msg.error && !msg.success) return;
+                setDismissing(false);
+                const timer = setTimeout(() => {
+                    setDismissing(true);
+                    setTimeout(() => {
+                        setMsg({});
+                        setDismissing(false);
+                    }, 500); // match CSS transition
+                }, msg.success ? 4000 : 5000);
+                return () => {
+                    clearTimeout(timer);
+                };
+            }, [msg]);
 
             const loadData = async () => {
                 try {
@@ -789,8 +795,8 @@
                         </div>
                     </nav>
                     <div className="container">
-                        {msg.error && <div className="alert alert-error">{msg.error}</div>}
-                        {msg.success && <div className="alert alert-success">{msg.success}</div>}
+                        {msg.error && <div className={`alert alert-error ${dismissing ? 'dismissing' : ''}`}>❌ {msg.error}</div>}
+                        {msg.success && <div className={`alert alert-success ${dismissing ? 'dismissing' : ''}`}>✅ {msg.success}</div>}
 
                         <div className="tabs">
                             {tabs.map(t => (
@@ -801,74 +807,74 @@
                         </div>
 
                         {tab === 'users' && (
-                                <div className="card">
-                                    <div className="table-container">
-                                        <table className="table">
-                                            <thead>
-                                                <tr><th>Name</th><th>Email</th><th>Current Role</th><th>Status</th><th>Address</th><th>GPS</th><th>Action</th></tr>
-                                            </thead>
-                                            <tbody>
-                                                {users.map(u => (
-                                                    <tr key={u.user_id}>
-                                                        <td>{u.name}</td>
-                                                        <td>{u.email}</td>
-                                                        <td>
-                                                            {u.email === 'admin@system.com' ? (
-                                                                <span className="badge badge-purple">{u.role}</span>
-                                                            ) : (
-                                                                <select className="form-select" style={{padding:'4px 8px',fontSize:'0.8rem',width:'120px'}} value={u.role}
-                                                                    onChange={async (e) => {
-                                                                        try { await API.put(`/api/users/${u.user_id}/role`, { role: e.target.value }); setMsg({ success: `Role updated!` }); loadData(); }
-                                                                        catch (err) { setMsg({ error: err.response?.data?.error || 'Failed' }); }
-                                                                    }}>
-                                                                    <option value="pending_user">Pending User</option>
-                                                                    <option value="borrower">Borrower</option>
-                                                                    <option value="collector">Collector</option>
-                                                                    <option value="admin">Admin</option>
+                            <div className="card">
+                                <div className="table-container">
+                                    <table className="table">
+                                        <thead>
+                                            <tr><th>Name</th><th>Email</th><th>Current Role</th><th>Status</th><th>Address</th><th>GPS</th><th>Action</th></tr>
+                                        </thead>
+                                        <tbody>
+                                            {users.map(u => (
+                                                <tr key={u.user_id}>
+                                                    <td>{u.name}</td>
+                                                    <td>{u.email}</td>
+                                                    <td>
+                                                        {u.email === 'admin@system.com' ? (
+                                                            <span className="badge badge-purple">{u.role}</span>
+                                                        ) : (
+                                                            <select className="form-select" style={{padding:'4px 8px',fontSize:'0.8rem',width:'120px'}} value={u.role}
+                                                                onChange={async (e) => {
+                                                                    try { await API.put(`/api/users/${u.user_id}/role`, { role: e.target.value }); setMsg({ success: `Role updated!` }); loadData(); }
+                                                                    catch (err) { setMsg({ error: err.response?.data?.error || 'Failed' }); }
+                                                                }}>
+                                                                <option value="pending_user">Pending User</option>
+                                                                <option value="borrower">Borrower</option>
+                                                                <option value="collector">Collector</option>
+                                                                <option value="admin">Admin</option>
+                                                            </select>
+                                                        )}
+                                                    </td>
+                                                    <td><span className={`badge ${u.status==='approved'?'badge-success':u.status==='pending'?'badge-warning':'badge-danger'}`}>{u.status}</span></td>
+                                                    <td style={{fontSize:'0.8rem'}}>{[u.street,u.barangay,u.city].filter(Boolean).join(', ')||'N/A'}</td>
+                                                    <td>{u.latitude?<span className="gps-indicator gps-active"><span className="gps-dot active"></span> Yes</span>:<span className="gps-indicator gps-inactive"><span className="gps-dot inactive"></span> No</span>}</td>
+                                                    <td>
+                                                        {u.email !== 'admin@system.com' && u.status === 'pending' && (
+                                                            <div style={{display:'flex',gap:'5px',flexDirection:'column'}}>
+                                                                <select id={`role-${u.user_id}`} className="form-select" style={{padding:'4px 8px',fontSize:'0.75rem',width:'120px'}} defaultValue="borrower">
+                                                                    <option value="borrower">As Borrower</option>
+                                                                    <option value="collector">As Collector</option>
                                                                 </select>
-                                                            )}
-                                                        </td>
-                                                        <td><span className={`badge ${u.status==='approved'?'badge-success':u.status==='pending'?'badge-warning':'badge-danger'}`}>{u.status}</span></td>
-                                                        <td style={{fontSize:'0.8rem'}}>{[u.street,u.barangay,u.city].filter(Boolean).join(', ')||'N/A'}</td>
-                                                        <td>{u.latitude?<span className="gps-indicator gps-active"><span className="gps-dot active"></span> Yes</span>:<span className="gps-indicator gps-inactive"><span className="gps-dot inactive"></span> No</span>}</td>
-                                                        <td>
-                                                            {u.email !== 'admin@system.com' && u.status === 'pending' && (
-                                                                <div style={{display:'flex',gap:'5px',flexDirection:'column'}}>
-                                                                    <select id={`role-${u.user_id}`} className="form-select" style={{padding:'4px 8px',fontSize:'0.75rem',width:'120px'}} defaultValue="borrower">
-                                                                        <option value="borrower">As Borrower</option>
-                                                                        <option value="collector">As Collector</option>
-                                                                    </select>
-                                                                    <button className="btn btn-success btn-sm" onClick={async () => {
-                                                                        const sel = document.getElementById(`role-${u.user_id}`);
-                                                                        try {
-                                                                            const res = await API.put(`/api/users/${u.user_id}/status`, { status: 'approved', role: sel?.value || 'borrower' });
-                                                                            setMsg({ success: res.data.message || 'Approved!' });
-                                                                            loadData();
-                                                                        } catch (err) { setMsg({ error: err.response?.data?.error || 'Failed' }); }
-                                                                    }}>✅ Approve</button>
-                                                                    <button className="btn btn-danger btn-sm" onClick={async () => {
-                                                                        try { await API.put(`/api/users/${u.user_id}/status`, { status: 'rejected' }); setMsg({ success: 'Rejected' }); loadData(); }
-                                                                        catch (err) { setMsg({ error: 'Failed' }); }
-                                                                    }}>❌ Reject</button>
-                                                                </div>
-                                                            )}
-                                                            {u.email !== 'admin@system.com' && u.status === 'rejected' && (
                                                                 <button className="btn btn-success btn-sm" onClick={async () => {
-                                                                    const r = prompt('Assign role? (borrower/collector)', 'borrower');
-                                                                    if (r) {
-                                                                        try { await API.put(`/api/users/${u.user_id}/status`, { status: 'approved', role: r }); setMsg({ success: 'Re-approved!' }); loadData(); }
-                                                                        catch (err) { setMsg({ error: 'Failed' }); }
-                                                                    }
-                                                                }}>Re-approve</button>
-                                                            )}
-                                                        </td>
-                                                    </tr>
-                                                ))}
-                                            </tbody>
-                                        </table>
-                                    </div>
+                                                                    const sel = document.getElementById(`role-${u.user_id}`);
+                                                                    try {
+                                                                        const res = await API.put(`/api/users/${u.user_id}/status`, { status: 'approved', role: sel?.value || 'borrower' });
+                                                                        setMsg({ success: res.data.message || 'Approved!' });
+                                                                        loadData();
+                                                                    } catch (err) { setMsg({ error: err.response?.data?.error || 'Failed' }); }
+                                                                }}>✅ Approve</button>
+                                                                <button className="btn btn-danger btn-sm" onClick={async () => {
+                                                                    try { await API.put(`/api/users/${u.user_id}/status`, { status: 'rejected' }); setMsg({ success: 'Rejected' }); loadData(); }
+                                                                    catch (err) { setMsg({ error: 'Failed' }); }
+                                                                }}>❌ Reject</button>
+                                                            </div>
+                                                        )}
+                                                        {u.email !== 'admin@system.com' && u.status === 'rejected' && (
+                                                            <button className="btn btn-success btn-sm" onClick={async () => {
+                                                                const r = prompt('Assign role? (borrower/collector)', 'borrower');
+                                                                if (r) {
+                                                                    try { await API.put(`/api/users/${u.user_id}/status`, { status: 'approved', role: r }); setMsg({ success: 'Re-approved!' }); loadData(); }
+                                                                    catch (err) { setMsg({ error: 'Failed' }); }
+                                                                }
+                                                            }}>Re-approve</button>
+                                                        )}
+                                                    </td>
+                                                </tr>
+                                            ))}
+                                        </tbody>
+                                    </table>
                                 </div>
-                            )}
+                            </div>
+                        )}
 
                         {tab === 'borrowers' && (
                             <div className="card">
@@ -1223,39 +1229,6 @@
 
         // ==================== RENDER ====================
         ReactDOM.createRoot(document.getElementById('root')).render(<App />);
-               // ==================== AUTO-DISMISS ALERTS (SAFE VERSION) ====================
-        const alertObserver = new MutationObserver(() => {
-            const alerts = document.querySelectorAll('.alert:not([data-dismissing])');
-            alerts.forEach(alert => {
-                alert.setAttribute('data-dismissing', 'true');
-                const dismissTime = alert.classList.contains('alert-success') ? 4000 : 5000;
-                setTimeout(() => {
-                    try {
-                        if (alert && alert.parentNode && document.body.contains(alert)) {
-                            alert.style.transition = 'opacity 0.5s ease, transform 0.5s ease';
-                            alert.style.opacity = '0';
-                            alert.style.transform = 'translateY(-10px)';
-                            setTimeout(() => {
-                                try {
-                                    if (alert && alert.parentNode && document.body.contains(alert)) {
-                                        alert.parentNode.removeChild(alert);
-                                    }
-                                } catch (e) {
-                                    // Ignore if already removed by React
-                                }
-                            }, 500);
-                        }
-                    } catch (e) {
-                        // Ignore errors from React already removing the element
-                    }
-                }, dismissTime);
-            });
-        });
-        
-        // Start observing only after DOM is ready
-        if (document.body) {
-            alertObserver.observe(document.body, { childList: true, subtree: true });
-        }
     </script>
 </body>
 </html>
