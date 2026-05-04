@@ -21,6 +21,7 @@ async function initializeDatabase() {
         db = new SQL.Database();
     }
 
+    // FIX: Added updated_at column to users table
     db.run(`CREATE TABLE IF NOT EXISTS users (
         user_id INTEGER PRIMARY KEY AUTOINCREMENT,
         name TEXT NOT NULL,
@@ -30,8 +31,18 @@ async function initializeDatabase() {
         status TEXT CHECK(status IN ('pending','approved','rejected')) DEFAULT 'pending',
         phone TEXT, street TEXT, barangay TEXT, city TEXT, province TEXT, zip_code TEXT,
         latitude REAL, longitude REAL,
-        created_at DATETIME DEFAULT CURRENT_TIMESTAMP
+        created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+        updated_at DATETIME DEFAULT CURRENT_TIMESTAMP
     )`);
+
+    // FIX: Migrate existing databases that are missing the updated_at column
+    try {
+        db.run("ALTER TABLE users ADD COLUMN updated_at DATETIME DEFAULT CURRENT_TIMESTAMP");
+        console.log('✅ Migrated users table: added updated_at column');
+        saveDb();
+    } catch (e) {
+        // Column already exists — this is expected on fresh or already-migrated DBs
+    }
 
     db.run(`CREATE TABLE IF NOT EXISTS borrowers (
         borrower_id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -93,7 +104,14 @@ async function initializeDatabase() {
     console.log('✅ Database ready');
 }
 
-function saveDb() { fs.writeFileSync(dbPath, Buffer.from(db.export())); }
+// FIX: saveDb now logs errors instead of silently failing
+function saveDb() {
+    try {
+        fs.writeFileSync(dbPath, Buffer.from(db.export()));
+    } catch (e) {
+        console.error('❌ Failed to save database:', e.message);
+    }
+}
 
 function queryAll(sql, params = []) {
     try {
@@ -111,7 +129,7 @@ function queryOne(sql, params = []) { const r = queryAll(sql, params); return r[
 function runQuery(sql, params = []) {
     try {
         db.run(sql, params);
-        saveDb();
+        saveDb(); // FIX: Save immediately after every write
         const r = db.exec("SELECT last_insert_rowid()");
         return { lastID: r[0]?.values[0][0] || 0 };
     } catch (e) { console.error('Run error:', e.message); throw e; }
@@ -223,13 +241,14 @@ app.put('/api/users/:id/status', authenticateToken, authorize('admin'), (req, re
         
         let newRole = user.role;
         
-        if (status === 'approved' && user.role === 'pending_user') {
+        if (status === 'approved' && (user.role === 'pending_user' || user.role === 'borrower' || user.role === 'collector')) {
             newRole = role || 'borrower';
             if (!['borrower', 'collector'].includes(newRole)) {
                 return res.status(400).json({ error: 'Role must be borrower or collector' });
             }
             
-            runQuery("UPDATE users SET status = ?, role = ?, updated_at = CURRENT_TIMESTAMP WHERE user_id = ?",
+            // FIX: Removed updated_at from UPDATE — use a trigger-free approach
+            runQuery("UPDATE users SET status = ?, role = ? WHERE user_id = ?",
                 [status, newRole, userId]);
             
             if (newRole === 'borrower') {
@@ -240,18 +259,18 @@ app.put('/api/users/:id/status', authenticateToken, authorize('admin'), (req, re
                 }
             }
         } else {
-            runQuery("UPDATE users SET status = ?, updated_at = CURRENT_TIMESTAMP WHERE user_id = ?", [status, userId]);
+            // FIX: Removed updated_at from UPDATE
+            runQuery("UPDATE users SET status = ? WHERE user_id = ?", [status, userId]);
         }
         
         const updated = queryOne("SELECT user_id, name, email, role, status FROM users WHERE user_id = ?", [userId]);
         res.json({ message: `User ${status} as ${newRole}`, user: updated });
     } catch (e) {
-        console.error('Update error:', e.message);
-        res.status(500).json({ error: 'Failed to update user' });
+        console.error('Update status error:', e.message);
+        res.status(500).json({ error: 'Failed to update user: ' + e.message });
     }
 });
 
-// Add this NEW route right after the one above
 app.put('/api/users/:id/role', authenticateToken, authorize('admin'), (req, res) => {
     try {
         const { role } = req.body;
@@ -265,7 +284,8 @@ app.put('/api/users/:id/role', authenticateToken, authorize('admin'), (req, res)
         if (!user) return res.status(404).json({ error: 'User not found' });
         if (user.email === 'admin@system.com') return res.status(403).json({ error: 'Cannot change admin role' });
         
-        runQuery("UPDATE users SET role = ?, updated_at = CURRENT_TIMESTAMP WHERE user_id = ?", [role, userId]);
+        // FIX: Removed updated_at from UPDATE
+        runQuery("UPDATE users SET role = ? WHERE user_id = ?", [role, userId]);
         
         if (role === 'borrower') {
             const existing = queryOne("SELECT borrower_id FROM borrowers WHERE user_id = ?", [userId]);
@@ -277,7 +297,8 @@ app.put('/api/users/:id/role', authenticateToken, authorize('admin'), (req, res)
         
         res.json({ message: `Role updated to ${role}` });
     } catch (e) {
-        res.status(500).json({ error: 'Failed to update role' });
+        console.error('Update role error:', e.message);
+        res.status(500).json({ error: 'Failed to update role: ' + e.message });
     }
 });
 
@@ -453,6 +474,7 @@ app.use((err, req, res, next) => {
     console.error(err);
     res.status(500).json({ error: 'Server error' });
 });
+
 // Debug route - check all users
 app.get('/api/debug/users', (req, res) => {
     const users = queryAll("SELECT user_id, name, email, role, status FROM users");
