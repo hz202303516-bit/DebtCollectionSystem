@@ -35,7 +35,7 @@
             content: '';
             position: fixed;
             top: 0; left: 0; right: 0; bottom: 0;
-            background: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.05'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+            background: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.05'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/G%3E%3C/svg%3E");
             pointer-events: none;
             z-index: 0;
         }
@@ -144,15 +144,12 @@
         }
         .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
 
-        /* ── Password wrapper for show/hide toggle ── */
         .password-wrapper {
             position: relative;
             display: flex;
             align-items: center;
         }
-        .password-wrapper .form-input {
-            padding-right: 46px;
-        }
+        .password-wrapper .form-input { padding-right: 46px; }
         .password-toggle {
             position: absolute;
             right: 12px;
@@ -211,10 +208,7 @@
         .alert-error { background: #fce8e6; color: #c5221f; border-left: 4px solid #c5221f; }
         .alert-success { background: #e6f4ea; color: #137333; border-left: 4px solid #137333; }
         .alert-info { background: #e8f0fe; color: #1967d2; border-left: 4px solid #1967d2; }
-        .alert.dismissing {
-            opacity: 0;
-            transform: translateY(-10px);
-        }
+        .alert.dismissing { opacity: 0; transform: translateY(-10px); }
 
         .tabs { display: flex; gap: 5px; margin-bottom: 20px; flex-wrap: wrap; }
         .tab {
@@ -312,11 +306,84 @@
         .risk-medium { color: #b06000; font-weight: 700; }
         .risk-high { color: #c5221f; font-weight: 700; }
 
+        /* ── ML Dashboard Styles ── */
+        .ml-summary-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+            gap: 14px;
+            margin-bottom: 22px;
+        }
+        .ml-stat {
+            background: white;
+            border-radius: 10px;
+            padding: 18px 14px;
+            text-align: center;
+            border: 1px solid var(--border);
+            box-shadow: var(--shadow);
+        }
+        .ml-stat-val { font-size: 1.9rem; font-weight: 700; }
+        .ml-stat-label { font-size: 0.78rem; color: var(--text-secondary); margin-top: 4px; text-transform: uppercase; letter-spacing: 0.4px; }
+        .ml-stat.high .ml-stat-val { color: #c5221f; }
+        .ml-stat.medium .ml-stat-val { color: #b06000; }
+        .ml-stat.low .ml-stat-val { color: #137333; }
+        .ml-stat.avg .ml-stat-val { color: #1a73e8; }
+
+        .risk-bar-wrap { display: flex; align-items: center; gap: 8px; }
+        .risk-bar-bg { flex: 1; height: 8px; background: #f0f0f0; border-radius: 99px; overflow: hidden; min-width: 60px; }
+        .risk-bar-fill { height: 100%; border-radius: 99px; transition: width 0.4s ease; }
+        .risk-score-num { font-size: 0.85rem; font-weight: 700; min-width: 28px; text-align: right; }
+
+        .ml-detail-card {
+            background: #f8f9fa;
+            border-radius: 10px;
+            padding: 18px;
+            margin-top: 10px;
+        }
+        .ml-detail-header { font-size: 1.05rem; font-weight: 600; margin-bottom: 12px; display: flex; align-items: center; gap: 10px; }
+        .ml-factor-row { display: flex; justify-content: space-between; font-size: 0.85rem; padding: 5px 0; border-bottom: 1px solid #ebebeb; }
+        .ml-factor-row:last-child { border-bottom: none; }
+        .ml-factor-label { color: var(--text-secondary); }
+        .ml-factor-val { font-weight: 600; }
+        .ml-strategy-list { margin-top: 12px; display: flex; flex-direction: column; gap: 7px; }
+        .ml-strategy-item { background: white; border-radius: 7px; padding: 9px 13px; font-size: 0.83rem; line-height: 1.5; border-left: 3px solid #ccc; }
+        .ml-strategy-item.high { border-left-color: #c5221f; }
+        .ml-strategy-item.medium { border-left-color: #e6a817; }
+        .ml-strategy-item.low { border-left-color: #0d904f; }
+
+        .ml-filter-row { display: flex; gap: 10px; align-items: center; margin-bottom: 16px; flex-wrap: wrap; }
+        .ml-filter-btn { padding: 7px 16px; border: 2px solid var(--border); border-radius: 20px; background: white; cursor: pointer; font-size: 0.83rem; font-weight: 500; transition: var(--transition); }
+        .ml-filter-btn:hover { border-color: var(--primary); color: var(--primary); }
+        .ml-filter-btn.active-filter { background: var(--primary); color: white; border-color: var(--primary); }
+        .ml-filter-btn.high-filter.active-filter { background: #c5221f; border-color: #c5221f; }
+        .ml-filter-btn.medium-filter.active-filter { background: #e6a817; border-color: #e6a817; color: #1f1f1f; }
+        .ml-filter-btn.low-filter.active-filter { background: #0d904f; border-color: #0d904f; }
+
+        .score-breakdown-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-top: 8px; }
+        .score-chip { background: #f0f0f0; border-radius: 6px; padding: 6px 10px; font-size: 0.78rem; }
+        .score-chip-label { color: var(--text-secondary); }
+        .score-chip-val { font-weight: 600; float: right; }
+
+        .ml-manual-form { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+        .ml-manual-form .form-group { margin-bottom: 0; }
+        .ml-result-box {
+            border-radius: 10px;
+            padding: 20px;
+            margin-top: 16px;
+            border: 2px solid #ebebeb;
+        }
+        .ml-result-box.high { background: #fce8e6; border-color: #c5221f; }
+        .ml-result-box.medium { background: #fef7e0; border-color: #e6a817; }
+        .ml-result-box.low { background: #e6f4ea; border-color: #0d904f; }
+        .ml-result-title { font-size: 1.3rem; font-weight: 700; }
+        .ml-result-score { font-size: 2.5rem; font-weight: 800; }
+
         @media (max-width: 768px) {
             .form-row { grid-template-columns: 1fr; }
             .grid-2, .grid-3, .grid-4 { grid-template-columns: 1fr; }
             .navbar { flex-direction: column; gap: 10px; text-align: center; }
             .auth-card { padding: 25px; }
+            .ml-manual-form { grid-template-columns: 1fr; }
+            .score-breakdown-grid { grid-template-columns: 1fr; }
         }
 
         .gps-indicator {
@@ -330,11 +397,7 @@
         }
         .gps-active { background: #e6f4ea; color: #137333; }
         .gps-inactive { background: #fce8e6; color: #c5221f; }
-        .gps-dot {
-            width: 8px; height: 8px;
-            border-radius: 50%;
-            display: inline-block;
-        }
+        .gps-dot { width: 8px; height: 8px; border-radius: 50%; display: inline-block; }
         .gps-dot.active { background: #137333; animation: pulse 1.5s infinite; }
         .gps-dot.inactive { background: #c5221f; }
         @keyframes pulse {
@@ -354,46 +417,31 @@
     <script type="text/babel">
         const { useState, useEffect, useCallback, useRef } = React;
         const API = axios.create({ baseURL: window.location.origin });
-        
+
         API.interceptors.request.use(c => {
             const t = localStorage.getItem('token');
             if (t) c.headers.Authorization = `Bearer ${t}`;
             return c;
         });
-        
+
         API.interceptors.response.use(r => r, e => {
             if (e.response?.status === 401) { localStorage.clear(); window.location.reload(); }
             return Promise.reject(e);
         });
 
-        // ── Reusable PasswordInput component ──────────────────────────────────
         function PasswordInput({ value, onChange, placeholder = '••••••', required = false }) {
             const [show, setShow] = useState(false);
             return (
                 <div className="password-wrapper">
-                    <input
-                        className="form-input"
-                        type={show ? 'text' : 'password'}
-                        placeholder={placeholder}
-                        required={required}
-                        value={value}
-                        onChange={onChange}
-                        autoComplete="current-password"
-                    />
-                    <button
-                        type="button"
-                        className="password-toggle"
-                        onClick={() => setShow(s => !s)}
-                        tabIndex={-1}
-                        title={show ? 'Hide password' : 'Show password'}
-                    >
+                    <input className="form-input" type={show ? 'text' : 'password'} placeholder={placeholder}
+                        required={required} value={value} onChange={onChange} autoComplete="current-password" />
+                    <button type="button" className="password-toggle" onClick={() => setShow(s => !s)} tabIndex={-1}>
                         {show ? '🙈' : '👁️'}
                     </button>
                 </div>
             );
         }
 
-        // ==================== ERROR BOUNDARY ====================
         class ErrorBoundary extends React.Component {
             state = { hasError: false, error: null };
             static getDerivedStateFromError(e) { return { hasError: true, error: e }; }
@@ -411,7 +459,6 @@
             }
         }
 
-        // ==================== MAIN APP ====================
         function App() {
             const [page, setPage] = useState('login');
             const [user, setUser] = useState(null);
@@ -424,13 +471,7 @@
                 setLoading(false);
             }, []);
 
-            const login = (u, t) => {
-                localStorage.setItem('token', t);
-                localStorage.setItem('user', JSON.stringify(u));
-                setUser(u);
-                setPage('dashboard');
-            };
-
+            const login = (u, t) => { localStorage.setItem('token', t); localStorage.setItem('user', JSON.stringify(u)); setUser(u); setPage('dashboard'); };
             const logout = () => { localStorage.clear(); setUser(null); setPage('login'); };
 
             if (loading) return <div className="auth-container"><div className="spinner"></div></div>;
@@ -447,20 +488,16 @@
             );
         }
 
-        // ==================== LOGIN PAGE ====================
+        // ==================== LOGIN ====================
         function LoginPage({ onLogin, onRegister }) {
             const [form, setForm] = useState({ email: '', password: '' });
             const [error, setError] = useState('');
             const [loading, setLoading] = useState(false);
 
             const submit = async (e) => {
-                e.preventDefault();
-                setLoading(true);
-                setError('');
-                try {
-                    const res = await API.post('/api/auth/login', form);
-                    onLogin(res.data.user, res.data.token);
-                } catch (err) { setError(err.response?.data?.error || 'Login failed'); }
+                e.preventDefault(); setLoading(true); setError('');
+                try { const res = await API.post('/api/auth/login', form); onLogin(res.data.user, res.data.token); }
+                catch (err) { setError(err.response?.data?.error || 'Login failed'); }
                 finally { setLoading(false); }
             };
 
@@ -478,45 +515,32 @@
                         <form onSubmit={submit}>
                             <div className="form-group">
                                 <label className="form-label">Email</label>
-                                <input className="form-input" type="email" placeholder="Enter your email" required
-                                    value={form.email} onChange={e => setForm({...form, email: e.target.value})} />
+                                <input className="form-input" type="email" placeholder="Enter your email" required value={form.email} onChange={e => setForm({...form, email: e.target.value})} />
                             </div>
                             <div className="form-group">
                                 <label className="form-label">Password</label>
-                                <PasswordInput
-                                    value={form.password}
-                                    onChange={e => setForm({...form, password: e.target.value})}
-                                    placeholder="Enter your password"
-                                    required
-                                />
+                                <PasswordInput value={form.password} onChange={e => setForm({...form, password: e.target.value})} placeholder="Enter your password" required />
                             </div>
                             <button className="btn btn-primary btn-block btn-lg" type="submit" disabled={loading}>
                                 {loading ? 'Signing in...' : '🔐 Sign In'}
                             </button>
                         </form>
-                        <p className="text-center mt-3">
-                            Don't have an account?{' '}
-                            <a href="#" onClick={e => { e.preventDefault(); onRegister(); }} style={{ color: 'var(--primary)', fontWeight: 600 }}>Register</a>
-                        </p>
+                        <p className="text-center mt-3">Don't have an account?{' '}<a href="#" onClick={e => { e.preventDefault(); onRegister(); }} style={{ color: 'var(--primary)', fontWeight: 600 }}>Register</a></p>
                     </div>
                 </div>
             );
         }
 
-        // ==================== REGISTER PAGE ====================
+        // ==================== REGISTER ====================
         function RegisterPage({ onSuccess, onLogin }) {
-            const [form, setForm] = useState({
-                name: '', email: '', password: '', confirmPassword: '',
-                phone: '', street: '', barangay: '', city: '', province: '', zip_code: '',
-                latitude: null, longitude: null
-            });
+            const [form, setForm] = useState({ name:'', email:'', password:'', confirmPassword:'', phone:'', street:'', barangay:'', city:'', province:'', zip_code:'', latitude: null, longitude: null });
             const [error, setError] = useState('');
             const [success, setSuccess] = useState('');
             const [loading, setLoading] = useState(false);
             const [gettingLocation, setGettingLocation] = useState(false);
 
             const getLocation = () => {
-                if (!navigator.geolocation) { setError('Geolocation not supported by your browser'); return; }
+                if (!navigator.geolocation) { setError('Geolocation not supported'); return; }
                 setGettingLocation(true);
                 navigator.geolocation.getCurrentPosition(
                     (pos) => { setForm({...form, latitude: pos.coords.latitude, longitude: pos.coords.longitude}); setGettingLocation(false); setError(''); },
@@ -526,25 +550,18 @@
             };
 
             const submit = async (e) => {
-                e.preventDefault();
-                setError(''); setSuccess('');
+                e.preventDefault(); setError(''); setSuccess('');
                 if (!form.name || !form.email || !form.password) return setError('Name, email, and password are required');
                 if (form.password.length < 6) return setError('Password must be at least 6 characters');
                 if (form.password !== form.confirmPassword) return setError('Passwords do not match');
                 if (!form.street || !form.barangay || !form.city) return setError('Please provide your complete address');
                 setLoading(true);
                 try {
-                    const res = await API.post('/api/auth/register', {
-                        name: form.name, email: form.email, password: form.password,
-                        phone: form.phone, street: form.street, barangay: form.barangay,
-                        city: form.city, province: form.province, zip_code: form.zip_code,
-                        latitude: form.latitude, longitude: form.longitude
-                    });
+                    const res = await API.post('/api/auth/register', { name: form.name, email: form.email, password: form.password, phone: form.phone, street: form.street, barangay: form.barangay, city: form.city, province: form.province, zip_code: form.zip_code, latitude: form.latitude, longitude: form.longitude });
                     setSuccess(res.data.message || 'Registration successful!');
                     setTimeout(() => onSuccess(), 2000);
-                } catch (err) {
-                    setError(err.response?.data?.error || 'Registration failed. Please try again.');
-                } finally { setLoading(false); }
+                } catch (err) { setError(err.response?.data?.error || 'Registration failed.'); }
+                finally { setLoading(false); }
             };
 
             const update = (field, value) => setForm({...form, [field]: value});
@@ -553,106 +570,42 @@
                 <div className="auth-container">
                     <div className="auth-card" style={{ maxWidth: '600px' }}>
                         <div className="text-center mb-2">
-                            <h2 style={{ background: 'linear-gradient(135deg, #667eea, #764ba2)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>
-                                Create Account
-                            </h2>
+                            <h2 style={{ background: 'linear-gradient(135deg, #667eea, #764ba2)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>Create Account</h2>
                             <p className="text-muted">Register for the GPS Debt Collection System</p>
                         </div>
                         {error && <div className="alert alert-error">❌ {error}</div>}
                         {success && <div className="alert alert-success">✅ {success}</div>}
                         <form onSubmit={submit}>
-                            <div className="form-group">
-                                <label className="form-label">Full Name *</label>
-                                <input className="form-input" type="text" placeholder="Juan Dela Cruz" required
-                                    value={form.name} onChange={e => update('name', e.target.value)} />
+                            <div className="form-group"><label className="form-label">Full Name *</label><input className="form-input" type="text" placeholder="Juan Dela Cruz" required value={form.name} onChange={e => update('name', e.target.value)} /></div>
+                            <div className="form-row">
+                                <div className="form-group"><label className="form-label">Email *</label><input className="form-input" type="email" placeholder="juan@email.com" required value={form.email} onChange={e => update('email', e.target.value)} /></div>
+                                <div className="form-group"><label className="form-label">Phone</label><input className="form-input" type="tel" placeholder="09123456789" value={form.phone} onChange={e => update('phone', e.target.value)} /></div>
                             </div>
                             <div className="form-row">
-                                <div className="form-group">
-                                    <label className="form-label">Email *</label>
-                                    <input className="form-input" type="email" placeholder="juan@email.com" required
-                                        value={form.email} onChange={e => update('email', e.target.value)} />
-                                </div>
-                                <div className="form-group">
-                                    <label className="form-label">Phone</label>
-                                    <input className="form-input" type="tel" placeholder="09123456789"
-                                        value={form.phone} onChange={e => update('phone', e.target.value)} />
-                                </div>
+                                <div className="form-group"><label className="form-label">Password * (min 6 chars)</label><PasswordInput value={form.password} onChange={e => update('password', e.target.value)} required /></div>
+                                <div className="form-group"><label className="form-label">Confirm Password *</label><PasswordInput value={form.confirmPassword} onChange={e => update('confirmPassword', e.target.value)} required /></div>
                             </div>
-                            <div className="form-row">
-                                <div className="form-group">
-                                    <label className="form-label">Password * (min 6 chars)</label>
-                                    <PasswordInput
-                                        value={form.password}
-                                        onChange={e => update('password', e.target.value)}
-                                        required
-                                    />
-                                </div>
-                                <div className="form-group">
-                                    <label className="form-label">Confirm Password *</label>
-                                    <PasswordInput
-                                        value={form.confirmPassword}
-                                        onChange={e => update('confirmPassword', e.target.value)}
-                                        required
-                                    />
-                                </div>
-                            </div>
-
                             <div className="card" style={{ background: '#f8f9fa', boxShadow: 'none', marginBottom: '16px' }}>
                                 <h4 style={{ marginBottom: '12px' }}>📍 Address Information</h4>
-                                <div className="form-group">
-                                    <label className="form-label">Street / House No. *</label>
-                                    <input className="form-input" type="text" placeholder="123 Rizal Street" required
-                                        value={form.street} onChange={e => update('street', e.target.value)} />
+                                <div className="form-group"><label className="form-label">Street / House No. *</label><input className="form-input" type="text" placeholder="123 Rizal Street" required value={form.street} onChange={e => update('street', e.target.value)} /></div>
+                                <div className="form-row">
+                                    <div className="form-group"><label className="form-label">Barangay *</label><input className="form-input" type="text" placeholder="Barangay" required value={form.barangay} onChange={e => update('barangay', e.target.value)} /></div>
+                                    <div className="form-group"><label className="form-label">City / Municipality *</label><input className="form-input" type="text" placeholder="City" required value={form.city} onChange={e => update('city', e.target.value)} /></div>
                                 </div>
                                 <div className="form-row">
-                                    <div className="form-group">
-                                        <label className="form-label">Barangay *</label>
-                                        <input className="form-input" type="text" placeholder="Barangay" required
-                                            value={form.barangay} onChange={e => update('barangay', e.target.value)} />
-                                    </div>
-                                    <div className="form-group">
-                                        <label className="form-label">City / Municipality *</label>
-                                        <input className="form-input" type="text" placeholder="City" required
-                                            value={form.city} onChange={e => update('city', e.target.value)} />
-                                    </div>
-                                </div>
-                                <div className="form-row">
-                                    <div className="form-group">
-                                        <label className="form-label">Province</label>
-                                        <input className="form-input" type="text" placeholder="Province"
-                                            value={form.province} onChange={e => update('province', e.target.value)} />
-                                    </div>
-                                    <div className="form-group">
-                                        <label className="form-label">Zip Code</label>
-                                        <input className="form-input" type="text" placeholder="Zip Code"
-                                            value={form.zip_code} onChange={e => update('zip_code', e.target.value)} />
-                                    </div>
+                                    <div className="form-group"><label className="form-label">Province</label><input className="form-input" type="text" placeholder="Province" value={form.province} onChange={e => update('province', e.target.value)} /></div>
+                                    <div className="form-group"><label className="form-label">Zip Code</label><input className="form-input" type="text" placeholder="Zip Code" value={form.zip_code} onChange={e => update('zip_code', e.target.value)} /></div>
                                 </div>
                             </div>
-
                             <div className="card" style={{ background: '#f8f9fa', boxShadow: 'none', marginBottom: '16px' }}>
                                 <h4 style={{ marginBottom: '12px' }}>📍 GPS Location</h4>
-                                <p className="text-muted" style={{ fontSize: '0.85rem', marginBottom: '10px' }}>
-                                    Allow location access so we can assign the nearest collector to you.
-                                </p>
-                                <button type="button" className="btn btn-outline" onClick={getLocation} disabled={gettingLocation}>
-                                    {gettingLocation ? '📍 Getting location...' : form.latitude ? '📍 Location captured! Click to retry' : '📍 Get My Location'}
-                                </button>
-                                {form.latitude && (
-                                    <p style={{ marginTop: '10px', fontSize: '0.85rem', color: '#137333' }}>
-                                        ✅ Location: {form.latitude.toFixed(6)}, {form.longitude.toFixed(6)}
-                                    </p>
-                                )}
+                                <p className="text-muted" style={{ fontSize: '0.85rem', marginBottom: '10px' }}>Allow location access so we can assign the nearest collector to you.</p>
+                                <button type="button" className="btn btn-outline" onClick={getLocation} disabled={gettingLocation}>{gettingLocation ? '📍 Getting location...' : form.latitude ? '📍 Location captured! Click to retry' : '📍 Get My Location'}</button>
+                                {form.latitude && <p style={{ marginTop: '10px', fontSize: '0.85rem', color: '#137333' }}>✅ Location: {form.latitude.toFixed(6)}, {form.longitude.toFixed(6)}</p>}
                             </div>
-
-                            <button className="btn btn-primary btn-block btn-lg" type="submit" disabled={loading}>
-                                {loading ? 'Registering...' : '📝 Create Account'}
-                            </button>
+                            <button className="btn btn-primary btn-block btn-lg" type="submit" disabled={loading}>{loading ? 'Registering...' : '📝 Create Account'}</button>
                         </form>
-                        <p className="text-center mt-3">
-                            Already have an account?{' '}
-                            <a href="#" onClick={e => { e.preventDefault(); onLogin(); }} style={{ color: 'var(--primary)', fontWeight: 600 }}>Sign In</a>
-                        </p>
+                        <p className="text-center mt-3">Already have an account?{' '}<a href="#" onClick={e => { e.preventDefault(); onLogin(); }} style={{ color: 'var(--primary)', fontWeight: 600 }}>Sign In</a></p>
                     </div>
                 </div>
             );
@@ -688,18 +641,9 @@
                         {loading ? <div className="spinner"></div> : (
                             <>
                                 <div className="grid grid-3">
-                                    <div className="stat-card">
-                                        <div className="stat-value">{stats.totalLoans || 0}</div>
-                                        <div className="stat-label">Total Loans</div>
-                                    </div>
-                                    <div className="stat-card green">
-                                        <div className="stat-value">₱{(stats.totalPayments || 0).toLocaleString()}</div>
-                                        <div className="stat-label">Total Payments</div>
-                                    </div>
-                                    <div className="stat-card orange">
-                                        <div className="stat-value">{stats.totalBorrowers || stats.pendingUsers || 0}</div>
-                                        <div className="stat-label">{stats.totalBorrowers ? 'Borrowers' : 'Pending Users'}</div>
-                                    </div>
+                                    <div className="stat-card"><div className="stat-value">{stats.totalLoans || 0}</div><div className="stat-label">Total Loans</div></div>
+                                    <div className="stat-card green"><div className="stat-value">₱{(stats.totalPayments || 0).toLocaleString()}</div><div className="stat-label">Total Payments</div></div>
+                                    <div className="stat-card orange"><div className="stat-value">{stats.totalBorrowers || stats.pendingUsers || 0}</div><div className="stat-label">{stats.totalBorrowers ? 'Borrowers' : 'Pending Users'}</div></div>
                                 </div>
                                 {stats.recentPayments?.length > 0 && (
                                     <div className="card mt-3">
@@ -707,11 +651,7 @@
                                         <div className="table-container">
                                             <table className="table">
                                                 <thead><tr><th>Borrower</th><th>Amount</th><th>Date</th></tr></thead>
-                                                <tbody>
-                                                    {stats.recentPayments.map((p, i) => (
-                                                        <tr key={i}><td>{p.borrower}</td><td>₱{p.amount}</td><td>{new Date(p.payment_date).toLocaleDateString()}</td></tr>
-                                                    ))}
-                                                </tbody>
+                                                <tbody>{stats.recentPayments.map((p, i) => (<tr key={i}><td>{p.borrower}</td><td>₱{p.amount}</td><td>{new Date(p.payment_date).toLocaleDateString()}</td></tr>))}</tbody>
                                             </table>
                                         </div>
                                     </div>
@@ -719,6 +659,219 @@
                             </>
                         )}
                     </div>
+                </div>
+            );
+        }
+
+        // ==================== ML RISK DASHBOARD COMPONENT ====================
+        function MLRiskDashboard() {
+            const [riskData, setRiskData] = useState(null);
+            const [loading, setLoading] = useState(true);
+            const [filter, setFilter] = useState('All');
+            const [selectedBorrower, setSelectedBorrower] = useState(null);
+            const [manualForm, setManualForm] = useState({ balance: '', loan_amount: '', days_past_due: '', payment_count: '', months_active: '', overdue_loans: '', active_loans: '1', has_gps: true, paid_loans: '' });
+            const [manualResult, setManualResult] = useState(null);
+            const [manualLoading, setManualLoading] = useState(false);
+            const [activeView, setActiveView] = useState('portfolio');
+
+            useEffect(() => { loadRiskData(); }, []);
+
+            const loadRiskData = async () => {
+                setLoading(true);
+                try { const res = await API.get('/api/ml/risk'); setRiskData(res.data); }
+                catch (e) { console.error(e); }
+                finally { setLoading(false); }
+            };
+
+            const runManualPredict = async () => {
+                setManualLoading(true); setManualResult(null);
+                try { const res = await API.post('/api/ml/predict', { ...manualForm, has_gps: manualForm.has_gps === true || manualForm.has_gps === 'true' }); setManualResult(res.data); }
+                catch (e) { alert('Prediction failed'); }
+                finally { setManualLoading(false); }
+            };
+
+            const updateManual = (k, v) => setManualForm(f => ({ ...f, [k]: v }));
+
+            const riskColor = (level) => level === 'High' ? '#c5221f' : level === 'Medium' ? '#b06000' : '#137333';
+            const riskBg = (level) => level === 'High' ? '#fce8e6' : level === 'Medium' ? '#fef7e0' : '#e6f4ea';
+            const riskBarColor = (score) => score >= 65 ? '#c5221f' : score >= 35 ? '#e6a817' : '#0d904f';
+
+            const filteredResults = riskData?.results?.filter(r => filter === 'All' || r.risk_level === filter) || [];
+
+            if (loading) return <div className="spinner"></div>;
+            if (!riskData) return <p className="text-muted">Failed to load risk data.</p>;
+
+            return (
+                <div>
+                    {/* Sub-nav */}
+                    <div style={{ display: 'flex', gap: '8px', marginBottom: '18px' }}>
+                        <button className={`ml-filter-btn ${activeView === 'portfolio' ? 'active-filter' : ''}`} onClick={() => setActiveView('portfolio')}>📊 Portfolio Risk</button>
+                        <button className={`ml-filter-btn ${activeView === 'manual' ? 'active-filter' : ''}`} onClick={() => setActiveView('manual')}>🔬 Manual Classifier</button>
+                    </div>
+
+                    {activeView === 'portfolio' && (
+                        <div>
+                            {/* Summary cards */}
+                            <div className="ml-summary-grid">
+                                <div className="ml-stat"><div className="ml-stat-val">{riskData.summary.total}</div><div className="ml-stat-label">Total Borrowers</div></div>
+                                <div className="ml-stat high"><div className="ml-stat-val">{riskData.summary.high}</div><div className="ml-stat-label">High Risk</div></div>
+                                <div className="ml-stat medium"><div className="ml-stat-val">{riskData.summary.medium}</div><div className="ml-stat-label">Medium Risk</div></div>
+                                <div className="ml-stat low"><div className="ml-stat-val">{riskData.summary.low}</div><div className="ml-stat-label">Low Risk</div></div>
+                                <div className="ml-stat avg"><div className="ml-stat-val">{riskData.summary.avg_score}</div><div className="ml-stat-label">Avg Score</div></div>
+                            </div>
+
+                            {/* Filter row */}
+                            <div className="ml-filter-row">
+                                <span style={{ fontSize: '0.85rem', color: 'var(--text-secondary)' }}>Filter:</span>
+                                {['All', 'High', 'Medium', 'Low'].map(f => (
+                                    <button key={f} className={`ml-filter-btn ${f.toLowerCase()}-filter ${filter === f ? 'active-filter' : ''}`} onClick={() => { setFilter(f); setSelectedBorrower(null); }}>{f === 'High' ? '🔴' : f === 'Medium' ? '🟡' : f === 'Low' ? '🟢' : '📋'} {f}</button>
+                                ))}
+                                <button className="ml-filter-btn" onClick={loadRiskData} style={{ marginLeft: 'auto' }}>🔄 Refresh</button>
+                            </div>
+
+                            {/* Table */}
+                            {filteredResults.length === 0 ? (
+                                <p className="text-muted" style={{ padding: '20px 0' }}>No borrowers in this category.</p>
+                            ) : (
+                                <div className="table-container">
+                                    <table className="table">
+                                        <thead>
+                                            <tr><th>Borrower</th><th>City</th><th>Risk Level</th><th>Score</th><th>DPD</th><th>Active Loans</th><th>Payments</th><th>GPS</th><th>Details</th></tr>
+                                        </thead>
+                                        <tbody>
+                                            {filteredResults.map(r => (
+                                                <tr key={r.borrower_id} style={{ cursor: 'pointer' }} onClick={() => setSelectedBorrower(selectedBorrower?.borrower_id === r.borrower_id ? null : r)}>
+                                                    <td><strong>{r.borrower}</strong></td>
+                                                    <td style={{ fontSize: '0.82rem' }}>{r.city || '—'}</td>
+                                                    <td>
+                                                        <span style={{ background: riskBg(r.risk_level), color: riskColor(r.risk_level), padding: '4px 12px', borderRadius: '20px', fontSize: '0.75rem', fontWeight: 700 }}>
+                                                            {r.risk_level === 'High' ? '🔴' : r.risk_level === 'Medium' ? '🟡' : '🟢'} {r.risk_level}
+                                                        </span>
+                                                    </td>
+                                                    <td>
+                                                        <div className="risk-bar-wrap">
+                                                            <div className="risk-bar-bg"><div className="risk-bar-fill" style={{ width: r.risk_score + '%', background: riskBarColor(r.risk_score) }}></div></div>
+                                                            <span className="risk-score-num" style={{ color: riskBarColor(r.risk_score) }}>{r.risk_score}</span>
+                                                        </div>
+                                                    </td>
+                                                    <td style={{ fontSize: '0.85rem' }}>{r.factors.days_past_due > 0 ? <span style={{ color: '#c5221f', fontWeight: 600 }}>{r.factors.days_past_due}d</span> : '—'}</td>
+                                                    <td style={{ textAlign: 'center' }}>{r.active_loans}</td>
+                                                    <td style={{ textAlign: 'center' }}>{r.total_payments}</td>
+                                                    <td>{r.factors.has_gps ? <span className="gps-indicator gps-active"><span className="gps-dot active"></span></span> : <span className="gps-indicator gps-inactive"><span className="gps-dot inactive"></span></span>}</td>
+                                                    <td><button className="btn btn-outline btn-sm" onClick={e => { e.stopPropagation(); setSelectedBorrower(selectedBorrower?.borrower_id === r.borrower_id ? null : r); }}>
+                                                        {selectedBorrower?.borrower_id === r.borrower_id ? '▲ Hide' : '▼ Show'}
+                                                    </button></td>
+                                                </tr>
+                                            ))}
+                                        </tbody>
+                                    </table>
+                                </div>
+                            )}
+
+                            {/* Detail panel */}
+                            {selectedBorrower && (
+                                <div className="ml-detail-card" style={{ borderLeft: `4px solid ${riskColor(selectedBorrower.risk_level)}` }}>
+                                    <div className="ml-detail-header">
+                                        <span style={{ background: riskBg(selectedBorrower.risk_level), color: riskColor(selectedBorrower.risk_level), padding: '4px 12px', borderRadius: '20px', fontSize: '0.8rem', fontWeight: 700 }}>
+                                            {selectedBorrower.risk_level} Risk — Score {selectedBorrower.risk_score}/100
+                                        </span>
+                                        <strong>{selectedBorrower.borrower}</strong>
+                                    </div>
+
+                                    <div className="form-row">
+                                        <div>
+                                            <p style={{ fontSize: '0.85rem', fontWeight: 600, marginBottom: '8px' }}>📊 Risk Factor Breakdown</p>
+                                            {[
+                                                ['Days Past Due', selectedBorrower.factors.days_past_due + ' days'],
+                                                ['Loan Utilization', selectedBorrower.factors.utilization_ratio + '%'],
+                                                ['Payments / Month', selectedBorrower.factors.payments_per_month],
+                                                ['Overdue Loans', selectedBorrower.factors.overdue_loans],
+                                                ['Active Loans', selectedBorrower.factors.active_loans],
+                                                ['Total Balance', '₱' + (selectedBorrower.factors.total_balance || 0).toLocaleString()],
+                                                ['Paid Loans', selectedBorrower.factors.paid_loans],
+                                                ['GPS on File', selectedBorrower.factors.has_gps ? 'Yes ✅' : 'No ❌'],
+                                            ].map(([label, val]) => (
+                                                <div key={label} className="ml-factor-row">
+                                                    <span className="ml-factor-label">{label}</span>
+                                                    <span className="ml-factor-val">{val}</span>
+                                                </div>
+                                            ))}
+                                        </div>
+                                        <div>
+                                            <p style={{ fontSize: '0.85rem', fontWeight: 600, marginBottom: '8px' }}>🎯 Score Components</p>
+                                            <div className="score-breakdown-grid">
+                                                {selectedBorrower.factors.scores_breakdown && Object.entries(selectedBorrower.factors.scores_breakdown).map(([k, v]) => (
+                                                    <div key={k} className="score-chip">
+                                                        <span className="score-chip-label">{k.replace(/_/g,' ')}</span>
+                                                        <span className="score-chip-val" style={{ color: v < 0 ? '#137333' : v > 10 ? '#c5221f' : '#b06000' }}>{v > 0 ? '+' : ''}{v}</span>
+                                                    </div>
+                                                ))}
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <p style={{ fontSize: '0.85rem', fontWeight: 600, marginTop: '14px', marginBottom: '8px' }}>📋 Recommended Collection Strategies</p>
+                                    <div className="ml-strategy-list">
+                                        {selectedBorrower.strategies.map((s, i) => (
+                                            <div key={i} className={`ml-strategy-item ${selectedBorrower.risk_level.toLowerCase()}`}>{s}</div>
+                                        ))}
+                                    </div>
+                                </div>
+                            )}
+                        </div>
+                    )}
+
+                    {activeView === 'manual' && (
+                        <div>
+                            <p className="text-muted" style={{ marginBottom: '16px', fontSize: '0.9rem' }}>
+                                Enter debtor details manually to get an instant ML risk classification — no database record required.
+                            </p>
+                            <div className="ml-manual-form">
+                                <div className="form-group"><label className="form-label">Outstanding Balance (₱)</label><input className="form-input" type="number" placeholder="e.g. 45000" value={manualForm.balance} onChange={e => updateManual('balance', e.target.value)} /></div>
+                                <div className="form-group"><label className="form-label">Original Loan Amount (₱)</label><input className="form-input" type="number" placeholder="e.g. 50000" value={manualForm.loan_amount} onChange={e => updateManual('loan_amount', e.target.value)} /></div>
+                                <div className="form-group"><label className="form-label">Days Past Due</label><input className="form-input" type="number" placeholder="e.g. 90" value={manualForm.days_past_due} onChange={e => updateManual('days_past_due', e.target.value)} /></div>
+                                <div className="form-group"><label className="form-label">Total Payments Made</label><input className="form-input" type="number" placeholder="e.g. 3" value={manualForm.payment_count} onChange={e => updateManual('payment_count', e.target.value)} /></div>
+                                <div className="form-group"><label className="form-label">Months Since First Loan</label><input className="form-input" type="number" placeholder="e.g. 6" value={manualForm.months_active} onChange={e => updateManual('months_active', e.target.value)} /></div>
+                                <div className="form-group"><label className="form-label">Overdue Loans Count</label><input className="form-input" type="number" placeholder="e.g. 1" value={manualForm.overdue_loans} onChange={e => updateManual('overdue_loans', e.target.value)} /></div>
+                                <div className="form-group"><label className="form-label">Active Loans Count</label><input className="form-input" type="number" placeholder="e.g. 2" value={manualForm.active_loans} onChange={e => updateManual('active_loans', e.target.value)} /></div>
+                                <div className="form-group"><label className="form-label">Previously Paid Loans</label><input className="form-input" type="number" placeholder="e.g. 1" value={manualForm.paid_loans} onChange={e => updateManual('paid_loans', e.target.value)} /></div>
+                                <div className="form-group" style={{ display: 'flex', alignItems: 'center', gap: '10px', gridColumn: '1 / -1' }}>
+                                    <label className="form-label" style={{ margin: 0 }}>GPS / Location on Record?</label>
+                                    <input type="checkbox" checked={manualForm.has_gps} onChange={e => updateManual('has_gps', e.target.checked)} style={{ width: '18px', height: '18px', cursor: 'pointer' }} />
+                                    <span style={{ fontSize: '0.85rem', color: 'var(--text-secondary)' }}>{manualForm.has_gps ? 'Yes — GPS available' : 'No — uncontactable risk'}</span>
+                                </div>
+                            </div>
+                            <button className="btn btn-primary mt-2" onClick={runManualPredict} disabled={manualLoading}>
+                                {manualLoading ? '⏳ Classifying...' : '🤖 Run ML Classification'}
+                            </button>
+
+                            {manualResult && (
+                                <div className={`ml-result-box ${manualResult.risk_level.toLowerCase()}`}>
+                                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
+                                        <div>
+                                            <div className="ml-result-title" style={{ color: riskColor(manualResult.risk_level) }}>{manualResult.risk_level === 'High' ? '🔴' : manualResult.risk_level === 'Medium' ? '🟡' : '🟢'} {manualResult.risk_level} Risk</div>
+                                            <p style={{ fontSize: '0.85rem', color: 'var(--text-secondary)', marginTop: '4px' }}>
+                                                {manualResult.risk_level === 'High' ? 'Immediate escalation required. Assign senior collector.' : manualResult.risk_level === 'Medium' ? 'Proactive engagement recommended. Monitor closely.' : 'Good indicators. Minimal intervention needed.'}
+                                            </p>
+                                        </div>
+                                        <div style={{ textAlign: 'right' }}>
+                                            <div className="ml-result-score" style={{ color: riskColor(manualResult.risk_level) }}>{manualResult.risk_score}</div>
+                                            <div style={{ fontSize: '0.8rem', color: 'var(--text-secondary)' }}>/ 100</div>
+                                        </div>
+                                    </div>
+                                    <div style={{ margin: '14px 0 8px', height: '10px', background: 'rgba(0,0,0,0.1)', borderRadius: '99px', overflow: 'hidden' }}>
+                                        <div style={{ width: manualResult.risk_score + '%', height: '100%', background: riskColor(manualResult.risk_level), borderRadius: '99px', transition: 'width 0.5s ease' }}></div>
+                                    </div>
+                                    <p style={{ fontSize: '0.85rem', fontWeight: 600, margin: '14px 0 8px' }}>📋 Recommended Strategies</p>
+                                    <div className="ml-strategy-list">
+                                        {manualResult.strategies.map((s, i) => (
+                                            <div key={i} className={`ml-strategy-item ${manualResult.risk_level.toLowerCase()}`}>{s}</div>
+                                        ))}
+                                    </div>
+                                </div>
+                            )}
+                        </div>
+                    )}
                 </div>
             );
         }
@@ -735,7 +888,6 @@
             const [gpsBorrowers, setGpsBorrowers] = useState([]);
             const [showLoanModal, setShowLoanModal] = useState(false);
             const [showAssignModal, setShowAssignModal] = useState(false);
-            const [riskData, setRiskData] = useState(null);
             const [newLoan, setNewLoan] = useState({ borrower_id: '', loan_amount: '', interest_rate: '', due_date: '' });
             const [assignForm, setAssignForm] = useState({ collector_id: '', borrower_id: '' });
             const [msg, setMsg] = useState({});
@@ -778,12 +930,15 @@
                 catch (e) { setMsg({ error: e.response?.data?.error || 'Failed' }); }
             };
 
-            const assessRisk = async (id) => {
-                try { const r = await API.get(`/api/ml/risk/${id}`); setRiskData(r.data); }
-                catch (e) { setMsg({ error: 'Risk assessment failed' }); }
-            };
-
-            const tabs = ['users', 'borrowers', 'loans', 'payments', 'assignments', 'gps', 'risk'];
+            const tabs = [
+                { id: 'users', label: '👥 Users' },
+                { id: 'borrowers', label: '🏠 Borrowers' },
+                { id: 'loans', label: '💰 Loans' },
+                { id: 'payments', label: '💳 Payments' },
+                { id: 'assignments', label: '📋 Assignments' },
+                { id: 'gps', label: '📍 GPS' },
+                { id: 'ml', label: '🤖 ML Risk' },
+            ];
 
             return (
                 <div>
@@ -800,19 +955,16 @@
 
                         <div className="tabs">
                             {tabs.map(t => (
-                                <button key={t} className={`tab ${tab === t ? 'active' : ''}`} onClick={() => setTab(t)}>
-                                    {t.charAt(0).toUpperCase() + t.slice(1)}
-                                </button>
+                                <button key={t.id} className={`tab ${tab === t.id ? 'active' : ''}`} onClick={() => setTab(t.id)}>{t.label}</button>
                             ))}
                         </div>
 
+                        {/* ── USERS TAB ── */}
                         {tab === 'users' && (
                             <div className="card">
                                 <div className="table-container">
                                     <table className="table">
-                                        <thead>
-                                            <tr><th>Name</th><th>Email</th><th>Current Role</th><th>Status</th><th>Address</th><th>GPS</th><th>Action</th></tr>
-                                        </thead>
+                                        <thead><tr><th>Name</th><th>Email</th><th>Current Role</th><th>Status</th><th>Address</th><th>GPS</th><th>Action</th></tr></thead>
                                         <tbody>
                                             {users.map(u => (
                                                 <tr key={u.user_id}>
@@ -822,9 +974,9 @@
                                                         {u.email === 'admin@system.com' ? (
                                                             <span className="badge badge-purple">{u.role}</span>
                                                         ) : (
-                                                            <select className="form-select" style={{padding:'4px 8px',fontSize:'0.8rem',width:'120px'}} value={u.role}
+                                                            <select className="form-select" style={{padding:'4px 8px',fontSize:'0.8rem',width:'130px'}} value={u.role}
                                                                 onChange={async (e) => {
-                                                                    try { await API.put(`/api/users/${u.user_id}/role`, { role: e.target.value }); setMsg({ success: `Role updated!` }); loadData(); }
+                                                                    try { await API.put(`/api/users/${u.user_id}/role`, { role: e.target.value }); setMsg({ success: 'Role updated!' }); loadData(); }
                                                                     catch (err) { setMsg({ error: err.response?.data?.error || 'Failed' }); }
                                                                 }}>
                                                                 <option value="pending_user">Pending User</option>
@@ -846,11 +998,8 @@
                                                                 </select>
                                                                 <button className="btn btn-success btn-sm" onClick={async () => {
                                                                     const sel = document.getElementById(`role-${u.user_id}`);
-                                                                    try {
-                                                                        const res = await API.put(`/api/users/${u.user_id}/status`, { status: 'approved', role: sel?.value || 'borrower' });
-                                                                        setMsg({ success: res.data.message || 'Approved!' });
-                                                                        loadData();
-                                                                    } catch (err) { setMsg({ error: err.response?.data?.error || 'Failed' }); }
+                                                                    try { const res = await API.put(`/api/users/${u.user_id}/status`, { status: 'approved', role: sel?.value || 'borrower' }); setMsg({ success: res.data.message || 'Approved!' }); loadData(); }
+                                                                    catch (err) { setMsg({ error: err.response?.data?.error || 'Failed' }); }
                                                                 }}>✅ Approve</button>
                                                                 <button className="btn btn-danger btn-sm" onClick={async () => {
                                                                     try { await API.put(`/api/users/${u.user_id}/status`, { status: 'rejected' }); setMsg({ success: 'Rejected' }); loadData(); }
@@ -876,6 +1025,7 @@
                             </div>
                         )}
 
+                        {/* ── BORROWERS TAB ── */}
                         {tab === 'borrowers' && (
                             <div className="card">
                                 <div className="flex flex-between mb-2">
@@ -884,7 +1034,7 @@
                                 </div>
                                 <div className="table-container">
                                     <table className="table">
-                                        <thead><tr><th>Name</th><th>Address</th><th>GPS</th><th>Collector</th><th>Risk</th></tr></thead>
+                                        <thead><tr><th>Name</th><th>Address</th><th>GPS</th><th>Collector</th></tr></thead>
                                         <tbody>
                                             {borrowers.map(b => (
                                                 <tr key={b.borrower_id}>
@@ -892,7 +1042,6 @@
                                                     <td style={{fontSize:'0.8rem'}}>{[b.street, b.barangay, b.city].filter(Boolean).join(', ') || 'N/A'}</td>
                                                     <td>{b.latitude ? <span className="gps-indicator gps-active"><span className="gps-dot active"></span> Tracked</span> : 'N/A'}</td>
                                                     <td>{b.collector_name || <span className="text-muted">Unassigned</span>}</td>
-                                                    <td><button className="btn btn-outline btn-sm" onClick={() => assessRisk(b.borrower_id)}>Assess</button></td>
                                                 </tr>
                                             ))}
                                         </tbody>
@@ -901,6 +1050,7 @@
                             </div>
                         )}
 
+                        {/* ── LOANS TAB ── */}
                         {tab === 'loans' && (
                             <div className="card">
                                 <div className="table-container">
@@ -923,6 +1073,7 @@
                             </div>
                         )}
 
+                        {/* ── PAYMENTS TAB ── */}
                         {tab === 'payments' && (
                             <div className="card">
                                 <div className="table-container">
@@ -934,7 +1085,7 @@
                                                     <td style={{fontSize:'0.8rem'}}>{p.receipt_number}</td>
                                                     <td>{p.borrower_name}</td><td>{p.collector_name || 'N/A'}</td>
                                                     <td>₱{p.amount}</td>
-                                                    <td>{p.latitude ? '📍' : '-'}</td>
+                                                    <td>{p.latitude ? '📍' : '—'}</td>
                                                     <td>{new Date(p.payment_date).toLocaleString()}</td>
                                                 </tr>
                                             ))}
@@ -944,6 +1095,7 @@
                             </div>
                         )}
 
+                        {/* ── ASSIGNMENTS TAB ── */}
                         {tab === 'assignments' && (
                             <div className="card">
                                 <div className="table-container">
@@ -963,6 +1115,7 @@
                             </div>
                         )}
 
+                        {/* ── GPS TAB ── */}
                         {tab === 'gps' && (
                             <div className="card">
                                 <h4>📍 Borrower Locations</h4>
@@ -980,26 +1133,19 @@
                             </div>
                         )}
 
-                        {tab === 'risk' && (
+                        {/* ── ML RISK TAB ── */}
+                        {tab === 'ml' && (
                             <div className="card">
-                                <h4>📊 Risk Assessment</h4>
-                                {riskData ? (
-                                    <div className="mt-2">
-                                        <p><strong>Borrower:</strong> {riskData.borrower}</p>
-                                        <p><strong>Risk Score:</strong> <span className={`risk-${riskData.risk_level?.toLowerCase()}`}>{riskData.risk_score} - {riskData.risk_level}</span></p>
-                                        <p><strong>Total Loans:</strong> {riskData.total_loans}</p>
-                                        <p><strong>Active Loans:</strong> {riskData.active_loans}</p>
-                                        <div style={{ background: '#f0f0f0', borderRadius: '10px', height: '20px', marginTop: '10px', overflow: 'hidden' }}>
-                                            <div style={{
-                                                width: `${riskData.risk_score}%`, height: '100%',
-                                                background: riskData.risk_score >= 70 ? '#137333' : riskData.risk_score >= 40 ? '#e6a817' : '#c5221f',
-                                                borderRadius: '10px', transition: 'width 0.5s ease'
-                                            }}></div>
-                                        </div>
-                                    </div>
-                                ) : (
-                                    <p className="text-muted">Click "Assess" on a borrower to see risk assessment</p>
-                                )}
+                                <div className="card-header" style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+                                    🤖 ML Risk Classification Engine
+                                    <span style={{ fontSize: '0.75rem', background: '#e8f0fe', color: '#1967d2', padding: '3px 10px', borderRadius: '20px', fontWeight: 500 }}>
+                                        6-Factor Weighted Model
+                                    </span>
+                                </div>
+                                <div className="alert alert-info" style={{ marginBottom: '16px', fontSize: '0.85rem' }}>
+                                    ℹ️ Risk scores are computed using Days Past Due (28%), Loan Utilization (20%), Payment Frequency (18%), Overdue Loans (15%), Debt Load (12%), and GPS Availability (7%).
+                                </div>
+                                <MLRiskDashboard />
                             </div>
                         )}
                     </div>
@@ -1113,7 +1259,7 @@
                                             <tr key={b.borrower_id}>
                                                 <td>{b.full_name}</td>
                                                 <td>{[b.street, b.barangay, b.city].filter(Boolean).join(', ')}</td>
-                                                <td>{b.latitude ? '📍' : '-'}</td>
+                                                <td>{b.latitude ? '📍' : '—'}</td>
                                                 <td>{b.latitude && <a href={`https://www.google.com/maps?q=${b.latitude},${b.longitude}`} target="_blank" className="btn btn-outline btn-sm">🗺️ Map</a>}</td>
                                             </tr>
                                         ))}
