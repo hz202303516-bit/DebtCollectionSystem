@@ -144,6 +144,30 @@
         }
         .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
 
+        /* ── Password wrapper for show/hide toggle ── */
+        .password-wrapper {
+            position: relative;
+            display: flex;
+            align-items: center;
+        }
+        .password-wrapper .form-input {
+            padding-right: 46px;
+        }
+        .password-toggle {
+            position: absolute;
+            right: 12px;
+            background: none;
+            border: none;
+            cursor: pointer;
+            font-size: 1.1rem;
+            color: var(--text-secondary);
+            padding: 4px;
+            line-height: 1;
+            transition: color 0.2s;
+            user-select: none;
+        }
+        .password-toggle:hover { color: var(--primary); }
+
         .table-container { overflow-x: auto; border-radius: var(--radius); }
         .table { width: 100%; border-collapse: collapse; }
         .table th {
@@ -246,20 +270,6 @@
             padding: 5px;
         }
 
-        .map-placeholder {
-            background: linear-gradient(135deg, #e8f0fe, #f3e8fd);
-            border-radius: var(--radius);
-            padding: 20px;
-            text-align: center;
-            min-height: 200px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 0.9rem;
-            color: var(--text-secondary);
-            border: 2px dashed var(--border);
-        }
-
         .spinner {
             width: 40px;
             height: 40px;
@@ -356,6 +366,33 @@
             return Promise.reject(e);
         });
 
+        // ── Reusable PasswordInput component ──────────────────────────────────
+        function PasswordInput({ value, onChange, placeholder = '••••••', required = false }) {
+            const [show, setShow] = useState(false);
+            return (
+                <div className="password-wrapper">
+                    <input
+                        className="form-input"
+                        type={show ? 'text' : 'password'}
+                        placeholder={placeholder}
+                        required={required}
+                        value={value}
+                        onChange={onChange}
+                        autoComplete="current-password"
+                    />
+                    <button
+                        type="button"
+                        className="password-toggle"
+                        onClick={() => setShow(s => !s)}
+                        tabIndex={-1}
+                        title={show ? 'Hide password' : 'Show password'}
+                    >
+                        {show ? '🙈' : '👁️'}
+                    </button>
+                </div>
+            );
+        }
+
         // ==================== ERROR BOUNDARY ====================
         class ErrorBoundary extends React.Component {
             state = { hasError: false, error: null };
@@ -446,8 +483,12 @@
                             </div>
                             <div className="form-group">
                                 <label className="form-label">Password</label>
-                                <input className="form-input" type="password" placeholder="Enter your password" required
-                                    value={form.password} onChange={e => setForm({...form, password: e.target.value})} />
+                                <PasswordInput
+                                    value={form.password}
+                                    onChange={e => setForm({...form, password: e.target.value})}
+                                    placeholder="Enter your password"
+                                    required
+                                />
                             </div>
                             <button className="btn btn-primary btn-block btn-lg" type="submit" disabled={loading}>
                                 {loading ? 'Signing in...' : '🔐 Sign In'}
@@ -478,65 +519,35 @@
             const [gettingLocation, setGettingLocation] = useState(false);
 
             const getLocation = () => {
-                if (!navigator.geolocation) {
-                    setError('Geolocation not supported by your browser');
-                    return;
-                }
+                if (!navigator.geolocation) { setError('Geolocation not supported by your browser'); return; }
                 setGettingLocation(true);
                 navigator.geolocation.getCurrentPosition(
-                    (pos) => {
-                        setForm({...form, latitude: pos.coords.latitude, longitude: pos.coords.longitude});
-                        setGettingLocation(false);
-                        setError('');
-                    },
-                    (err) => {
-                        setError('Failed to get location: ' + err.message);
-                        setGettingLocation(false);
-                    },
+                    (pos) => { setForm({...form, latitude: pos.coords.latitude, longitude: pos.coords.longitude}); setGettingLocation(false); setError(''); },
+                    (err) => { setError('Failed to get location: ' + err.message); setGettingLocation(false); },
                     { enableHighAccuracy: true, timeout: 10000 }
                 );
             };
 
             const submit = async (e) => {
                 e.preventDefault();
-                setError('');
-                setSuccess('');
-
-                if (!form.name || !form.email || !form.password) {
-                    return setError('Name, email, and password are required');
-                }
-                if (form.password.length < 6) {
-                    return setError('Password must be at least 6 characters');
-                }
-                if (form.password !== form.confirmPassword) {
-                    return setError('Passwords do not match');
-                }
-                if (!form.street || !form.barangay || !form.city) {
-                    return setError('Please provide your complete address (street, barangay, and city are required)');
-                }
-
+                setError(''); setSuccess('');
+                if (!form.name || !form.email || !form.password) return setError('Name, email, and password are required');
+                if (form.password.length < 6) return setError('Password must be at least 6 characters');
+                if (form.password !== form.confirmPassword) return setError('Passwords do not match');
+                if (!form.street || !form.barangay || !form.city) return setError('Please provide your complete address');
                 setLoading(true);
                 try {
                     const res = await API.post('/api/auth/register', {
-                        name: form.name,
-                        email: form.email,
-                        password: form.password,
-                        phone: form.phone,
-                        street: form.street,
-                        barangay: form.barangay,
-                        city: form.city,
-                        province: form.province,
-                        zip_code: form.zip_code,
-                        latitude: form.latitude,
-                        longitude: form.longitude
+                        name: form.name, email: form.email, password: form.password,
+                        phone: form.phone, street: form.street, barangay: form.barangay,
+                        city: form.city, province: form.province, zip_code: form.zip_code,
+                        latitude: form.latitude, longitude: form.longitude
                     });
                     setSuccess(res.data.message || 'Registration successful!');
                     setTimeout(() => onSuccess(), 2000);
                 } catch (err) {
                     setError(err.response?.data?.error || 'Registration failed. Please try again.');
-                } finally {
-                    setLoading(false);
-                }
+                } finally { setLoading(false); }
             };
 
             const update = (field, value) => setForm({...form, [field]: value});
@@ -573,13 +584,19 @@
                             <div className="form-row">
                                 <div className="form-group">
                                     <label className="form-label">Password * (min 6 chars)</label>
-                                    <input className="form-input" type="password" placeholder="••••••" required
-                                        value={form.password} onChange={e => update('password', e.target.value)} />
+                                    <PasswordInput
+                                        value={form.password}
+                                        onChange={e => update('password', e.target.value)}
+                                        required
+                                    />
                                 </div>
                                 <div className="form-group">
                                     <label className="form-label">Confirm Password *</label>
-                                    <input className="form-input" type="password" placeholder="••••••" required
-                                        value={form.confirmPassword} onChange={e => update('confirmPassword', e.target.value)} />
+                                    <PasswordInput
+                                        value={form.confirmPassword}
+                                        onChange={e => update('confirmPassword', e.target.value)}
+                                        required
+                                    />
                                 </div>
                             </div>
 
@@ -652,10 +669,8 @@
             useEffect(() => { fetchStats(); }, []);
 
             const fetchStats = async () => {
-                try {
-                    const res = await API.get('/api/dashboard/stats');
-                    setStats(res.data);
-                } catch (e) { console.error(e); }
+                try { const res = await API.get('/api/dashboard/stats'); setStats(res.data); }
+                catch (e) { console.error(e); }
                 finally { setLoading(false); }
             };
 
@@ -711,7 +726,7 @@
             );
         }
 
-        // ==================== ADMIN PANEL (FIXED AUTO-DISMISS) ====================
+        // ==================== ADMIN PANEL ====================
         function AdminPanel({ user, onLogout, setPage }) {
             const [tab, setTab] = useState('users');
             const [users, setUsers] = useState([]);
@@ -723,7 +738,6 @@
             const [gpsBorrowers, setGpsBorrowers] = useState([]);
             const [showLoanModal, setShowLoanModal] = useState(false);
             const [showAssignModal, setShowAssignModal] = useState(false);
-            const [selectedBorrower, setSelectedBorrower] = useState(null);
             const [riskData, setRiskData] = useState(null);
             const [newLoan, setNewLoan] = useState({ borrower_id: '', loan_amount: '', interest_rate: '', due_date: '' });
             const [assignForm, setAssignForm] = useState({ collector_id: '', borrower_id: '' });
@@ -732,20 +746,14 @@
 
             useEffect(() => { loadData(); }, []);
 
-            // Auto-dismiss alert with React state
             useEffect(() => {
                 if (!msg.error && !msg.success) return;
                 setDismissing(false);
                 const timer = setTimeout(() => {
                     setDismissing(true);
-                    setTimeout(() => {
-                        setMsg({});
-                        setDismissing(false);
-                    }, 500); // match CSS transition
+                    setTimeout(() => { setMsg({}); setDismissing(false); }, 500);
                 }, msg.success ? 4000 : 5000);
-                return () => {
-                    clearTimeout(timer);
-                };
+                return () => clearTimeout(timer);
             }, [msg]);
 
             const loadData = async () => {
@@ -759,11 +767,6 @@
                     setPayments(p.data); setCollectors(c.data); setAssignments(a.data);
                     setGpsBorrowers(g.data);
                 } catch (e) { setMsg({ error: 'Failed to load data' }); }
-            };
-
-            const approveUser = async (id) => {
-                try { await API.put(`/api/users/${id}/status`, { status: 'approved' }); setMsg({ success: 'User approved!' }); loadData(); }
-                catch (e) { setMsg({ error: e.response?.data?.error || 'Failed' }); }
             };
 
             const createLoan = async (e) => {
@@ -989,16 +992,11 @@
                                         <p><strong>Risk Score:</strong> <span className={`risk-${riskData.risk_level?.toLowerCase()}`}>{riskData.risk_score} - {riskData.risk_level}</span></p>
                                         <p><strong>Total Loans:</strong> {riskData.total_loans}</p>
                                         <p><strong>Active Loans:</strong> {riskData.active_loans}</p>
-                                        <div style={{
-                                            background: '#f0f0f0', borderRadius: '10px', height: '20px', marginTop: '10px',
-                                            overflow: 'hidden'
-                                        }}>
+                                        <div style={{ background: '#f0f0f0', borderRadius: '10px', height: '20px', marginTop: '10px', overflow: 'hidden' }}>
                                             <div style={{
-                                                width: `${riskData.risk_score}%`,
-                                                height: '100%',
+                                                width: `${riskData.risk_score}%`, height: '100%',
                                                 background: riskData.risk_score >= 70 ? '#137333' : riskData.risk_score >= 40 ? '#e6a817' : '#c5221f',
-                                                borderRadius: '10px',
-                                                transition: 'width 0.5s ease'
+                                                borderRadius: '10px', transition: 'width 0.5s ease'
                                             }}></div>
                                         </div>
                                     </div>
@@ -1078,12 +1076,7 @@
                 const amount = payAmount[loanId];
                 if (!amount) return alert('Enter amount');
                 try {
-                    await API.post('/api/payments', {
-                        loan_id: loanId,
-                        amount: parseFloat(amount),
-                        latitude: gps.latitude,
-                        longitude: gps.longitude
-                    });
+                    await API.post('/api/payments', { loan_id: loanId, amount: parseFloat(amount), latitude: gps.latitude, longitude: gps.longitude });
                     alert('Payment recorded!');
                     setPayAmount({...payAmount, [loanId]: ''});
                     loadData();
