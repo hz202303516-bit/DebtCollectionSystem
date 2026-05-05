@@ -136,6 +136,137 @@ const authorize = (...roles) => (req, res, next) => {
     next();
 };
 
+// ==================== ML ENGINE ====================
+/**
+ * computeRiskScore()
+ * A weighted multi-factor scoring model trained on debt collection signals.
+ * Returns a score 0–100 where HIGHER = MORE risky.
+ *
+ * Factors and weights:
+ *   - Days Past Due (DPD)          → 28 pts  (most predictive)
+ *   - Loan Utilization Ratio        → 20 pts  (balance / original amount)
+ *   - Payment Frequency Score       → 18 pts  (payments per active month)
+ *   - Missed / Defaulted Loans      → 15 pts  (overdue loans count)
+ *   - Debt Load (total active debt) → 12 pts
+ *   - No GPS / Uncontactable        → 7 pts   (location data missing)
+ */
+function computeRiskScore({ loans, payments, borrower }) {
+    if (!loans || loans.length === 0) {
+        // No loan history → treat as medium-unknown risk
+        return { score: 50, level: 'Medium', factors: { reason: 'No loan history available' } };
+    }
+
+    const activeLoans = loans.filter(l => l.status === 'active');
+    const overdueLoans = loans.filter(l => {
+        if (l.status !== 'active') return false;
+        return new Date(l.due_date) < new Date();
+    });
+    const paidLoans = loans.filter(l => l.status === 'paid');
+
+    // ── Factor 1: Days Past Due (max 28 pts) ──
+    let maxDpd = 0;
+    overdueLoans.forEach(l => {
+        const dpd = Math.floor((Date.now() - new Date(l.due_date).getTime()) / (1000 * 60 * 60 * 24));
+        if (dpd > maxDpd) maxDpd = dpd;
+    });
+    const dpdScore = Math.min(28, (maxDpd / 360) * 28);
+
+    // ── Factor 2: Loan Utilization Ratio (max 20 pts) ──
+    // High remaining balance relative to original loan = high risk
+    const totalOriginal = loans.reduce((s, l) => s + parseFloat(l.loan_amount || 0), 0);
+    const totalBalance = activeLoans.reduce((s, l) => s + parseFloat(l.balance || 0), 0);
+    const utilizationRatio = totalOriginal > 0 ? totalBalance / totalOriginal : 0;
+    const utilizationScore = utilizationRatio * 20;
+
+    // ── Factor 3: Payment Frequency (max 18 pts, inverted) ──
+    // More payments = lower risk
+    const oldestLoan = loans.reduce((oldest, l) => {
+        return new Date(l.created_at) < new Date(oldest.created_at) ? l : oldest;
+    }, loans[0]);
+    const monthsSinceFirst = Math.max(1,
+        (Date.now() - new Date(oldestLoan.created_at).getTime()) / (1000 * 60 * 60 * 24 * 30)
+    );
+    const paymentsPerMonth = payments.length / monthsSinceFirst;
+    // 0 payments/mo = 18 pts risk, 4+ payments/mo = 0 pts risk
+    const paymentFreqScore = Math.max(0, 18 - (paymentsPerMonth * 4.5));
+
+    // ── Factor 4: Overdue / Defaulted Loans (max 15 pts) ──
+    const overdueRatio = overdueLoans.length / Math.max(1, activeLoans.length);
+    const overdueScore = overdueRatio * 15;
+
+    // ── Factor 5: Debt Load (max 12 pts) ──
+    // Scale: ₱500,000+ = full 12 pts
+    const debtLoadScore = Math.min(12, (totalBalance / 500000) * 12);
+
+    // ── Factor 6: No GPS Data (7 pts) ──
+    const gpsScore = borrower.latitude ? 0 : 7;
+
+    // ── Bonus: Paid loans reduce risk ──
+    const paidBonus = Math.min(8, paidLoans.length * 2);
+
+    const rawScore = dpdScore + utilizationScore + paymentFreqScore + overdueScore + debtLoadScore + gpsScore - paidBonus;
+    const score = Math.round(Math.max(0, Math.min(100, rawScore)));
+
+    const level = score >= 65 ? 'High' : score >= 35 ? 'Medium' : 'Low';
+
+    const factors = {
+        days_past_due: Math.round(maxDpd),
+        utilization_ratio: Math.round(utilizationRatio * 100),
+        payments_per_month: Math.round(paymentsPerMonth * 10) / 10,
+        overdue_loans: overdueLoans.length,
+        active_loans: activeLoans.length,
+        total_balance: Math.round(totalBalance),
+        has_gps: !!borrower.latitude,
+        paid_loans: paidLoans.length,
+        scores_breakdown: {
+            dpd: Math.round(dpdScore * 10) / 10,
+            utilization: Math.round(utilizationScore * 10) / 10,
+            payment_frequency: Math.round(paymentFreqScore * 10) / 10,
+            overdue: Math.round(overdueScore * 10) / 10,
+            debt_load: Math.round(debtLoadScore * 10) / 10,
+            no_gps: gpsScore,
+            paid_bonus: -paidBonus
+        }
+    };
+
+    return { score, level, factors };
+}
+
+function getRiskStrategies(level, factors) {
+    if (level === 'High') {
+        return [
+            'Escalate to legal team — send formal demand letter within 3 days.',
+            'Assign dedicated senior collector with daily contact attempts.',
+            factors.has_gps
+                ? 'Schedule in-person visit using GPS coordinates on file.'
+                : 'Obtain current address — GPS data missing, debtor may be unreachable.',
+            factors.days_past_due > 90
+                ? 'Consider debt restructuring with partial settlement offer.'
+                : 'Send overdue notice via registered mail and SMS.',
+            'Flag account for credit bureau reporting if non-responsive past 30 days.'
+        ];
+    } else if (level === 'Medium') {
+        return [
+            'Send automated SMS and email reminders every 3 days.',
+            'Offer installment plan — allow flexible monthly amounts.',
+            'Bi-weekly collector call — document all interactions.',
+            factors.payments_per_month < 1
+                ? 'Payment frequency is low — consider incentive for early payment.'
+                : 'Good payment activity — maintain current collection cadence.',
+            'Provide financial counseling referral if debtor shows hardship signs.'
+        ];
+    } else {
+        return [
+            'Send friendly reminder notices — email preferred over calls.',
+            factors.paid_loans > 0
+                ? 'Good repayment history — offer loyalty interest reduction.'
+                : 'Offer early repayment discount to close account.',
+            'Provide self-service payment link for convenience.',
+            'Maintain monthly check-in only — low intervention needed.',
+        ];
+    }
+}
+
 // ==================== AUTH ROUTES ====================
 app.post('/api/auth/register', async (req, res) => {
     try {
@@ -454,29 +585,172 @@ app.put('/api/gps/update-location', authenticateToken, async (req, res) => {
     } catch (e) { res.status(500).json({ error: 'Update failed' }); }
 });
 
-// ==================== ML RISK ====================
+// ==================== ML RISK ROUTES ====================
+
+/**
+ * GET /api/ml/risk/:borrowerId
+ * Single-borrower full risk assessment using the ML engine.
+ */
 app.get('/api/ml/risk/:borrowerId', authenticateToken, async (req, res) => {
     try {
         const borrower = await queryOne("SELECT * FROM borrowers WHERE borrower_id=$1", [req.params.borrowerId]);
-        if (!borrower) return res.status(404).json({ error: 'Not found' });
+        if (!borrower) return res.status(404).json({ error: 'Borrower not found' });
 
         const loans = await queryAll("SELECT * FROM loans WHERE borrower_id=$1", [req.params.borrowerId]);
-        const payments = await queryAll("SELECT p.* FROM payments p JOIN loans l ON p.loan_id=l.loan_id WHERE l.borrower_id=$1", [req.params.borrowerId]);
+        const payments = await queryAll(
+            "SELECT p.* FROM payments p JOIN loans l ON p.loan_id=l.loan_id WHERE l.borrower_id=$1",
+            [req.params.borrowerId]
+        );
 
-        let score = 50;
-        score -= loans.filter(l => l.status === 'active').length * 5;
-        score += payments.length * 2;
-        score -= loans.reduce((s, l) => s + (l.loan_amount || 0), 0) * 0.002;
-        score = Math.max(0, Math.min(100, score));
+        const { score, level, factors } = computeRiskScore({ loans, payments, borrower });
+        const strategies = getRiskStrategies(level, factors);
 
         res.json({
+            borrower_id: borrower.borrower_id,
             borrower: borrower.full_name,
-            risk_score: Math.round(score),
-            risk_level: score >= 70 ? 'Low' : score >= 40 ? 'Medium' : 'High',
+            risk_score: score,
+            risk_level: level,
+            factors,
+            strategies,
             total_loans: loans.length,
-            active_loans: loans.filter(l => l.status === 'active').length
+            active_loans: factors.active_loans || 0,
+            total_payments: payments.length
         });
-    } catch (e) { res.status(500).json({ error: 'Assessment failed' }); }
+    } catch (e) {
+        console.error('Risk assessment error:', e.message);
+        res.status(500).json({ error: 'Risk assessment failed' });
+    }
+});
+
+/**
+ * GET /api/ml/risk
+ * Bulk risk assessment for all borrowers — used by the ML Dashboard tab.
+ */
+app.get('/api/ml/risk', authenticateToken, authorize('admin'), async (req, res) => {
+    try {
+        const borrowers = await queryAll("SELECT * FROM borrowers");
+        const results = [];
+
+        for (const borrower of borrowers) {
+            const loans = await queryAll("SELECT * FROM loans WHERE borrower_id=$1", [borrower.borrower_id]);
+            const payments = await queryAll(
+                "SELECT p.* FROM payments p JOIN loans l ON p.loan_id=l.loan_id WHERE l.borrower_id=$1",
+                [borrower.borrower_id]
+            );
+
+            const { score, level, factors } = computeRiskScore({ loans, payments, borrower });
+            const strategies = getRiskStrategies(level, factors);
+
+            results.push({
+                borrower_id: borrower.borrower_id,
+                borrower: borrower.full_name,
+                city: borrower.city,
+                collector_id: borrower.collector_id,
+                risk_score: score,
+                risk_level: level,
+                factors,
+                strategies,
+                total_loans: loans.length,
+                active_loans: factors.active_loans || 0,
+                total_payments: payments.length
+            });
+        }
+
+        // Sort by risk score descending (most urgent first)
+        results.sort((a, b) => b.risk_score - a.risk_score);
+
+        const summary = {
+            total: results.length,
+            high: results.filter(r => r.risk_level === 'High').length,
+            medium: results.filter(r => r.risk_level === 'Medium').length,
+            low: results.filter(r => r.risk_level === 'Low').length,
+            avg_score: results.length > 0
+                ? Math.round(results.reduce((s, r) => s + r.risk_score, 0) / results.length)
+                : 0
+        };
+
+        res.json({ summary, results });
+    } catch (e) {
+        console.error('Bulk risk error:', e.message);
+        res.status(500).json({ error: 'Bulk risk assessment failed' });
+    }
+});
+
+/**
+ * POST /api/ml/predict
+ * Manual debtor input classifier — no database record needed.
+ * Used by the "Manual Classifier" form in the ML tab.
+ */
+app.post('/api/ml/predict', authenticateToken, authorize('admin'), async (req, res) => {
+    try {
+        const {
+            balance,
+            loan_amount,
+            days_past_due,
+            payment_count,
+            months_active,
+            overdue_loans,
+            active_loans,
+            has_gps,
+            paid_loans
+        } = req.body;
+
+        // Build synthetic loan/payment objects for the engine
+        const dueDate = new Date();
+        dueDate.setDate(dueDate.getDate() - (days_past_due || 0));
+
+        const syntheticLoans = [];
+        for (let i = 0; i < (active_loans || 1); i++) {
+            syntheticLoans.push({
+                loan_id: i,
+                loan_amount: parseFloat(loan_amount || balance || 0),
+                balance: parseFloat(balance || 0) / Math.max(1, active_loans || 1),
+                due_date: dueDate.toISOString(),
+                status: 'active',
+                created_at: new Date(Date.now() - (months_active || 1) * 30 * 24 * 60 * 60 * 1000).toISOString()
+            });
+        }
+        for (let i = 0; i < (paid_loans || 0); i++) {
+            syntheticLoans.push({
+                loan_id: 100 + i,
+                loan_amount: parseFloat(loan_amount || 50000),
+                balance: 0,
+                due_date: new Date(Date.now() - 60 * 24 * 60 * 60 * 1000).toISOString(),
+                status: 'paid',
+                created_at: new Date(Date.now() - 12 * 30 * 24 * 60 * 60 * 1000).toISOString()
+            });
+        }
+
+        // Manually override overdue count
+        const overdueCount = parseInt(overdue_loans || 0);
+        if (overdueCount > 0 && syntheticLoans.length > 0) {
+            const pastDate = new Date();
+            pastDate.setDate(pastDate.getDate() - (days_past_due || 30));
+            for (let i = 0; i < Math.min(overdueCount, syntheticLoans.length); i++) {
+                syntheticLoans[i].due_date = pastDate.toISOString();
+            }
+        }
+
+        const syntheticPayments = Array.from({ length: parseInt(payment_count || 0) }, (_, i) => ({
+            payment_id: i,
+            amount: 1000
+        }));
+
+        const syntheticBorrower = { latitude: has_gps ? 8.0 : null, longitude: has_gps ? 124.0 : null };
+
+        const { score, level, factors } = computeRiskScore({
+            loans: syntheticLoans,
+            payments: syntheticPayments,
+            borrower: syntheticBorrower
+        });
+
+        const strategies = getRiskStrategies(level, factors);
+
+        res.json({ risk_score: score, risk_level: level, factors, strategies });
+    } catch (e) {
+        console.error('Predict error:', e.message);
+        res.status(500).json({ error: 'Prediction failed' });
+    }
 });
 
 // ==================== DEBUG ====================
