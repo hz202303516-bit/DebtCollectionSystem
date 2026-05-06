@@ -21,325 +21,134 @@
             --radius: 12px;
             --transition: all 0.25s ease;
         }
-
         * { margin: 0; padding: 0; box-sizing: border-box; }
-
-        body {
-            font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            min-height: 100vh;
-            color: var(--text);
-        }
-
-        body::before {
-            content: '';
-            position: fixed;
-            top: 0; left: 0; right: 0; bottom: 0;
-            background: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.05'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/G%3E%3C/svg%3E");
-            pointer-events: none;
-            z-index: 0;
-        }
-
-        .container {
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 20px;
-            position: relative;
-            z-index: 1;
-        }
-
-        .navbar {
-            background: rgba(255,255,255,0.95);
-            backdrop-filter: blur(10px);
-            border-radius: var(--radius);
-            padding: 15px 25px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 25px;
-            box-shadow: var(--shadow-lg);
-        }
-        .navbar-brand {
-            font-size: 1.4rem;
-            font-weight: 700;
-            background: linear-gradient(135deg, #667eea, #764ba2);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-        }
-        .navbar-actions { display: flex; gap: 10px; align-items: center; }
+        body { font-family: 'Segoe UI', system-ui, -apple-system, sans-serif; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); min-height: 100vh; color: var(--text); }
+        body::before { content: ''; position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.05'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E"); pointer-events: none; z-index: 0; }
+        .container { max-width: 1200px; margin: 0 auto; padding: 20px; position: relative; z-index: 1; }
+        .navbar { background: rgba(255,255,255,0.95); backdrop-filter: blur(10px); border-radius: var(--radius); padding: 15px 25px; display: flex; justify-content: space-between; align-items: center; margin-bottom: 25px; box-shadow: var(--shadow-lg); }
+        .navbar-brand { font-size: 1.4rem; font-weight: 700; background: linear-gradient(135deg, #667eea, #764ba2); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+        .navbar-actions { display: flex; gap: 10px; align-items: center; flex-wrap: wrap; }
         .navbar-user { color: var(--text-secondary); font-size: 0.9rem; }
-
-        .card {
-            background: rgba(255,255,255,0.95);
-            backdrop-filter: blur(10px);
-            border-radius: var(--radius);
-            padding: 30px;
-            box-shadow: var(--shadow-lg);
-            margin-bottom: 20px;
-        }
-        .card-header {
-            font-size: 1.3rem;
-            font-weight: 600;
-            margin-bottom: 20px;
-            color: var(--text);
-        }
-
+        .card { background: rgba(255,255,255,0.95); backdrop-filter: blur(10px); border-radius: var(--radius); padding: 30px; box-shadow: var(--shadow-lg); margin-bottom: 20px; }
+        .card-header { font-size: 1.3rem; font-weight: 600; margin-bottom: 20px; color: var(--text); }
         .grid { display: grid; gap: 20px; }
         .grid-2 { grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); }
         .grid-3 { grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); }
         .grid-4 { grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); }
-
-        .stat-card {
-            background: linear-gradient(135deg, #667eea, #764ba2);
-            color: white;
-            border-radius: var(--radius);
-            padding: 25px;
-            text-align: center;
-        }
+        .stat-card { background: linear-gradient(135deg, #667eea, #764ba2); color: white; border-radius: var(--radius); padding: 25px; text-align: center; }
         .stat-card.green { background: linear-gradient(135deg, #11998e, #38ef7d); }
         .stat-card.orange { background: linear-gradient(135deg, #f2994a, #f2c94c); }
         .stat-card.red { background: linear-gradient(135deg, #eb3349, #f45c43); }
         .stat-value { font-size: 2.2rem; font-weight: 700; }
         .stat-label { font-size: 0.9rem; opacity: 0.9; margin-top: 5px; }
-
-        .btn {
-            padding: 10px 20px;
-            border: none;
-            border-radius: 8px;
-            cursor: pointer;
-            font-size: 0.9rem;
-            font-weight: 500;
-            transition: var(--transition);
-            display: inline-flex;
-            align-items: center;
-            gap: 6px;
-        }
+        .btn { padding: 10px 20px; border: none; border-radius: 8px; cursor: pointer; font-size: 0.9rem; font-weight: 500; transition: var(--transition); display: inline-flex; align-items: center; gap: 6px; }
         .btn:hover { transform: translateY(-1px); box-shadow: var(--shadow); }
         .btn:active { transform: translateY(0); }
+        .btn:disabled { opacity: 0.6; cursor: not-allowed; transform: none; }
         .btn-primary { background: var(--primary); color: white; }
-        .btn-primary:hover { background: var(--primary-dark); }
+        .btn-primary:hover:not(:disabled) { background: var(--primary-dark); }
         .btn-success { background: var(--success); color: white; }
         .btn-danger { background: var(--danger); color: white; }
         .btn-warning { background: var(--warning); color: #1f1f1f; }
         .btn-outline { background: transparent; border: 2px solid var(--border); color: var(--text); }
+        .btn-purple { background: #7b1fa2; color: white; }
         .btn-sm { padding: 6px 14px; font-size: 0.8rem; }
         .btn-lg { padding: 14px 28px; font-size: 1rem; }
         .btn-block { width: 100%; justify-content: center; }
-
         .form-group { margin-bottom: 16px; }
         .form-label { display: block; font-weight: 500; margin-bottom: 6px; color: var(--text); font-size: 0.9rem; }
-        .form-input, .form-select {
-            width: 100%;
-            padding: 12px 16px;
-            border: 2px solid var(--border);
-            border-radius: 8px;
-            font-size: 0.95rem;
-            transition: var(--transition);
-            background: white;
-        }
-        .form-input:focus, .form-select:focus {
-            outline: none;
-            border-color: var(--primary);
-            box-shadow: 0 0 0 3px rgba(26,115,232,0.1);
-        }
+        .form-label .required { color: var(--danger); margin-left: 2px; }
+        .form-input, .form-select, .form-textarea { width: 100%; padding: 12px 16px; border: 2px solid var(--border); border-radius: 8px; font-size: 0.95rem; transition: var(--transition); background: white; font-family: inherit; }
+        .form-textarea { min-height: 80px; resize: vertical; }
+        .form-input:focus, .form-select:focus, .form-textarea:focus { outline: none; border-color: var(--primary); box-shadow: 0 0 0 3px rgba(26,115,232,0.1); }
+        .form-input.error, .form-select.error { border-color: var(--danger); }
+        .form-hint { font-size: 0.78rem; color: var(--text-secondary); margin-top: 4px; }
         .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
-
-        .password-wrapper {
-            position: relative;
-            display: flex;
-            align-items: center;
-        }
+        .password-wrapper { position: relative; display: flex; align-items: center; }
         .password-wrapper .form-input { padding-right: 46px; }
-        .password-toggle {
-            position: absolute;
-            right: 12px;
-            background: none;
-            border: none;
-            cursor: pointer;
-            font-size: 1.1rem;
-            color: var(--text-secondary);
-            padding: 4px;
-            line-height: 1;
-            transition: color 0.2s;
-            user-select: none;
-        }
+        .password-toggle { position: absolute; right: 12px; background: none; border: none; cursor: pointer; font-size: 1.1rem; color: var(--text-secondary); padding: 4px; line-height: 1; transition: color 0.2s; user-select: none; }
         .password-toggle:hover { color: var(--primary); }
-
         .table-container { overflow-x: auto; border-radius: var(--radius); }
         .table { width: 100%; border-collapse: collapse; }
-        .table th {
-            background: linear-gradient(135deg, #667eea, #764ba2);
-            color: white;
-            padding: 14px 16px;
-            text-align: left;
-            font-weight: 500;
-            font-size: 0.85rem;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-        }
+        .table th { background: linear-gradient(135deg, #667eea, #764ba2); color: white; padding: 14px 16px; text-align: left; font-weight: 500; font-size: 0.85rem; text-transform: uppercase; letter-spacing: 0.5px; }
         .table td { padding: 12px 16px; border-bottom: 1px solid var(--border); font-size: 0.9rem; }
         .table tr:hover td { background: rgba(102,126,234,0.05); }
-
-        .badge {
-            display: inline-block;
-            padding: 4px 12px;
-            border-radius: 20px;
-            font-size: 0.75rem;
-            font-weight: 600;
-            text-transform: uppercase;
-            letter-spacing: 0.3px;
-        }
+        .badge { display: inline-block; padding: 4px 12px; border-radius: 20px; font-size: 0.75rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.3px; }
         .badge-success { background: #e6f4ea; color: #137333; }
         .badge-warning { background: #fef7e0; color: #b06000; }
         .badge-danger { background: #fce8e6; color: #c5221f; }
         .badge-info { background: #e8f0fe; color: #1967d2; }
         .badge-purple { background: #f3e8fd; color: #7b1fa2; }
-
-        .alert {
-            padding: 14px 18px;
-            border-radius: 8px;
-            margin-bottom: 16px;
-            font-size: 0.9rem;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            transition: opacity 0.5s ease, transform 0.5s ease;
-        }
+        .alert { padding: 14px 18px; border-radius: 8px; margin-bottom: 16px; font-size: 0.9rem; display: flex; align-items: flex-start; gap: 10px; transition: opacity 0.5s ease, transform 0.5s ease; }
         .alert-error { background: #fce8e6; color: #c5221f; border-left: 4px solid #c5221f; }
         .alert-success { background: #e6f4ea; color: #137333; border-left: 4px solid #137333; }
         .alert-info { background: #e8f0fe; color: #1967d2; border-left: 4px solid #1967d2; }
+        .alert-warning { background: #fef7e0; color: #b06000; border-left: 4px solid #e6a817; }
         .alert.dismissing { opacity: 0; transform: translateY(-10px); }
-
         .tabs { display: flex; gap: 5px; margin-bottom: 20px; flex-wrap: wrap; }
-        .tab {
-            padding: 10px 20px;
-            border: none;
-            background: transparent;
-            cursor: pointer;
-            border-radius: 8px;
-            font-size: 0.9rem;
-            transition: var(--transition);
-            color: var(--text-secondary);
-        }
+        .tab { padding: 10px 20px; border: none; background: transparent; cursor: pointer; border-radius: 8px; font-size: 0.9rem; transition: var(--transition); color: var(--text-secondary); }
         .tab:hover { background: rgba(102,126,234,0.08); }
         .tab.active { background: var(--primary); color: white; }
-
-        .modal-overlay {
-            display: none;
-            position: fixed;
-            top: 0; left: 0; right: 0; bottom: 0;
-            background: rgba(0,0,0,0.6);
-            z-index: 1000;
-            justify-content: center;
-            align-items: flex-start;
-            padding: 40px 20px;
-            overflow-y: auto;
-        }
+        .tab-badge { background: var(--danger); color: white; font-size: 0.7rem; padding: 1px 6px; border-radius: 10px; margin-left: 4px; }
+        .modal-overlay { display: none; position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.6); z-index: 1000; justify-content: center; align-items: flex-start; padding: 40px 20px; overflow-y: auto; }
         .modal-overlay.active { display: flex; }
-        .modal {
-            background: white;
-            border-radius: var(--radius);
-            padding: 30px;
-            width: 100%;
-            max-width: 600px;
-            box-shadow: var(--shadow-lg);
-            animation: slideUp 0.3s ease;
-        }
-        @keyframes slideUp {
-            from { transform: translateY(30px); opacity: 0; }
-            to { transform: translateY(0); opacity: 1; }
-        }
-        .modal-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 20px;
-        }
-        .modal-close {
-            background: none;
-            border: none;
-            font-size: 1.5rem;
-            cursor: pointer;
-            color: var(--text-secondary);
-            padding: 5px;
-        }
-
-        .spinner {
-            width: 40px;
-            height: 40px;
-            border: 3px solid var(--border);
-            border-top-color: var(--primary);
-            border-radius: 50%;
-            animation: spin 0.8s linear infinite;
-            margin: 30px auto;
-        }
+        .modal { background: white; border-radius: var(--radius); padding: 30px; width: 100%; max-width: 600px; box-shadow: var(--shadow-lg); animation: slideUp 0.3s ease; }
+        @keyframes slideUp { from { transform: translateY(30px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+        .modal-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
+        .modal-close { background: none; border: none; font-size: 1.5rem; cursor: pointer; color: var(--text-secondary); padding: 5px; }
+        .spinner { width: 40px; height: 40px; border: 3px solid var(--border); border-top-color: var(--primary); border-radius: 50%; animation: spin 0.8s linear infinite; margin: 30px auto; }
         @keyframes spin { to { transform: rotate(360deg); } }
-
-        .auth-container {
-            min-height: 100vh;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            padding: 20px;
-        }
-        .auth-card {
-            background: rgba(255,255,255,0.95);
-            backdrop-filter: blur(10px);
-            border-radius: var(--radius);
-            padding: 40px;
-            width: 100%;
-            max-width: 520px;
-            box-shadow: var(--shadow-lg);
-        }
-
+        .auth-container { min-height: 100vh; display: flex; align-items: center; justify-content: center; padding: 20px; }
+        .auth-card { background: rgba(255,255,255,0.95); backdrop-filter: blur(10px); border-radius: var(--radius); padding: 40px; width: 100%; max-width: 520px; box-shadow: var(--shadow-lg); }
         .text-center { text-align: center; }
         .text-muted { color: var(--text-secondary); }
         .mt-1 { margin-top: 8px; }
         .mt-2 { margin-top: 16px; }
         .mt-3 { margin-top: 24px; }
+        .mb-1 { margin-bottom: 8px; }
         .mb-2 { margin-bottom: 16px; }
-        .gap-2 { gap: 12px; }
         .flex { display: flex; }
-        .flex-between { justify-content: space-between; }
-
+        .flex-between { justify-content: space-between; align-items: center; }
+        .flex-wrap { flex-wrap: wrap; }
+        .gap-2 { gap: 12px; }
         .risk-low { color: #137333; font-weight: 700; }
         .risk-medium { color: #b06000; font-weight: 700; }
         .risk-high { color: #c5221f; font-weight: 700; }
 
-        /* ── ML Dashboard Styles ── */
-        .ml-summary-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
-            gap: 14px;
-            margin-bottom: 22px;
-        }
-        .ml-stat {
-            background: white;
-            border-radius: 10px;
-            padding: 18px 14px;
-            text-align: center;
-            border: 1px solid var(--border);
-            box-shadow: var(--shadow);
-        }
+        /* ── Application Status Cards ── */
+        .app-status-card { border-radius: 10px; padding: 16px 18px; border: 2px solid; margin-bottom: 12px; }
+        .app-status-card.pending { background: #fef7e0; border-color: #e6a817; }
+        .app-status-card.approved { background: #e6f4ea; border-color: #0d904f; }
+        .app-status-card.rejected { background: #fce8e6; border-color: #c5221f; }
+        .app-status-title { font-weight: 700; font-size: 0.95rem; margin-bottom: 6px; }
+        .app-status-meta { font-size: 0.82rem; color: var(--text-secondary); display: flex; gap: 16px; flex-wrap: wrap; }
+
+        /* ── GPS styles ── */
+        .gps-indicator { display: inline-flex; align-items: center; gap: 6px; padding: 6px 12px; border-radius: 20px; font-size: 0.8rem; font-weight: 500; }
+        .gps-active { background: #e6f4ea; color: #137333; }
+        .gps-inactive { background: #fce8e6; color: #c5221f; }
+        .gps-geocoded { background: #e8f0fe; color: #1967d2; }
+        .gps-dot { width: 8px; height: 8px; border-radius: 50%; display: inline-block; }
+        .gps-dot.active { background: #137333; animation: pulse 1.5s infinite; }
+        .gps-dot.inactive { background: #c5221f; }
+        .gps-dot.geocoded { background: #1967d2; }
+        @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.3; } }
+
+        /* ── ML Dashboard ── */
+        .ml-summary-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 14px; margin-bottom: 22px; }
+        .ml-stat { background: white; border-radius: 10px; padding: 18px 14px; text-align: center; border: 1px solid var(--border); box-shadow: var(--shadow); }
         .ml-stat-val { font-size: 1.9rem; font-weight: 700; }
         .ml-stat-label { font-size: 0.78rem; color: var(--text-secondary); margin-top: 4px; text-transform: uppercase; letter-spacing: 0.4px; }
         .ml-stat.high .ml-stat-val { color: #c5221f; }
         .ml-stat.medium .ml-stat-val { color: #b06000; }
         .ml-stat.low .ml-stat-val { color: #137333; }
         .ml-stat.avg .ml-stat-val { color: #1a73e8; }
-
         .risk-bar-wrap { display: flex; align-items: center; gap: 8px; }
         .risk-bar-bg { flex: 1; height: 8px; background: #f0f0f0; border-radius: 99px; overflow: hidden; min-width: 60px; }
         .risk-bar-fill { height: 100%; border-radius: 99px; transition: width 0.4s ease; }
         .risk-score-num { font-size: 0.85rem; font-weight: 700; min-width: 28px; text-align: right; }
-
-        .ml-detail-card {
-            background: #f8f9fa;
-            border-radius: 10px;
-            padding: 18px;
-            margin-top: 10px;
-        }
-        .ml-detail-header { font-size: 1.05rem; font-weight: 600; margin-bottom: 12px; display: flex; align-items: center; gap: 10px; }
+        .ml-detail-card { background: #f8f9fa; border-radius: 10px; padding: 18px; margin-top: 10px; }
+        .ml-detail-header { font-size: 1.05rem; font-weight: 600; margin-bottom: 12px; display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
         .ml-factor-row { display: flex; justify-content: space-between; font-size: 0.85rem; padding: 5px 0; border-bottom: 1px solid #ebebeb; }
         .ml-factor-row:last-child { border-bottom: none; }
         .ml-factor-label { color: var(--text-secondary); }
@@ -349,7 +158,6 @@
         .ml-strategy-item.high { border-left-color: #c5221f; }
         .ml-strategy-item.medium { border-left-color: #e6a817; }
         .ml-strategy-item.low { border-left-color: #0d904f; }
-
         .ml-filter-row { display: flex; gap: 10px; align-items: center; margin-bottom: 16px; flex-wrap: wrap; }
         .ml-filter-btn { padding: 7px 16px; border: 2px solid var(--border); border-radius: 20px; background: white; cursor: pointer; font-size: 0.83rem; font-weight: 500; transition: var(--transition); }
         .ml-filter-btn:hover { border-color: var(--primary); color: var(--primary); }
@@ -357,25 +165,22 @@
         .ml-filter-btn.high-filter.active-filter { background: #c5221f; border-color: #c5221f; }
         .ml-filter-btn.medium-filter.active-filter { background: #e6a817; border-color: #e6a817; color: #1f1f1f; }
         .ml-filter-btn.low-filter.active-filter { background: #0d904f; border-color: #0d904f; }
-
         .score-breakdown-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-top: 8px; }
         .score-chip { background: #f0f0f0; border-radius: 6px; padding: 6px 10px; font-size: 0.78rem; }
         .score-chip-label { color: var(--text-secondary); }
         .score-chip-val { font-weight: 600; float: right; }
-
         .ml-manual-form { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
         .ml-manual-form .form-group { margin-bottom: 0; }
-        .ml-result-box {
-            border-radius: 10px;
-            padding: 20px;
-            margin-top: 16px;
-            border: 2px solid #ebebeb;
-        }
+        .ml-result-box { border-radius: 10px; padding: 20px; margin-top: 16px; border: 2px solid #ebebeb; }
         .ml-result-box.high { background: #fce8e6; border-color: #c5221f; }
         .ml-result-box.medium { background: #fef7e0; border-color: #e6a817; }
         .ml-result-box.low { background: #e6f4ea; border-color: #0d904f; }
         .ml-result-title { font-size: 1.3rem; font-weight: 700; }
         .ml-result-score { font-size: 2.5rem; font-weight: 800; }
+
+        /* ── GPS fallback notice ── */
+        .gps-fallback-box { background: #e8f0fe; border: 1.5px solid #1a73e8; border-radius: 10px; padding: 14px 18px; margin-top: 10px; font-size: 0.87rem; }
+        .gps-fallback-box strong { display: block; color: #1967d2; margin-bottom: 4px; }
 
         @media (max-width: 768px) {
             .form-row { grid-template-columns: 1fr; }
@@ -385,986 +190,1304 @@
             .ml-manual-form { grid-template-columns: 1fr; }
             .score-breakdown-grid { grid-template-columns: 1fr; }
         }
-
-        .gps-indicator {
-            display: inline-flex;
-            align-items: center;
-            gap: 6px;
-            padding: 6px 12px;
-            border-radius: 20px;
-            font-size: 0.8rem;
-            font-weight: 500;
-        }
-        .gps-active { background: #e6f4ea; color: #137333; }
-        .gps-inactive { background: #fce8e6; color: #c5221f; }
-        .gps-dot { width: 8px; height: 8px; border-radius: 50%; display: inline-block; }
-        .gps-dot.active { background: #137333; animation: pulse 1.5s infinite; }
-        .gps-dot.inactive { background: #c5221f; }
-        @keyframes pulse {
-            0%, 100% { opacity: 1; }
-            50% { opacity: 0.3; }
-        }
     </style>
 </head>
 <body>
-    <div id="root"></div>
+<div id="root"></div>
+<script src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+<script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+<script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+<script src="https://unpkg.com/axios/dist/axios.min.js"></script>
 
-    <script src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
-    <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
-    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
-    <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+<script type="text/babel">
+const { useState, useEffect, useCallback, useRef } = React;
+const API = axios.create({ baseURL: window.location.origin });
 
-    <script type="text/babel">
-        const { useState, useEffect, useCallback, useRef } = React;
-        const API = axios.create({ baseURL: window.location.origin });
+API.interceptors.request.use(c => {
+    const t = localStorage.getItem('token');
+    if (t) c.headers.Authorization = `Bearer ${t}`;
+    return c;
+});
+API.interceptors.response.use(r => r, e => {
+    if (e.response?.status === 401) { localStorage.clear(); window.location.reload(); }
+    return Promise.reject(e);
+});
 
-        API.interceptors.request.use(c => {
-            const t = localStorage.getItem('token');
-            if (t) c.headers.Authorization = `Bearer ${t}`;
-            return c;
-        });
+// ── Helpers ──
+function fmtCurrency(val) { return '₱' + parseFloat(val || 0).toLocaleString('en-PH', { minimumFractionDigits: 2, maximumFractionDigits: 2 }); }
+function fmtDate(d) { if (!d) return '—'; return new Date(d).toLocaleDateString('en-PH', { year:'numeric', month:'short', day:'numeric' }); }
+function fmtDatetime(d) { if (!d) return '—'; return new Date(d).toLocaleString('en-PH'); }
 
-        API.interceptors.response.use(r => r, e => {
-            if (e.response?.status === 401) { localStorage.clear(); window.location.reload(); }
-            return Promise.reject(e);
-        });
+function PasswordInput({ value, onChange, placeholder = '••••••', required = false }) {
+    const [show, setShow] = useState(false);
+    return (
+        <div className="password-wrapper">
+            <input className="form-input" type={show ? 'text' : 'password'} placeholder={placeholder}
+                required={required} value={value} onChange={onChange} autoComplete="current-password" />
+            <button type="button" className="password-toggle" onClick={() => setShow(s => !s)} tabIndex={-1}>
+                {show ? '🙈' : '👁️'}
+            </button>
+        </div>
+    );
+}
 
-        function PasswordInput({ value, onChange, placeholder = '••••••', required = false }) {
-            const [show, setShow] = useState(false);
-            return (
-                <div className="password-wrapper">
-                    <input className="form-input" type={show ? 'text' : 'password'} placeholder={placeholder}
-                        required={required} value={value} onChange={onChange} autoComplete="current-password" />
-                    <button type="button" className="password-toggle" onClick={() => setShow(s => !s)} tabIndex={-1}>
-                        {show ? '🙈' : '👁️'}
+function Alert({ type = 'error', children, onDismiss }) {
+    return (
+        <div className={`alert alert-${type}`}>
+            <span>{type === 'error' ? '❌' : type === 'success' ? '✅' : type === 'warning' ? '⚠️' : 'ℹ️'}</span>
+            <span style={{ flex: 1 }}>{children}</span>
+            {onDismiss && <button onClick={onDismiss} style={{ background: 'none', border: 'none', cursor: 'pointer', fontSize: '1.1rem', opacity: 0.6 }}>×</button>}
+        </div>
+    );
+}
+
+function useMsg() {
+    const [msg, setMsg] = useState(null);
+    const setMessage = useCallback((type, text) => {
+        setMsg({ type, text });
+        setTimeout(() => setMsg(null), type === 'error' ? 6000 : 4000);
+    }, []);
+    const clearMsg = useCallback(() => setMsg(null), []);
+    return [msg, setMessage, clearMsg];
+}
+
+class ErrorBoundary extends React.Component {
+    state = { hasError: false, error: null };
+    static getDerivedStateFromError(e) { return { hasError: true, error: e }; }
+    render() {
+        if (this.state.hasError) return (
+            <div className="auth-container">
+                <div className="auth-card text-center">
+                    <h2>⚠️ Something went wrong</h2>
+                    <p className="text-muted mt-2">{this.state.error?.message}</p>
+                    <button className="btn btn-primary mt-3" onClick={() => window.location.reload()}>Reload</button>
+                </div>
+            </div>
+        );
+        return this.props.children;
+    }
+}
+
+// ==================== APP ====================
+function App() {
+    const [page, setPage] = useState('login');
+    const [user, setUser] = useState(null);
+    const [loading, setLoading] = useState(true);
+
+    useEffect(() => {
+        const t = localStorage.getItem('token');
+        const u = localStorage.getItem('user');
+        if (t && u) { try { setUser(JSON.parse(u)); setPage('dashboard'); } catch(e) { localStorage.clear(); } }
+        setLoading(false);
+    }, []);
+
+    const login = (u, t) => { localStorage.setItem('token', t); localStorage.setItem('user', JSON.stringify(u)); setUser(u); setPage('dashboard'); };
+    const logout = () => { localStorage.clear(); setUser(null); setPage('login'); };
+
+    if (loading) return <div className="auth-container"><div className="spinner"></div></div>;
+
+    return (
+        <ErrorBoundary>
+            {page === 'login' && <LoginPage onLogin={login} onRegister={() => setPage('register')} />}
+            {page === 'register' && <RegisterPage onSuccess={() => setPage('login')} onLogin={() => setPage('login')} />}
+            {page === 'dashboard' && user && <Dashboard user={user} onLogout={logout} setPage={setPage} />}
+            {page === 'admin' && user?.role === 'admin' && <AdminPanel user={user} onLogout={logout} setPage={setPage} />}
+            {page === 'collector' && user?.role === 'collector' && <CollectorPanel user={user} onLogout={logout} setPage={setPage} />}
+            {page === 'borrower' && user?.role === 'borrower' && <BorrowerPanel user={user} onLogout={logout} setPage={setPage} />}
+        </ErrorBoundary>
+    );
+}
+
+// ==================== LOGIN ====================
+function LoginPage({ onLogin, onRegister }) {
+    const [form, setForm] = useState({ email: '', password: '' });
+    const [msg, setMsg, clearMsg] = useMsg();
+    const [loading, setLoading] = useState(false);
+
+    const submit = async (e) => {
+        e.preventDefault();
+        if (!form.email.trim()) return setMsg('error', 'Please enter your email address');
+        if (!form.password) return setMsg('error', 'Please enter your password');
+        setLoading(true);
+        try { const res = await API.post('/api/auth/login', form); onLogin(res.data.user, res.data.token); }
+        catch (err) { setMsg('error', err.response?.data?.error || 'Login failed. Please try again.'); }
+        finally { setLoading(false); }
+    };
+
+    return (
+        <div className="auth-container">
+            <div className="auth-card">
+                <div className="text-center mb-2">
+                    <div style={{ fontSize: '3rem', marginBottom: '10px' }}>📍</div>
+                    <h1 style={{ background: 'linear-gradient(135deg, #667eea, #764ba2)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', fontSize: '1.8rem' }}>GPS Debt Collection</h1>
+                    <p className="text-muted">Sign in to your account</p>
+                </div>
+                {msg && <Alert type={msg.type} onDismiss={clearMsg}>{msg.text}</Alert>}
+                <form onSubmit={submit}>
+                    <div className="form-group">
+                        <label className="form-label">Email</label>
+                        <input className="form-input" type="email" placeholder="Enter your email" required value={form.email} onChange={e => setForm({...form, email: e.target.value})} />
+                    </div>
+                    <div className="form-group">
+                        <label className="form-label">Password</label>
+                        <PasswordInput value={form.password} onChange={e => setForm({...form, password: e.target.value})} placeholder="Enter your password" required />
+                    </div>
+                    <button className="btn btn-primary btn-block btn-lg" type="submit" disabled={loading}>
+                        {loading ? '⏳ Signing in...' : '🔐 Sign In'}
                     </button>
-                </div>
-            );
-        }
+                </form>
+                <p className="text-center mt-3">Don't have an account? <a href="#" onClick={e => { e.preventDefault(); onRegister(); }} style={{ color: 'var(--primary)', fontWeight: 600 }}>Register</a></p>
+            </div>
+        </div>
+    );
+}
 
-        class ErrorBoundary extends React.Component {
-            state = { hasError: false, error: null };
-            static getDerivedStateFromError(e) { return { hasError: true, error: e }; }
-            render() {
-                if (this.state.hasError) return (
-                    <div className="auth-container">
-                        <div className="auth-card text-center">
-                            <h2>⚠️ Something went wrong</h2>
-                            <p className="text-muted mt-2">{this.state.error?.message}</p>
-                            <button className="btn btn-primary mt-3" onClick={() => window.location.reload()}>Reload</button>
+// ==================== REGISTER ====================
+function RegisterPage({ onSuccess, onLogin }) {
+    const [form, setForm] = useState({ name:'', email:'', password:'', confirmPassword:'', phone:'', street:'', barangay:'', city:'', province:'', zip_code:'', latitude: null, longitude: null });
+    const [msg, setMsg, clearMsg] = useMsg();
+    const [loading, setLoading] = useState(false);
+    const [gettingLocation, setGettingLocation] = useState(false);
+
+    const getLocation = () => {
+        if (!navigator.geolocation) return setMsg('error', 'Geolocation is not supported by your browser');
+        setGettingLocation(true);
+        navigator.geolocation.getCurrentPosition(
+            (pos) => { setForm(f => ({...f, latitude: pos.coords.latitude, longitude: pos.coords.longitude})); setGettingLocation(false); },
+            (err) => {
+                const msg = err.code === 1 ? 'Location permission denied. You can still register — we will geocode your address instead.'
+                    : err.code === 2 ? 'Location unavailable. Your address will be used for geocoding.'
+                    : 'Location request timed out. Proceeding with address-based location.';
+                setMsg('warning', msg);
+                setGettingLocation(false);
+            },
+            { enableHighAccuracy: true, timeout: 10000 }
+        );
+    };
+
+    const update = (field, value) => setForm(f => ({...f, [field]: value}));
+
+    const submit = async (e) => {
+        e.preventDefault();
+        clearMsg();
+        if (!form.name.trim() || form.name.trim().length < 2) return setMsg('error', 'Full name must be at least 2 characters');
+        if (!form.email.trim()) return setMsg('error', 'Email address is required');
+        if (!form.password) return setMsg('error', 'Password is required');
+        if (form.password.length < 6) return setMsg('error', 'Password must be at least 6 characters');
+        if (form.password !== form.confirmPassword) return setMsg('error', 'Passwords do not match');
+        if (!form.street.trim() || !form.barangay.trim() || !form.city.trim()) return setMsg('error', 'Street, barangay, and city are required');
+        setLoading(true);
+        try {
+            const res = await API.post('/api/auth/register', { name: form.name, email: form.email, password: form.password, phone: form.phone, street: form.street, barangay: form.barangay, city: form.city, province: form.province, zip_code: form.zip_code, latitude: form.latitude, longitude: form.longitude });
+            setMsg('success', res.data.message || 'Registration successful!');
+            setTimeout(() => onSuccess(), 2500);
+        } catch (err) { setMsg('error', err.response?.data?.error || 'Registration failed. Please try again.'); }
+        finally { setLoading(false); }
+    };
+
+    return (
+        <div className="auth-container">
+            <div className="auth-card" style={{ maxWidth: '600px' }}>
+                <div className="text-center mb-2">
+                    <h2 style={{ background: 'linear-gradient(135deg, #667eea, #764ba2)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>Create Account</h2>
+                    <p className="text-muted">Register for the GPS Debt Collection System</p>
+                </div>
+                {msg && <Alert type={msg.type} onDismiss={clearMsg}>{msg.text}</Alert>}
+                <form onSubmit={submit}>
+                    <div className="form-group"><label className="form-label">Full Name <span className="required">*</span></label><input className="form-input" type="text" placeholder="Juan Dela Cruz" required value={form.name} onChange={e => update('name', e.target.value)} /></div>
+                    <div className="form-row">
+                        <div className="form-group"><label className="form-label">Email <span className="required">*</span></label><input className="form-input" type="email" placeholder="juan@email.com" required value={form.email} onChange={e => update('email', e.target.value)} /></div>
+                        <div className="form-group"><label className="form-label">Phone</label><input className="form-input" type="tel" placeholder="09123456789" value={form.phone} onChange={e => update('phone', e.target.value)} /></div>
+                    </div>
+                    <div className="form-row">
+                        <div className="form-group"><label className="form-label">Password <span className="required">*</span> <span style={{fontSize:'0.78rem',color:'var(--text-secondary)'}}>(min 6 chars)</span></label><PasswordInput value={form.password} onChange={e => update('password', e.target.value)} required /></div>
+                        <div className="form-group"><label className="form-label">Confirm Password <span className="required">*</span></label><PasswordInput value={form.confirmPassword} onChange={e => update('confirmPassword', e.target.value)} required /></div>
+                    </div>
+                    <div className="card" style={{ background: '#f8f9fa', boxShadow: 'none', marginBottom: '16px', padding: '20px' }}>
+                        <h4 style={{ marginBottom: '12px' }}>📍 Address Information</h4>
+                        <div className="form-group"><label className="form-label">Street / House No. <span className="required">*</span></label><input className="form-input" type="text" placeholder="123 Rizal Street" required value={form.street} onChange={e => update('street', e.target.value)} /></div>
+                        <div className="form-row">
+                            <div className="form-group"><label className="form-label">Barangay <span className="required">*</span></label><input className="form-input" type="text" placeholder="Barangay" required value={form.barangay} onChange={e => update('barangay', e.target.value)} /></div>
+                            <div className="form-group"><label className="form-label">City / Municipality <span className="required">*</span></label><input className="form-input" type="text" placeholder="City" required value={form.city} onChange={e => update('city', e.target.value)} /></div>
+                        </div>
+                        <div className="form-row">
+                            <div className="form-group"><label className="form-label">Province</label><input className="form-input" type="text" placeholder="Province" value={form.province} onChange={e => update('province', e.target.value)} /></div>
+                            <div className="form-group"><label className="form-label">Zip Code</label><input className="form-input" type="text" placeholder="e.g. 9000" value={form.zip_code} onChange={e => update('zip_code', e.target.value)} /></div>
                         </div>
                     </div>
-                );
-                return this.props.children;
-            }
-        }
+                    <div className="card" style={{ background: '#f8f9fa', boxShadow: 'none', marginBottom: '16px', padding: '20px' }}>
+                        <h4 style={{ marginBottom: '4px' }}>📍 GPS Location <span style={{fontSize:'0.8rem',color:'var(--text-secondary)',fontWeight:400}}>(Optional)</span></h4>
+                        <p className="text-muted" style={{ fontSize: '0.83rem', marginBottom: '12px' }}>
+                            Allow location access for faster collector assignment. If you skip this, your address will be used to estimate your location automatically.
+                        </p>
+                        <button type="button" className="btn btn-outline" onClick={getLocation} disabled={gettingLocation}>
+                            {gettingLocation ? '📍 Getting location...' : form.latitude ? '✅ Location captured — click to update' : '📍 Get My Current Location'}
+                        </button>
+                        {form.latitude
+                            ? <p style={{ marginTop: '10px', fontSize: '0.85rem', color: '#137333' }}>✅ GPS: {form.latitude.toFixed(6)}, {form.longitude.toFixed(6)}</p>
+                            : <div className="gps-fallback-box mt-1"><strong>ℹ️ No GPS? No problem!</strong>Your address will be geocoded automatically after registration so collectors can still find you on the map.</div>
+                        }
+                    </div>
+                    <button className="btn btn-primary btn-block btn-lg" type="submit" disabled={loading}>
+                        {loading ? '⏳ Registering...' : '📝 Create Account'}
+                    </button>
+                </form>
+                <p className="text-center mt-3">Already have an account? <a href="#" onClick={e => { e.preventDefault(); onLogin(); }} style={{ color: 'var(--primary)', fontWeight: 600 }}>Sign In</a></p>
+            </div>
+        </div>
+    );
+}
 
-        function App() {
-            const [page, setPage] = useState('login');
-            const [user, setUser] = useState(null);
-            const [loading, setLoading] = useState(true);
+// ==================== DASHBOARD ====================
+function Dashboard({ user, onLogout, setPage }) {
+    const [stats, setStats] = useState({});
+    const [loading, setLoading] = useState(true);
 
-            useEffect(() => {
-                const t = localStorage.getItem('token');
-                const u = localStorage.getItem('user');
-                if (t && u) { try { setUser(JSON.parse(u)); setPage('dashboard'); } catch(e) { localStorage.clear(); } }
-                setLoading(false);
-            }, []);
+    useEffect(() => { fetchStats(); }, []);
 
-            const login = (u, t) => { localStorage.setItem('token', t); localStorage.setItem('user', JSON.stringify(u)); setUser(u); setPage('dashboard'); };
-            const logout = () => { localStorage.clear(); setUser(null); setPage('login'); };
+    const fetchStats = async () => {
+        try { const res = await API.get('/api/dashboard/stats'); setStats(res.data); }
+        catch (e) { console.error(e); }
+        finally { setLoading(false); }
+    };
 
-            if (loading) return <div className="auth-container"><div className="spinner"></div></div>;
-
-            return (
-                <ErrorBoundary>
-                    {page === 'login' && <LoginPage onLogin={login} onRegister={() => setPage('register')} />}
-                    {page === 'register' && <RegisterPage onSuccess={() => setPage('login')} onLogin={() => setPage('login')} />}
-                    {page === 'dashboard' && user && <Dashboard user={user} onLogout={logout} setPage={setPage} />}
-                    {page === 'admin' && user?.role === 'admin' && <AdminPanel user={user} onLogout={logout} setPage={setPage} />}
-                    {page === 'collector' && user?.role === 'collector' && <CollectorPanel user={user} onLogout={logout} setPage={setPage} />}
-                    {page === 'borrower' && user?.role === 'borrower' && <BorrowerPanel user={user} onLogout={logout} setPage={setPage} />}
-                </ErrorBoundary>
-            );
-        }
-
-        // ==================== LOGIN ====================
-        function LoginPage({ onLogin, onRegister }) {
-            const [form, setForm] = useState({ email: '', password: '' });
-            const [error, setError] = useState('');
-            const [loading, setLoading] = useState(false);
-
-            const submit = async (e) => {
-                e.preventDefault(); setLoading(true); setError('');
-                try { const res = await API.post('/api/auth/login', form); onLogin(res.data.user, res.data.token); }
-                catch (err) { setError(err.response?.data?.error || 'Login failed'); }
-                finally { setLoading(false); }
-            };
-
-            return (
-                <div className="auth-container">
-                    <div className="auth-card">
-                        <div className="text-center mb-2">
-                            <div style={{ fontSize: '3rem', marginBottom: '10px' }}>📍</div>
-                            <h1 style={{ background: 'linear-gradient(135deg, #667eea, #764ba2)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', fontSize: '1.8rem' }}>
-                                GPS Debt Collection System
-                            </h1>
-                            <p className="text-muted">Sign in to your account</p>
+    return (
+        <div>
+            <nav className="navbar">
+                <span className="navbar-brand">📍 GPS Debt Collection System</span>
+                <div className="navbar-actions">
+                    <span className="navbar-user">👤 {user.name} ({user.role})</span>
+                    {user.role === 'admin' && <button className="btn btn-primary btn-sm" onClick={() => setPage('admin')}>⚙️ Admin Panel</button>}
+                    {user.role === 'collector' && <button className="btn btn-primary btn-sm" onClick={() => setPage('collector')}>📋 Collector Panel</button>}
+                    {user.role === 'borrower' && <button className="btn btn-primary btn-sm" onClick={() => setPage('borrower')}>💰 My Loans</button>}
+                    <button className="btn btn-danger btn-sm" onClick={onLogout}>🚪 Logout</button>
+                </div>
+            </nav>
+            <div className="container">
+                <h2 style={{color:'white', marginBottom:'20px'}}>Welcome, {user.name}!</h2>
+                {loading ? <div className="spinner"></div> : (
+                    <>
+                        <div className="grid grid-3">
+                            <div className="stat-card"><div className="stat-value">{stats.totalLoans || 0}</div><div className="stat-label">Active Loans</div></div>
+                            <div className="stat-card green"><div className="stat-value">{fmtCurrency(stats.totalPayments || 0)}</div><div className="stat-label">Total Payments</div></div>
+                            <div className="stat-card orange">
+                                <div className="stat-value">{stats.totalBorrowers || stats.pendingApplications || stats.pendingUsers || 0}</div>
+                                <div className="stat-label">{stats.totalBorrowers ? 'Borrowers' : stats.pendingApplications !== undefined ? 'Pending Applications' : 'Pending Users'}</div>
+                            </div>
                         </div>
-                        {error && <div className="alert alert-error">❌ {error}</div>}
-                        <form onSubmit={submit}>
-                            <div className="form-group">
-                                <label className="form-label">Email</label>
-                                <input className="form-input" type="email" placeholder="Enter your email" required value={form.email} onChange={e => setForm({...form, email: e.target.value})} />
+                        {(stats.pendingLoanApplications > 0 || stats.pendingUsers > 0) && (
+                            <div className="card mt-3" style={{ background: '#fef7e0', border: '2px solid #e6a817' }}>
+                                <p style={{ fontWeight: 600, color: '#b06000' }}>⚠️ Attention Required</p>
+                                {stats.pendingUsers > 0 && <p style={{ fontSize: '0.9rem' }}>• {stats.pendingUsers} user(s) pending approval</p>}
+                                {stats.pendingLoanApplications > 0 && <p style={{ fontSize: '0.9rem' }}>• {stats.pendingLoanApplications} loan application(s) pending review</p>}
+                                <button className="btn btn-warning btn-sm mt-1" onClick={() => setPage('admin')}>Review Now</button>
                             </div>
-                            <div className="form-group">
-                                <label className="form-label">Password</label>
-                                <PasswordInput value={form.password} onChange={e => setForm({...form, password: e.target.value})} placeholder="Enter your password" required />
+                        )}
+                        {stats.recentPayments?.length > 0 && (
+                            <div className="card mt-3">
+                                <div className="card-header">Recent Payments</div>
+                                <div className="table-container">
+                                    <table className="table">
+                                        <thead><tr><th>Borrower</th><th>Amount</th><th>Date</th></tr></thead>
+                                        <tbody>{stats.recentPayments.map((p, i) => (<tr key={i}><td>{p.borrower}</td><td>{fmtCurrency(p.amount)}</td><td>{fmtDate(p.payment_date)}</td></tr>))}</tbody>
+                                    </table>
+                                </div>
                             </div>
-                            <button className="btn btn-primary btn-block btn-lg" type="submit" disabled={loading}>
-                                {loading ? 'Signing in...' : '🔐 Sign In'}
+                        )}
+                    </>
+                )}
+            </div>
+        </div>
+    );
+}
+
+// ==================== ML RISK DASHBOARD ====================
+function MLRiskDashboard() {
+    const [riskData, setRiskData] = useState(null);
+    const [loading, setLoading] = useState(true);
+    const [filter, setFilter] = useState('All');
+    const [selectedBorrower, setSelectedBorrower] = useState(null);
+    const [manualForm, setManualForm] = useState({ balance: '', loan_amount: '', days_past_due: '', payment_count: '', months_active: '', overdue_loans: '', active_loans: '1', has_gps: true, paid_loans: '' });
+    const [manualResult, setManualResult] = useState(null);
+    const [manualLoading, setManualLoading] = useState(false);
+    const [activeView, setActiveView] = useState('portfolio');
+    const [manualMsg, setManualMsg, clearManualMsg] = useMsg();
+
+    useEffect(() => { loadRiskData(); }, []);
+
+    const loadRiskData = async () => {
+        setLoading(true);
+        try { const res = await API.get('/api/ml/risk'); setRiskData(res.data); }
+        catch (e) { console.error(e); }
+        finally { setLoading(false); }
+    };
+
+    const runManualPredict = async () => {
+        clearManualMsg();
+        if (!manualForm.balance) return setManualMsg('error', 'Outstanding balance is required');
+        if (parseFloat(manualForm.balance) < 0) return setManualMsg('error', 'Balance cannot be negative');
+        setManualLoading(true); setManualResult(null);
+        try {
+            const res = await API.post('/api/ml/predict', { ...manualForm, has_gps: manualForm.has_gps === true || manualForm.has_gps === 'true' });
+            setManualResult(res.data);
+        } catch (e) { setManualMsg('error', e.response?.data?.error || 'Prediction failed'); }
+        finally { setManualLoading(false); }
+    };
+
+    const updateManual = (k, v) => setManualForm(f => ({ ...f, [k]: v }));
+    const riskColor = (level) => level === 'High' ? '#c5221f' : level === 'Medium' ? '#b06000' : '#137333';
+    const riskBg = (level) => level === 'High' ? '#fce8e6' : level === 'Medium' ? '#fef7e0' : '#e6f4ea';
+    const riskBarColor = (score) => score >= 65 ? '#c5221f' : score >= 35 ? '#e6a817' : '#0d904f';
+    const filteredResults = riskData?.results?.filter(r => filter === 'All' || r.risk_level === filter) || [];
+
+    if (loading) return <div className="spinner"></div>;
+    if (!riskData) return <Alert type="error">Failed to load risk data. Please refresh.</Alert>;
+
+    return (
+        <div>
+            <div style={{ display: 'flex', gap: '8px', marginBottom: '18px' }}>
+                <button className={`ml-filter-btn ${activeView === 'portfolio' ? 'active-filter' : ''}`} onClick={() => setActiveView('portfolio')}>📊 Portfolio Risk</button>
+                <button className={`ml-filter-btn ${activeView === 'manual' ? 'active-filter' : ''}`} onClick={() => setActiveView('manual')}>🔬 Manual Classifier</button>
+            </div>
+
+            {activeView === 'portfolio' && (
+                <div>
+                    <div className="ml-summary-grid">
+                        <div className="ml-stat"><div className="ml-stat-val">{riskData.summary.total}</div><div className="ml-stat-label">Total Borrowers</div></div>
+                        <div className="ml-stat high"><div className="ml-stat-val">{riskData.summary.high}</div><div className="ml-stat-label">High Risk</div></div>
+                        <div className="ml-stat medium"><div className="ml-stat-val">{riskData.summary.medium}</div><div className="ml-stat-label">Medium Risk</div></div>
+                        <div className="ml-stat low"><div className="ml-stat-val">{riskData.summary.low}</div><div className="ml-stat-label">Low Risk</div></div>
+                        <div className="ml-stat avg"><div className="ml-stat-val">{riskData.summary.avg_score}</div><div className="ml-stat-label">Avg Score</div></div>
+                    </div>
+                    <div className="ml-filter-row">
+                        <span style={{ fontSize: '0.85rem', color: 'var(--text-secondary)' }}>Filter:</span>
+                        {['All','High','Medium','Low'].map(f => (
+                            <button key={f} className={`ml-filter-btn ${f.toLowerCase()}-filter ${filter === f ? 'active-filter' : ''}`} onClick={() => { setFilter(f); setSelectedBorrower(null); }}>
+                                {f === 'High' ? '🔴' : f === 'Medium' ? '🟡' : f === 'Low' ? '🟢' : '📋'} {f}
                             </button>
-                        </form>
-                        <p className="text-center mt-3">Don't have an account?{' '}<a href="#" onClick={e => { e.preventDefault(); onRegister(); }} style={{ color: 'var(--primary)', fontWeight: 600 }}>Register</a></p>
+                        ))}
+                        <button className="ml-filter-btn" onClick={loadRiskData} style={{ marginLeft: 'auto' }}>🔄 Refresh</button>
                     </div>
-                </div>
-            );
-        }
-
-        // ==================== REGISTER ====================
-        function RegisterPage({ onSuccess, onLogin }) {
-            const [form, setForm] = useState({ name:'', email:'', password:'', confirmPassword:'', phone:'', street:'', barangay:'', city:'', province:'', zip_code:'', latitude: null, longitude: null });
-            const [error, setError] = useState('');
-            const [success, setSuccess] = useState('');
-            const [loading, setLoading] = useState(false);
-            const [gettingLocation, setGettingLocation] = useState(false);
-
-            const getLocation = () => {
-                if (!navigator.geolocation) { setError('Geolocation not supported'); return; }
-                setGettingLocation(true);
-                navigator.geolocation.getCurrentPosition(
-                    (pos) => { setForm({...form, latitude: pos.coords.latitude, longitude: pos.coords.longitude}); setGettingLocation(false); setError(''); },
-                    (err) => { setError('Failed to get location: ' + err.message); setGettingLocation(false); },
-                    { enableHighAccuracy: true, timeout: 10000 }
-                );
-            };
-
-            const submit = async (e) => {
-                e.preventDefault(); setError(''); setSuccess('');
-                if (!form.name || !form.email || !form.password) return setError('Name, email, and password are required');
-                if (form.password.length < 6) return setError('Password must be at least 6 characters');
-                if (form.password !== form.confirmPassword) return setError('Passwords do not match');
-                if (!form.street || !form.barangay || !form.city) return setError('Please provide your complete address');
-                setLoading(true);
-                try {
-                    const res = await API.post('/api/auth/register', { name: form.name, email: form.email, password: form.password, phone: form.phone, street: form.street, barangay: form.barangay, city: form.city, province: form.province, zip_code: form.zip_code, latitude: form.latitude, longitude: form.longitude });
-                    setSuccess(res.data.message || 'Registration successful!');
-                    setTimeout(() => onSuccess(), 2000);
-                } catch (err) { setError(err.response?.data?.error || 'Registration failed.'); }
-                finally { setLoading(false); }
-            };
-
-            const update = (field, value) => setForm({...form, [field]: value});
-
-            return (
-                <div className="auth-container">
-                    <div className="auth-card" style={{ maxWidth: '600px' }}>
-                        <div className="text-center mb-2">
-                            <h2 style={{ background: 'linear-gradient(135deg, #667eea, #764ba2)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>Create Account</h2>
-                            <p className="text-muted">Register for the GPS Debt Collection System</p>
-                        </div>
-                        {error && <div className="alert alert-error">❌ {error}</div>}
-                        {success && <div className="alert alert-success">✅ {success}</div>}
-                        <form onSubmit={submit}>
-                            <div className="form-group"><label className="form-label">Full Name *</label><input className="form-input" type="text" placeholder="Juan Dela Cruz" required value={form.name} onChange={e => update('name', e.target.value)} /></div>
-                            <div className="form-row">
-                                <div className="form-group"><label className="form-label">Email *</label><input className="form-input" type="email" placeholder="juan@email.com" required value={form.email} onChange={e => update('email', e.target.value)} /></div>
-                                <div className="form-group"><label className="form-label">Phone</label><input className="form-input" type="tel" placeholder="09123456789" value={form.phone} onChange={e => update('phone', e.target.value)} /></div>
-                            </div>
-                            <div className="form-row">
-                                <div className="form-group"><label className="form-label">Password * (min 6 chars)</label><PasswordInput value={form.password} onChange={e => update('password', e.target.value)} required /></div>
-                                <div className="form-group"><label className="form-label">Confirm Password *</label><PasswordInput value={form.confirmPassword} onChange={e => update('confirmPassword', e.target.value)} required /></div>
-                            </div>
-                            <div className="card" style={{ background: '#f8f9fa', boxShadow: 'none', marginBottom: '16px' }}>
-                                <h4 style={{ marginBottom: '12px' }}>📍 Address Information</h4>
-                                <div className="form-group"><label className="form-label">Street / House No. *</label><input className="form-input" type="text" placeholder="123 Rizal Street" required value={form.street} onChange={e => update('street', e.target.value)} /></div>
-                                <div className="form-row">
-                                    <div className="form-group"><label className="form-label">Barangay *</label><input className="form-input" type="text" placeholder="Barangay" required value={form.barangay} onChange={e => update('barangay', e.target.value)} /></div>
-                                    <div className="form-group"><label className="form-label">City / Municipality *</label><input className="form-input" type="text" placeholder="City" required value={form.city} onChange={e => update('city', e.target.value)} /></div>
-                                </div>
-                                <div className="form-row">
-                                    <div className="form-group"><label className="form-label">Province</label><input className="form-input" type="text" placeholder="Province" value={form.province} onChange={e => update('province', e.target.value)} /></div>
-                                    <div className="form-group"><label className="form-label">Zip Code</label><input className="form-input" type="text" placeholder="Zip Code" value={form.zip_code} onChange={e => update('zip_code', e.target.value)} /></div>
-                                </div>
-                            </div>
-                            <div className="card" style={{ background: '#f8f9fa', boxShadow: 'none', marginBottom: '16px' }}>
-                                <h4 style={{ marginBottom: '12px' }}>📍 GPS Location</h4>
-                                <p className="text-muted" style={{ fontSize: '0.85rem', marginBottom: '10px' }}>Allow location access so we can assign the nearest collector to you.</p>
-                                <button type="button" className="btn btn-outline" onClick={getLocation} disabled={gettingLocation}>{gettingLocation ? '📍 Getting location...' : form.latitude ? '📍 Location captured! Click to retry' : '📍 Get My Location'}</button>
-                                {form.latitude && <p style={{ marginTop: '10px', fontSize: '0.85rem', color: '#137333' }}>✅ Location: {form.latitude.toFixed(6)}, {form.longitude.toFixed(6)}</p>}
-                            </div>
-                            <button className="btn btn-primary btn-block btn-lg" type="submit" disabled={loading}>{loading ? 'Registering...' : '📝 Create Account'}</button>
-                        </form>
-                        <p className="text-center mt-3">Already have an account?{' '}<a href="#" onClick={e => { e.preventDefault(); onLogin(); }} style={{ color: 'var(--primary)', fontWeight: 600 }}>Sign In</a></p>
-                    </div>
-                </div>
-            );
-        }
-
-        // ==================== DASHBOARD ====================
-        function Dashboard({ user, onLogout, setPage }) {
-            const [stats, setStats] = useState({});
-            const [loading, setLoading] = useState(true);
-
-            useEffect(() => { fetchStats(); }, []);
-
-            const fetchStats = async () => {
-                try { const res = await API.get('/api/dashboard/stats'); setStats(res.data); }
-                catch (e) { console.error(e); }
-                finally { setLoading(false); }
-            };
-
-            return (
-                <div>
-                    <nav className="navbar">
-                        <span className="navbar-brand">📍 GPS Debt Collection System</span>
-                        <div className="navbar-actions">
-                            <span className="navbar-user">👤 {user.name} ({user.role})</span>
-                            {user.role === 'admin' && <button className="btn btn-primary btn-sm" onClick={() => setPage('admin')}>⚙️ Admin Panel</button>}
-                            {user.role === 'collector' && <button className="btn btn-primary btn-sm" onClick={() => setPage('collector')}>📋 Collector Panel</button>}
-                            {user.role === 'borrower' && <button className="btn btn-primary btn-sm" onClick={() => setPage('borrower')}>💰 My Loans</button>}
-                            <button className="btn btn-danger btn-sm" onClick={onLogout}>🚪 Logout</button>
-                        </div>
-                    </nav>
-                    <div className="container">
-                        <h2 style={{color:'white', marginBottom:'20px'}}>Dashboard</h2>
-                        {loading ? <div className="spinner"></div> : (
-                            <>
-                                <div className="grid grid-3">
-                                    <div className="stat-card"><div className="stat-value">{stats.totalLoans || 0}</div><div className="stat-label">Total Loans</div></div>
-                                    <div className="stat-card green"><div className="stat-value">₱{(stats.totalPayments || 0).toLocaleString()}</div><div className="stat-label">Total Payments</div></div>
-                                    <div className="stat-card orange"><div className="stat-value">{stats.totalBorrowers || stats.pendingUsers || 0}</div><div className="stat-label">{stats.totalBorrowers ? 'Borrowers' : 'Pending Users'}</div></div>
-                                </div>
-                                {stats.recentPayments?.length > 0 && (
-                                    <div className="card mt-3">
-                                        <div className="card-header">Recent Payments</div>
-                                        <div className="table-container">
-                                            <table className="table">
-                                                <thead><tr><th>Borrower</th><th>Amount</th><th>Date</th></tr></thead>
-                                                <tbody>{stats.recentPayments.map((p, i) => (<tr key={i}><td>{p.borrower}</td><td>₱{p.amount}</td><td>{new Date(p.payment_date).toLocaleDateString()}</td></tr>))}</tbody>
-                                            </table>
-                                        </div>
-                                    </div>
-                                )}
-                            </>
-                        )}
-                    </div>
-                </div>
-            );
-        }
-
-        // ==================== ML RISK DASHBOARD COMPONENT ====================
-        function MLRiskDashboard() {
-            const [riskData, setRiskData] = useState(null);
-            const [loading, setLoading] = useState(true);
-            const [filter, setFilter] = useState('All');
-            const [selectedBorrower, setSelectedBorrower] = useState(null);
-            const [manualForm, setManualForm] = useState({ balance: '', loan_amount: '', days_past_due: '', payment_count: '', months_active: '', overdue_loans: '', active_loans: '1', has_gps: true, paid_loans: '' });
-            const [manualResult, setManualResult] = useState(null);
-            const [manualLoading, setManualLoading] = useState(false);
-            const [activeView, setActiveView] = useState('portfolio');
-
-            useEffect(() => { loadRiskData(); }, []);
-
-            const loadRiskData = async () => {
-                setLoading(true);
-                try { const res = await API.get('/api/ml/risk'); setRiskData(res.data); }
-                catch (e) { console.error(e); }
-                finally { setLoading(false); }
-            };
-
-            const runManualPredict = async () => {
-                setManualLoading(true); setManualResult(null);
-                try { const res = await API.post('/api/ml/predict', { ...manualForm, has_gps: manualForm.has_gps === true || manualForm.has_gps === 'true' }); setManualResult(res.data); }
-                catch (e) { alert('Prediction failed'); }
-                finally { setManualLoading(false); }
-            };
-
-            const updateManual = (k, v) => setManualForm(f => ({ ...f, [k]: v }));
-
-            const riskColor = (level) => level === 'High' ? '#c5221f' : level === 'Medium' ? '#b06000' : '#137333';
-            const riskBg = (level) => level === 'High' ? '#fce8e6' : level === 'Medium' ? '#fef7e0' : '#e6f4ea';
-            const riskBarColor = (score) => score >= 65 ? '#c5221f' : score >= 35 ? '#e6a817' : '#0d904f';
-
-            const filteredResults = riskData?.results?.filter(r => filter === 'All' || r.risk_level === filter) || [];
-
-            if (loading) return <div className="spinner"></div>;
-            if (!riskData) return <p className="text-muted">Failed to load risk data.</p>;
-
-            return (
-                <div>
-                    {/* Sub-nav */}
-                    <div style={{ display: 'flex', gap: '8px', marginBottom: '18px' }}>
-                        <button className={`ml-filter-btn ${activeView === 'portfolio' ? 'active-filter' : ''}`} onClick={() => setActiveView('portfolio')}>📊 Portfolio Risk</button>
-                        <button className={`ml-filter-btn ${activeView === 'manual' ? 'active-filter' : ''}`} onClick={() => setActiveView('manual')}>🔬 Manual Classifier</button>
-                    </div>
-
-                    {activeView === 'portfolio' && (
-                        <div>
-                            {/* Summary cards */}
-                            <div className="ml-summary-grid">
-                                <div className="ml-stat"><div className="ml-stat-val">{riskData.summary.total}</div><div className="ml-stat-label">Total Borrowers</div></div>
-                                <div className="ml-stat high"><div className="ml-stat-val">{riskData.summary.high}</div><div className="ml-stat-label">High Risk</div></div>
-                                <div className="ml-stat medium"><div className="ml-stat-val">{riskData.summary.medium}</div><div className="ml-stat-label">Medium Risk</div></div>
-                                <div className="ml-stat low"><div className="ml-stat-val">{riskData.summary.low}</div><div className="ml-stat-label">Low Risk</div></div>
-                                <div className="ml-stat avg"><div className="ml-stat-val">{riskData.summary.avg_score}</div><div className="ml-stat-label">Avg Score</div></div>
-                            </div>
-
-                            {/* Filter row */}
-                            <div className="ml-filter-row">
-                                <span style={{ fontSize: '0.85rem', color: 'var(--text-secondary)' }}>Filter:</span>
-                                {['All', 'High', 'Medium', 'Low'].map(f => (
-                                    <button key={f} className={`ml-filter-btn ${f.toLowerCase()}-filter ${filter === f ? 'active-filter' : ''}`} onClick={() => { setFilter(f); setSelectedBorrower(null); }}>{f === 'High' ? '🔴' : f === 'Medium' ? '🟡' : f === 'Low' ? '🟢' : '📋'} {f}</button>
-                                ))}
-                                <button className="ml-filter-btn" onClick={loadRiskData} style={{ marginLeft: 'auto' }}>🔄 Refresh</button>
-                            </div>
-
-                            {/* Table */}
-                            {filteredResults.length === 0 ? (
-                                <p className="text-muted" style={{ padding: '20px 0' }}>No borrowers in this category.</p>
-                            ) : (
-                                <div className="table-container">
-                                    <table className="table">
-                                        <thead>
-                                            <tr><th>Borrower</th><th>City</th><th>Risk Level</th><th>Score</th><th>DPD</th><th>Active Loans</th><th>Payments</th><th>GPS</th><th>Details</th></tr>
-                                        </thead>
-                                        <tbody>
-                                            {filteredResults.map(r => (
-                                                <tr key={r.borrower_id} style={{ cursor: 'pointer' }} onClick={() => setSelectedBorrower(selectedBorrower?.borrower_id === r.borrower_id ? null : r)}>
-                                                    <td><strong>{r.borrower}</strong></td>
-                                                    <td style={{ fontSize: '0.82rem' }}>{r.city || '—'}</td>
-                                                    <td>
-                                                        <span style={{ background: riskBg(r.risk_level), color: riskColor(r.risk_level), padding: '4px 12px', borderRadius: '20px', fontSize: '0.75rem', fontWeight: 700 }}>
-                                                            {r.risk_level === 'High' ? '🔴' : r.risk_level === 'Medium' ? '🟡' : '🟢'} {r.risk_level}
-                                                        </span>
-                                                    </td>
-                                                    <td>
-                                                        <div className="risk-bar-wrap">
-                                                            <div className="risk-bar-bg"><div className="risk-bar-fill" style={{ width: r.risk_score + '%', background: riskBarColor(r.risk_score) }}></div></div>
-                                                            <span className="risk-score-num" style={{ color: riskBarColor(r.risk_score) }}>{r.risk_score}</span>
-                                                        </div>
-                                                    </td>
-                                                    <td style={{ fontSize: '0.85rem' }}>{r.factors.days_past_due > 0 ? <span style={{ color: '#c5221f', fontWeight: 600 }}>{r.factors.days_past_due}d</span> : '—'}</td>
-                                                    <td style={{ textAlign: 'center' }}>{r.active_loans}</td>
-                                                    <td style={{ textAlign: 'center' }}>{r.total_payments}</td>
-                                                    <td>{r.factors.has_gps ? <span className="gps-indicator gps-active"><span className="gps-dot active"></span></span> : <span className="gps-indicator gps-inactive"><span className="gps-dot inactive"></span></span>}</td>
-                                                    <td><button className="btn btn-outline btn-sm" onClick={e => { e.stopPropagation(); setSelectedBorrower(selectedBorrower?.borrower_id === r.borrower_id ? null : r); }}>
-                                                        {selectedBorrower?.borrower_id === r.borrower_id ? '▲ Hide' : '▼ Show'}
-                                                    </button></td>
-                                                </tr>
-                                            ))}
-                                        </tbody>
-                                    </table>
-                                </div>
-                            )}
-
-                            {/* Detail panel */}
-                            {selectedBorrower && (
-                                <div className="ml-detail-card" style={{ borderLeft: `4px solid ${riskColor(selectedBorrower.risk_level)}` }}>
-                                    <div className="ml-detail-header">
-                                        <span style={{ background: riskBg(selectedBorrower.risk_level), color: riskColor(selectedBorrower.risk_level), padding: '4px 12px', borderRadius: '20px', fontSize: '0.8rem', fontWeight: 700 }}>
-                                            {selectedBorrower.risk_level} Risk — Score {selectedBorrower.risk_score}/100
-                                        </span>
-                                        <strong>{selectedBorrower.borrower}</strong>
-                                    </div>
-
-                                    <div className="form-row">
-                                        <div>
-                                            <p style={{ fontSize: '0.85rem', fontWeight: 600, marginBottom: '8px' }}>📊 Risk Factor Breakdown</p>
-                                            {[
-                                                ['Days Past Due', selectedBorrower.factors.days_past_due + ' days'],
-                                                ['Loan Utilization', selectedBorrower.factors.utilization_ratio + '%'],
-                                                ['Payments / Month', selectedBorrower.factors.payments_per_month],
-                                                ['Overdue Loans', selectedBorrower.factors.overdue_loans],
-                                                ['Active Loans', selectedBorrower.factors.active_loans],
-                                                ['Total Balance', '₱' + (selectedBorrower.factors.total_balance || 0).toLocaleString()],
-                                                ['Paid Loans', selectedBorrower.factors.paid_loans],
-                                                ['GPS on File', selectedBorrower.factors.has_gps ? 'Yes ✅' : 'No ❌'],
-                                            ].map(([label, val]) => (
-                                                <div key={label} className="ml-factor-row">
-                                                    <span className="ml-factor-label">{label}</span>
-                                                    <span className="ml-factor-val">{val}</span>
-                                                </div>
-                                            ))}
-                                        </div>
-                                        <div>
-                                            <p style={{ fontSize: '0.85rem', fontWeight: 600, marginBottom: '8px' }}>🎯 Score Components</p>
-                                            <div className="score-breakdown-grid">
-                                                {selectedBorrower.factors.scores_breakdown && Object.entries(selectedBorrower.factors.scores_breakdown).map(([k, v]) => (
-                                                    <div key={k} className="score-chip">
-                                                        <span className="score-chip-label">{k.replace(/_/g,' ')}</span>
-                                                        <span className="score-chip-val" style={{ color: v < 0 ? '#137333' : v > 10 ? '#c5221f' : '#b06000' }}>{v > 0 ? '+' : ''}{v}</span>
-                                                    </div>
-                                                ))}
-                                            </div>
-                                        </div>
-                                    </div>
-
-                                    <p style={{ fontSize: '0.85rem', fontWeight: 600, marginTop: '14px', marginBottom: '8px' }}>📋 Recommended Collection Strategies</p>
-                                    <div className="ml-strategy-list">
-                                        {selectedBorrower.strategies.map((s, i) => (
-                                            <div key={i} className={`ml-strategy-item ${selectedBorrower.risk_level.toLowerCase()}`}>{s}</div>
-                                        ))}
-                                    </div>
-                                </div>
-                            )}
-                        </div>
-                    )}
-
-                    {activeView === 'manual' && (
-                        <div>
-                            <p className="text-muted" style={{ marginBottom: '16px', fontSize: '0.9rem' }}>
-                                Enter debtor details manually to get an instant ML risk classification — no database record required.
-                            </p>
-                            <div className="ml-manual-form">
-                                <div className="form-group"><label className="form-label">Outstanding Balance (₱)</label><input className="form-input" type="number" placeholder="e.g. 45000" value={manualForm.balance} onChange={e => updateManual('balance', e.target.value)} /></div>
-                                <div className="form-group"><label className="form-label">Original Loan Amount (₱)</label><input className="form-input" type="number" placeholder="e.g. 50000" value={manualForm.loan_amount} onChange={e => updateManual('loan_amount', e.target.value)} /></div>
-                                <div className="form-group"><label className="form-label">Days Past Due</label><input className="form-input" type="number" placeholder="e.g. 90" value={manualForm.days_past_due} onChange={e => updateManual('days_past_due', e.target.value)} /></div>
-                                <div className="form-group"><label className="form-label">Total Payments Made</label><input className="form-input" type="number" placeholder="e.g. 3" value={manualForm.payment_count} onChange={e => updateManual('payment_count', e.target.value)} /></div>
-                                <div className="form-group"><label className="form-label">Months Since First Loan</label><input className="form-input" type="number" placeholder="e.g. 6" value={manualForm.months_active} onChange={e => updateManual('months_active', e.target.value)} /></div>
-                                <div className="form-group"><label className="form-label">Overdue Loans Count</label><input className="form-input" type="number" placeholder="e.g. 1" value={manualForm.overdue_loans} onChange={e => updateManual('overdue_loans', e.target.value)} /></div>
-                                <div className="form-group"><label className="form-label">Active Loans Count</label><input className="form-input" type="number" placeholder="e.g. 2" value={manualForm.active_loans} onChange={e => updateManual('active_loans', e.target.value)} /></div>
-                                <div className="form-group"><label className="form-label">Previously Paid Loans</label><input className="form-input" type="number" placeholder="e.g. 1" value={manualForm.paid_loans} onChange={e => updateManual('paid_loans', e.target.value)} /></div>
-                                <div className="form-group" style={{ display: 'flex', alignItems: 'center', gap: '10px', gridColumn: '1 / -1' }}>
-                                    <label className="form-label" style={{ margin: 0 }}>GPS / Location on Record?</label>
-                                    <input type="checkbox" checked={manualForm.has_gps} onChange={e => updateManual('has_gps', e.target.checked)} style={{ width: '18px', height: '18px', cursor: 'pointer' }} />
-                                    <span style={{ fontSize: '0.85rem', color: 'var(--text-secondary)' }}>{manualForm.has_gps ? 'Yes — GPS available' : 'No — uncontactable risk'}</span>
-                                </div>
-                            </div>
-                            <button className="btn btn-primary mt-2" onClick={runManualPredict} disabled={manualLoading}>
-                                {manualLoading ? '⏳ Classifying...' : '🤖 Run ML Classification'}
-                            </button>
-
-                            {manualResult && (
-                                <div className={`ml-result-box ${manualResult.risk_level.toLowerCase()}`}>
-                                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
-                                        <div>
-                                            <div className="ml-result-title" style={{ color: riskColor(manualResult.risk_level) }}>{manualResult.risk_level === 'High' ? '🔴' : manualResult.risk_level === 'Medium' ? '🟡' : '🟢'} {manualResult.risk_level} Risk</div>
-                                            <p style={{ fontSize: '0.85rem', color: 'var(--text-secondary)', marginTop: '4px' }}>
-                                                {manualResult.risk_level === 'High' ? 'Immediate escalation required. Assign senior collector.' : manualResult.risk_level === 'Medium' ? 'Proactive engagement recommended. Monitor closely.' : 'Good indicators. Minimal intervention needed.'}
-                                            </p>
-                                        </div>
-                                        <div style={{ textAlign: 'right' }}>
-                                            <div className="ml-result-score" style={{ color: riskColor(manualResult.risk_level) }}>{manualResult.risk_score}</div>
-                                            <div style={{ fontSize: '0.8rem', color: 'var(--text-secondary)' }}>/ 100</div>
-                                        </div>
-                                    </div>
-                                    <div style={{ margin: '14px 0 8px', height: '10px', background: 'rgba(0,0,0,0.1)', borderRadius: '99px', overflow: 'hidden' }}>
-                                        <div style={{ width: manualResult.risk_score + '%', height: '100%', background: riskColor(manualResult.risk_level), borderRadius: '99px', transition: 'width 0.5s ease' }}></div>
-                                    </div>
-                                    <p style={{ fontSize: '0.85rem', fontWeight: 600, margin: '14px 0 8px' }}>📋 Recommended Strategies</p>
-                                    <div className="ml-strategy-list">
-                                        {manualResult.strategies.map((s, i) => (
-                                            <div key={i} className={`ml-strategy-item ${manualResult.risk_level.toLowerCase()}`}>{s}</div>
-                                        ))}
-                                    </div>
-                                </div>
-                            )}
-                        </div>
-                    )}
-                </div>
-            );
-        }
-
-        // ==================== ADMIN PANEL ====================
-        function AdminPanel({ user, onLogout, setPage }) {
-            const [tab, setTab] = useState('users');
-            const [users, setUsers] = useState([]);
-            const [borrowers, setBorrowers] = useState([]);
-            const [loans, setLoans] = useState([]);
-            const [payments, setPayments] = useState([]);
-            const [collectors, setCollectors] = useState([]);
-            const [assignments, setAssignments] = useState([]);
-            const [gpsBorrowers, setGpsBorrowers] = useState([]);
-            const [showLoanModal, setShowLoanModal] = useState(false);
-            const [showAssignModal, setShowAssignModal] = useState(false);
-            const [newLoan, setNewLoan] = useState({ borrower_id: '', loan_amount: '', interest_rate: '', due_date: '' });
-            const [assignForm, setAssignForm] = useState({ collector_id: '', borrower_id: '' });
-            const [msg, setMsg] = useState({});
-            const [dismissing, setDismissing] = useState(false);
-
-            useEffect(() => { loadData(); }, []);
-
-            useEffect(() => {
-                if (!msg.error && !msg.success) return;
-                setDismissing(false);
-                const timer = setTimeout(() => {
-                    setDismissing(true);
-                    setTimeout(() => { setMsg({}); setDismissing(false); }, 500);
-                }, msg.success ? 4000 : 5000);
-                return () => clearTimeout(timer);
-            }, [msg]);
-
-            const loadData = async () => {
-                try {
-                    const [u, b, l, p, c, a, g] = await Promise.all([
-                        API.get('/api/users'), API.get('/api/borrowers'), API.get('/api/loans'),
-                        API.get('/api/payments'), API.get('/api/collectors'), API.get('/api/assignments'),
-                        API.get('/api/gps/borrowers')
-                    ]);
-                    setUsers(u.data); setBorrowers(b.data); setLoans(l.data);
-                    setPayments(p.data); setCollectors(c.data); setAssignments(a.data);
-                    setGpsBorrowers(g.data);
-                } catch (e) { setMsg({ error: 'Failed to load data' }); }
-            };
-
-            const createLoan = async (e) => {
-                e.preventDefault();
-                try { await API.post('/api/loans', newLoan); setMsg({ success: 'Loan created!' }); setShowLoanModal(false); setNewLoan({ borrower_id: '', loan_amount: '', interest_rate: '', due_date: '' }); loadData(); }
-                catch (e) { setMsg({ error: e.response?.data?.error || 'Failed' }); }
-            };
-
-            const assignCollector = async (e) => {
-                e.preventDefault();
-                try { await API.post('/api/assignments', assignForm); setMsg({ success: 'Collector assigned!' }); setShowAssignModal(false); loadData(); }
-                catch (e) { setMsg({ error: e.response?.data?.error || 'Failed' }); }
-            };
-
-            const tabs = [
-                { id: 'users', label: '👥 Users' },
-                { id: 'borrowers', label: '🏠 Borrowers' },
-                { id: 'loans', label: '💰 Loans' },
-                { id: 'payments', label: '💳 Payments' },
-                { id: 'assignments', label: '📋 Assignments' },
-                { id: 'gps', label: '📍 GPS' },
-                { id: 'ml', label: '🤖 ML Risk' },
-            ];
-
-            return (
-                <div>
-                    <nav className="navbar">
-                        <span className="navbar-brand">📍 Admin Panel</span>
-                        <div className="navbar-actions">
-                            <button className="btn btn-outline btn-sm" onClick={() => setPage('dashboard')}>📊 Dashboard</button>
-                            <button className="btn btn-danger btn-sm" onClick={onLogout}>🚪 Logout</button>
-                        </div>
-                    </nav>
-                    <div className="container">
-                        {msg.error && <div className={`alert alert-error ${dismissing ? 'dismissing' : ''}`}>❌ {msg.error}</div>}
-                        {msg.success && <div className={`alert alert-success ${dismissing ? 'dismissing' : ''}`}>✅ {msg.success}</div>}
-
-                        <div className="tabs">
-                            {tabs.map(t => (
-                                <button key={t.id} className={`tab ${tab === t.id ? 'active' : ''}`} onClick={() => setTab(t.id)}>{t.label}</button>
-                            ))}
-                        </div>
-
-                        {/* ── USERS TAB ── */}
-                        {tab === 'users' && (
-                            <div className="card">
-                                <div className="table-container">
-                                    <table className="table">
-                                        <thead><tr><th>Name</th><th>Email</th><th>Current Role</th><th>Status</th><th>Address</th><th>GPS</th><th>Action</th></tr></thead>
-                                        <tbody>
-                                            {users.map(u => (
-                                                <tr key={u.user_id}>
-                                                    <td>{u.name}</td>
-                                                    <td>{u.email}</td>
-                                                    <td>
-                                                        {u.email === 'admin@system.com' ? (
-                                                            <span className="badge badge-purple">{u.role}</span>
-                                                        ) : (
-                                                            <select className="form-select" style={{padding:'4px 8px',fontSize:'0.8rem',width:'130px'}} value={u.role}
-                                                                onChange={async (e) => {
-                                                                    try { await API.put(`/api/users/${u.user_id}/role`, { role: e.target.value }); setMsg({ success: 'Role updated!' }); loadData(); }
-                                                                    catch (err) { setMsg({ error: err.response?.data?.error || 'Failed' }); }
-                                                                }}>
-                                                                <option value="pending_user">Pending User</option>
-                                                                <option value="borrower">Borrower</option>
-                                                                <option value="collector">Collector</option>
-                                                                <option value="admin">Admin</option>
-                                                            </select>
-                                                        )}
-                                                    </td>
-                                                    <td><span className={`badge ${u.status==='approved'?'badge-success':u.status==='pending'?'badge-warning':'badge-danger'}`}>{u.status}</span></td>
-                                                    <td style={{fontSize:'0.8rem'}}>{[u.street,u.barangay,u.city].filter(Boolean).join(', ')||'N/A'}</td>
-                                                    <td>{u.latitude?<span className="gps-indicator gps-active"><span className="gps-dot active"></span> Yes</span>:<span className="gps-indicator gps-inactive"><span className="gps-dot inactive"></span> No</span>}</td>
-                                                    <td>
-                                                        {u.email !== 'admin@system.com' && u.status === 'pending' && (
-                                                            <div style={{display:'flex',gap:'5px',flexDirection:'column'}}>
-                                                                <select id={`role-${u.user_id}`} className="form-select" style={{padding:'4px 8px',fontSize:'0.75rem',width:'120px'}} defaultValue="borrower">
-                                                                    <option value="borrower">As Borrower</option>
-                                                                    <option value="collector">As Collector</option>
-                                                                </select>
-                                                                <button className="btn btn-success btn-sm" onClick={async () => {
-                                                                    const sel = document.getElementById(`role-${u.user_id}`);
-                                                                    try { const res = await API.put(`/api/users/${u.user_id}/status`, { status: 'approved', role: sel?.value || 'borrower' }); setMsg({ success: res.data.message || 'Approved!' }); loadData(); }
-                                                                    catch (err) { setMsg({ error: err.response?.data?.error || 'Failed' }); }
-                                                                }}>✅ Approve</button>
-                                                                <button className="btn btn-danger btn-sm" onClick={async () => {
-                                                                    try { await API.put(`/api/users/${u.user_id}/status`, { status: 'rejected' }); setMsg({ success: 'Rejected' }); loadData(); }
-                                                                    catch (err) { setMsg({ error: 'Failed' }); }
-                                                                }}>❌ Reject</button>
-                                                            </div>
-                                                        )}
-                                                        {u.email !== 'admin@system.com' && u.status === 'rejected' && (
-                                                            <button className="btn btn-success btn-sm" onClick={async () => {
-                                                                const r = prompt('Assign role? (borrower/collector)', 'borrower');
-                                                                if (r) {
-                                                                    try { await API.put(`/api/users/${u.user_id}/status`, { status: 'approved', role: r }); setMsg({ success: 'Re-approved!' }); loadData(); }
-                                                                    catch (err) { setMsg({ error: 'Failed' }); }
-                                                                }
-                                                            }}>Re-approve</button>
-                                                        )}
-                                                    </td>
-                                                </tr>
-                                            ))}
-                                        </tbody>
-                                    </table>
-                                </div>
-                            </div>
-                        )}
-
-                        {/* ── BORROWERS TAB ── */}
-                        {tab === 'borrowers' && (
-                            <div className="card">
-                                <div className="flex flex-between mb-2">
-                                    <button className="btn btn-primary btn-sm" onClick={() => setShowLoanModal(true)}>💰 Create Loan</button>
-                                    <button className="btn btn-warning btn-sm" onClick={() => { setAssignForm({...assignForm, borrower_id: ''}); setShowAssignModal(true); }}>👤 Assign Collector</button>
-                                </div>
-                                <div className="table-container">
-                                    <table className="table">
-                                        <thead><tr><th>Name</th><th>Address</th><th>GPS</th><th>Collector</th></tr></thead>
-                                        <tbody>
-                                            {borrowers.map(b => (
-                                                <tr key={b.borrower_id}>
-                                                    <td>{b.full_name}</td>
-                                                    <td style={{fontSize:'0.8rem'}}>{[b.street, b.barangay, b.city].filter(Boolean).join(', ') || 'N/A'}</td>
-                                                    <td>{b.latitude ? <span className="gps-indicator gps-active"><span className="gps-dot active"></span> Tracked</span> : 'N/A'}</td>
-                                                    <td>{b.collector_name || <span className="text-muted">Unassigned</span>}</td>
-                                                </tr>
-                                            ))}
-                                        </tbody>
-                                    </table>
-                                </div>
-                            </div>
-                        )}
-
-                        {/* ── LOANS TAB ── */}
-                        {tab === 'loans' && (
-                            <div className="card">
-                                <div className="table-container">
-                                    <table className="table">
-                                        <thead><tr><th>ID</th><th>Borrower</th><th>Amount</th><th>Interest</th><th>Balance</th><th>Due Date</th><th>Status</th></tr></thead>
-                                        <tbody>
-                                            {loans.map(l => (
-                                                <tr key={l.loan_id}>
-                                                    <td>{l.loan_id}</td><td>{l.borrower_name}</td>
-                                                    <td>₱{parseFloat(l.loan_amount).toLocaleString()}</td>
-                                                    <td>{l.interest_rate}%</td>
-                                                    <td>₱{parseFloat(l.balance).toLocaleString()}</td>
-                                                    <td>{new Date(l.due_date).toLocaleDateString()}</td>
-                                                    <td><span className={`badge ${l.status === 'active' ? 'badge-info' : l.status === 'paid' ? 'badge-success' : 'badge-danger'}`}>{l.status}</span></td>
-                                                </tr>
-                                            ))}
-                                        </tbody>
-                                    </table>
-                                </div>
-                            </div>
-                        )}
-
-                        {/* ── PAYMENTS TAB ── */}
-                        {tab === 'payments' && (
-                            <div className="card">
-                                <div className="table-container">
-                                    <table className="table">
-                                        <thead><tr><th>Receipt</th><th>Borrower</th><th>Collector</th><th>Amount</th><th>GPS</th><th>Date</th></tr></thead>
-                                        <tbody>
-                                            {payments.map(p => (
-                                                <tr key={p.payment_id}>
-                                                    <td style={{fontSize:'0.8rem'}}>{p.receipt_number}</td>
-                                                    <td>{p.borrower_name}</td><td>{p.collector_name || 'N/A'}</td>
-                                                    <td>₱{p.amount}</td>
-                                                    <td>{p.latitude ? '📍' : '—'}</td>
-                                                    <td>{new Date(p.payment_date).toLocaleString()}</td>
-                                                </tr>
-                                            ))}
-                                        </tbody>
-                                    </table>
-                                </div>
-                            </div>
-                        )}
-
-                        {/* ── ASSIGNMENTS TAB ── */}
-                        {tab === 'assignments' && (
-                            <div className="card">
-                                <div className="table-container">
-                                    <table className="table">
-                                        <thead><tr><th>Borrower</th><th>Collector</th><th>Status</th><th>Date</th></tr></thead>
-                                        <tbody>
-                                            {assignments.map(a => (
-                                                <tr key={a.assignment_id}>
-                                                    <td>{a.borrower_name}</td><td>{a.collector_name}</td>
-                                                    <td><span className="badge badge-info">{a.status}</span></td>
-                                                    <td>{new Date(a.assigned_date).toLocaleDateString()}</td>
-                                                </tr>
-                                            ))}
-                                        </tbody>
-                                    </table>
-                                </div>
-                            </div>
-                        )}
-
-                        {/* ── GPS TAB ── */}
-                        {tab === 'gps' && (
-                            <div className="card">
-                                <h4>📍 Borrower Locations</h4>
-                                <div className="grid grid-2 mt-2">
-                                    {gpsBorrowers.map(b => (
-                                        <div key={b.borrower_id} className="card" style={{ background: '#f8f9fa' }}>
-                                            <strong>{b.full_name}</strong>
-                                            <p className="text-muted" style={{fontSize:'0.85rem'}}>{b.street}, {b.barangay}, {b.city}</p>
-                                            <p style={{fontSize:'0.85rem'}}>📍 {b.latitude?.toFixed(6)}, {b.longitude?.toFixed(6)}</p>
-                                            <a href={`https://www.google.com/maps?q=${b.latitude},${b.longitude}`} target="_blank" className="btn btn-outline btn-sm mt-1">🗺️ View on Map</a>
-                                        </div>
+                    {filteredResults.length === 0 ? <p className="text-muted" style={{ padding: '20px 0' }}>No borrowers in this category.</p> : (
+                        <div className="table-container">
+                            <table className="table">
+                                <thead><tr><th>Borrower</th><th>City</th><th>Risk Level</th><th>Score</th><th>DPD</th><th>Loans</th><th>Payments</th><th>Location</th><th>Details</th></tr></thead>
+                                <tbody>
+                                    {filteredResults.map(r => (
+                                        <tr key={r.borrower_id}>
+                                            <td><strong>{r.borrower}</strong></td>
+                                            <td style={{ fontSize: '0.82rem' }}>{r.city || '—'}</td>
+                                            <td><span style={{ background: riskBg(r.risk_level), color: riskColor(r.risk_level), padding: '4px 12px', borderRadius: '20px', fontSize: '0.75rem', fontWeight: 700 }}>
+                                                {r.risk_level === 'High' ? '🔴' : r.risk_level === 'Medium' ? '🟡' : '🟢'} {r.risk_level}
+                                            </span></td>
+                                            <td><div className="risk-bar-wrap"><div className="risk-bar-bg"><div className="risk-bar-fill" style={{ width: r.risk_score + '%', background: riskBarColor(r.risk_score) }}></div></div><span className="risk-score-num" style={{ color: riskBarColor(r.risk_score) }}>{r.risk_score}</span></div></td>
+                                            <td style={{ fontSize: '0.85rem' }}>{r.factors.days_past_due > 0 ? <span style={{ color: '#c5221f', fontWeight: 600 }}>{r.factors.days_past_due}d</span> : '—'}</td>
+                                            <td style={{ textAlign: 'center' }}>{r.active_loans}</td>
+                                            <td style={{ textAlign: 'center' }}>{r.total_payments}</td>
+                                            <td>
+                                                {r.factors.has_gps ? <span className="gps-indicator gps-active" style={{fontSize:'0.75rem'}}><span className="gps-dot active"></span> GPS</span>
+                                                    : r.factors.has_geocoded ? <span className="gps-indicator gps-geocoded" style={{fontSize:'0.75rem'}}><span className="gps-dot geocoded"></span> Addr</span>
+                                                    : <span className="gps-indicator gps-inactive" style={{fontSize:'0.75rem'}}><span className="gps-dot inactive"></span> None</span>}
+                                            </td>
+                                            <td><button className="btn btn-outline btn-sm" onClick={() => setSelectedBorrower(selectedBorrower?.borrower_id === r.borrower_id ? null : r)}>{selectedBorrower?.borrower_id === r.borrower_id ? '▲ Hide' : '▼ Show'}</button></td>
+                                        </tr>
                                     ))}
-                                    {gpsBorrowers.length === 0 && <p className="text-muted">No borrower locations available</p>}
-                                </div>
+                                </tbody>
+                            </table>
+                        </div>
+                    )}
+                    {selectedBorrower && (
+                        <div className="ml-detail-card" style={{ borderLeft: `4px solid ${riskColor(selectedBorrower.risk_level)}` }}>
+                            <div className="ml-detail-header">
+                                <span style={{ background: riskBg(selectedBorrower.risk_level), color: riskColor(selectedBorrower.risk_level), padding: '4px 12px', borderRadius: '20px', fontSize: '0.8rem', fontWeight: 700 }}>{selectedBorrower.risk_level} Risk — Score {selectedBorrower.risk_score}/100</span>
+                                <strong>{selectedBorrower.borrower}</strong>
                             </div>
-                        )}
-
-                        {/* ── ML RISK TAB ── */}
-                        {tab === 'ml' && (
-                            <div className="card">
-                                <div className="card-header" style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-                                    🤖 ML Risk Classification Engine
-                                    <span style={{ fontSize: '0.75rem', background: '#e8f0fe', color: '#1967d2', padding: '3px 10px', borderRadius: '20px', fontWeight: 500 }}>
-                                        6-Factor Weighted Model
-                                    </span>
+                            <div className="form-row">
+                                <div>
+                                    <p style={{ fontSize: '0.85rem', fontWeight: 600, marginBottom: '8px' }}>📊 Risk Factors</p>
+                                    {[['Days Past Due', selectedBorrower.factors.days_past_due + 'd'],['Loan Utilization', selectedBorrower.factors.utilization_ratio + '%'],['Payments / Month', selectedBorrower.factors.payments_per_month],['Overdue Loans', selectedBorrower.factors.overdue_loans],['Active Loans', selectedBorrower.factors.active_loans],['Total Balance', fmtCurrency(selectedBorrower.factors.total_balance)],['Paid Loans', selectedBorrower.factors.paid_loans],['GPS', selectedBorrower.factors.has_gps ? '✅ Live GPS' : selectedBorrower.factors.has_geocoded ? '🗺️ Geocoded' : '❌ None']].map(([l, v]) => (
+                                        <div key={l} className="ml-factor-row"><span className="ml-factor-label">{l}</span><span className="ml-factor-val">{v}</span></div>
+                                    ))}
                                 </div>
-                                <div className="alert alert-info" style={{ marginBottom: '16px', fontSize: '0.85rem' }}>
-                                    ℹ️ Risk scores are computed using Days Past Due (28%), Loan Utilization (20%), Payment Frequency (18%), Overdue Loans (15%), Debt Load (12%), and GPS Availability (7%).
-                                </div>
-                                <MLRiskDashboard />
-                            </div>
-                        )}
-                    </div>
-
-                    {/* Create Loan Modal */}
-                    <div className={`modal-overlay ${showLoanModal ? 'active' : ''}`} onClick={e => { if (e.target === e.currentTarget) setShowLoanModal(false); }}>
-                        <div className="modal">
-                            <div className="modal-header"><h3>Create New Loan</h3><button className="modal-close" onClick={() => setShowLoanModal(false)}>×</button></div>
-                            <form onSubmit={createLoan}>
-                                <div className="form-group">
-                                    <label className="form-label">Borrower</label>
-                                    <select className="form-select" value={newLoan.borrower_id} onChange={e => setNewLoan({...newLoan, borrower_id: e.target.value})} required>
-                                        <option value="">Select borrower</option>
-                                        {borrowers.map(b => <option key={b.borrower_id} value={b.borrower_id}>{b.full_name}</option>)}
-                                    </select>
-                                </div>
-                                <div className="form-row">
-                                    <div className="form-group"><label className="form-label">Amount (₱)</label><input className="form-input" type="number" required value={newLoan.loan_amount} onChange={e => setNewLoan({...newLoan, loan_amount: e.target.value})} /></div>
-                                    <div className="form-group"><label className="form-label">Interest Rate (%)</label><input className="form-input" type="number" required value={newLoan.interest_rate} onChange={e => setNewLoan({...newLoan, interest_rate: e.target.value})} /></div>
-                                </div>
-                                <div className="form-group"><label className="form-label">Due Date</label><input className="form-input" type="date" required value={newLoan.due_date} onChange={e => setNewLoan({...newLoan, due_date: e.target.value})} /></div>
-                                <button className="btn btn-primary btn-block" type="submit">Create Loan</button>
-                            </form>
-                        </div>
-                    </div>
-
-                    {/* Assign Collector Modal */}
-                    <div className={`modal-overlay ${showAssignModal ? 'active' : ''}`} onClick={e => { if (e.target === e.currentTarget) setShowAssignModal(false); }}>
-                        <div className="modal">
-                            <div className="modal-header"><h3>Assign Collector</h3><button className="modal-close" onClick={() => setShowAssignModal(false)}>×</button></div>
-                            <form onSubmit={assignCollector}>
-                                <div className="form-group">
-                                    <label className="form-label">Borrower</label>
-                                    <select className="form-select" value={assignForm.borrower_id} onChange={e => setAssignForm({...assignForm, borrower_id: e.target.value})} required>
-                                        <option value="">Select borrower</option>
-                                        {borrowers.filter(b => !b.collector_id).map(b => <option key={b.borrower_id} value={b.borrower_id}>{b.full_name}</option>)}
-                                    </select>
-                                </div>
-                                <div className="form-group">
-                                    <label className="form-label">Collector</label>
-                                    <select className="form-select" value={assignForm.collector_id} onChange={e => setAssignForm({...assignForm, collector_id: e.target.value})} required>
-                                        <option value="">Select collector</option>
-                                        {collectors.map(c => <option key={c.user_id} value={c.user_id}>{c.name}</option>)}
-                                    </select>
-                                </div>
-                                <button className="btn btn-primary btn-block" type="submit">Assign</button>
-                            </form>
-                        </div>
-                    </div>
-                </div>
-            );
-        }
-
-        // ==================== COLLECTOR PANEL ====================
-        function CollectorPanel({ user, onLogout, setPage }) {
-            const [borrowers, setBorrowers] = useState([]);
-            const [loans, setLoans] = useState([]);
-            const [payAmount, setPayAmount] = useState({});
-            const [gps, setGps] = useState({});
-
-            useEffect(() => { loadData(); }, []);
-
-            const loadData = async () => {
-                try {
-                    const [b, l] = await Promise.all([API.get('/api/borrowers'), API.get('/api/loans')]);
-                    setBorrowers(b.data); setLoans(l.data);
-                } catch (e) { console.error(e); }
-            };
-
-            const recordPayment = async (loanId) => {
-                const amount = payAmount[loanId];
-                if (!amount) return alert('Enter amount');
-                try {
-                    await API.post('/api/payments', { loan_id: loanId, amount: parseFloat(amount), latitude: gps.latitude, longitude: gps.longitude });
-                    alert('Payment recorded!');
-                    setPayAmount({...payAmount, [loanId]: ''});
-                    loadData();
-                } catch (e) { alert(e.response?.data?.error || 'Failed'); }
-            };
-
-            const getGps = () => {
-                navigator.geolocation.getCurrentPosition(
-                    pos => setGps({ latitude: pos.coords.latitude, longitude: pos.coords.longitude }),
-                    err => alert('GPS error: ' + err.message),
-                    { enableHighAccuracy: true }
-                );
-            };
-
-            return (
-                <div>
-                    <nav className="navbar">
-                        <span className="navbar-brand">📍 Collector Panel</span>
-                        <div className="navbar-actions">
-                            <span className={`gps-indicator ${gps.latitude ? 'gps-active' : 'gps-inactive'}`}>
-                                <span className={`gps-dot ${gps.latitude ? 'active' : 'inactive'}`}></span>
-                                {gps.latitude ? 'GPS Active' : 'GPS Inactive'}
-                            </span>
-                            <button className="btn btn-outline btn-sm" onClick={getGps}>📍 Get GPS</button>
-                            <button className="btn btn-outline btn-sm" onClick={() => setPage('dashboard')}>📊 Dashboard</button>
-                            <button className="btn btn-danger btn-sm" onClick={onLogout}>🚪 Logout</button>
-                        </div>
-                    </nav>
-                    <div className="container">
-                        <div className="card">
-                            <h3>My Borrowers</h3>
-                            <div className="table-container mt-2">
-                                <table className="table">
-                                    <thead><tr><th>Name</th><th>Address</th><th>GPS</th><th>Map</th></tr></thead>
-                                    <tbody>
-                                        {borrowers.map(b => (
-                                            <tr key={b.borrower_id}>
-                                                <td>{b.full_name}</td>
-                                                <td>{[b.street, b.barangay, b.city].filter(Boolean).join(', ')}</td>
-                                                <td>{b.latitude ? '📍' : '—'}</td>
-                                                <td>{b.latitude && <a href={`https://www.google.com/maps?q=${b.latitude},${b.longitude}`} target="_blank" className="btn btn-outline btn-sm">🗺️ Map</a>}</td>
-                                            </tr>
+                                <div>
+                                    <p style={{ fontSize: '0.85rem', fontWeight: 600, marginBottom: '8px' }}>🎯 Score Breakdown</p>
+                                    <div className="score-breakdown-grid">
+                                        {selectedBorrower.factors.scores_breakdown && Object.entries(selectedBorrower.factors.scores_breakdown).map(([k, v]) => (
+                                            <div key={k} className="score-chip"><span className="score-chip-label">{k.replace(/_/g,' ')}</span><span className="score-chip-val" style={{ color: v < 0 ? '#137333' : v > 10 ? '#c5221f' : '#b06000' }}>{v > 0 ? '+' : ''}{v}</span></div>
                                         ))}
-                                    </tbody>
-                                </table>
+                                    </div>
+                                </div>
+                            </div>
+                            <p style={{ fontSize: '0.85rem', fontWeight: 600, marginTop: '14px', marginBottom: '8px' }}>📋 Recommended Strategies</p>
+                            <div className="ml-strategy-list">
+                                {selectedBorrower.strategies.map((s, i) => <div key={i} className={`ml-strategy-item ${selectedBorrower.risk_level.toLowerCase()}`}>{s}</div>)}
                             </div>
                         </div>
-                        <div className="card mt-3">
-                            <h3>Active Loans</h3>
-                            <div className="table-container mt-2">
-                                <table className="table">
-                                    <thead><tr><th>Borrower</th><th>Amount</th><th>Balance</th><th>Due Date</th><th>Payment</th></tr></thead>
-                                    <tbody>
-                                        {loans.filter(l => l.status === 'active').map(l => (
-                                            <tr key={l.loan_id}>
-                                                <td>{l.borrower_name}</td>
-                                                <td>₱{parseFloat(l.loan_amount).toLocaleString()}</td>
-                                                <td>₱{parseFloat(l.balance).toLocaleString()}</td>
-                                                <td>{new Date(l.due_date).toLocaleDateString()}</td>
-                                                <td>
-                                                    <div style={{display:'flex', gap:'8px'}}>
-                                                        <input type="number" className="form-input" style={{width:'100px', padding:'8px'}} placeholder="Amount"
-                                                            value={payAmount[l.loan_id] || ''} onChange={e => setPayAmount({...payAmount, [l.loan_id]: e.target.value})} />
-                                                        <button className="btn btn-success btn-sm" onClick={() => recordPayment(l.loan_id)}>Pay</button>
+                    )}
+                </div>
+            )}
+
+            {activeView === 'manual' && (
+                <div>
+                    <p className="text-muted" style={{ marginBottom: '16px', fontSize: '0.9rem' }}>Enter debtor details manually to get an instant ML risk classification — no database record required.</p>
+                    {manualMsg && <Alert type={manualMsg.type} onDismiss={clearManualMsg}>{manualMsg.text}</Alert>}
+                    <div className="ml-manual-form">
+                        <div className="form-group"><label className="form-label">Outstanding Balance (₱) <span className="required">*</span></label><input className="form-input" type="number" min="0" placeholder="e.g. 45000" value={manualForm.balance} onChange={e => updateManual('balance', e.target.value)} /></div>
+                        <div className="form-group"><label className="form-label">Original Loan Amount (₱)</label><input className="form-input" type="number" min="0" placeholder="e.g. 50000" value={manualForm.loan_amount} onChange={e => updateManual('loan_amount', e.target.value)} /></div>
+                        <div className="form-group"><label className="form-label">Days Past Due</label><input className="form-input" type="number" min="0" placeholder="e.g. 90" value={manualForm.days_past_due} onChange={e => updateManual('days_past_due', e.target.value)} /></div>
+                        <div className="form-group"><label className="form-label">Total Payments Made</label><input className="form-input" type="number" min="0" placeholder="e.g. 3" value={manualForm.payment_count} onChange={e => updateManual('payment_count', e.target.value)} /></div>
+                        <div className="form-group"><label className="form-label">Months Since First Loan</label><input className="form-input" type="number" min="0" placeholder="e.g. 6" value={manualForm.months_active} onChange={e => updateManual('months_active', e.target.value)} /></div>
+                        <div className="form-group"><label className="form-label">Overdue Loans Count</label><input className="form-input" type="number" min="0" placeholder="e.g. 1" value={manualForm.overdue_loans} onChange={e => updateManual('overdue_loans', e.target.value)} /></div>
+                        <div className="form-group"><label className="form-label">Active Loans Count</label><input className="form-input" type="number" min="1" placeholder="e.g. 2" value={manualForm.active_loans} onChange={e => updateManual('active_loans', e.target.value)} /></div>
+                        <div className="form-group"><label className="form-label">Previously Paid Loans</label><input className="form-input" type="number" min="0" placeholder="e.g. 1" value={manualForm.paid_loans} onChange={e => updateManual('paid_loans', e.target.value)} /></div>
+                        <div className="form-group" style={{ display: 'flex', alignItems: 'center', gap: '10px', gridColumn: '1 / -1' }}>
+                            <label className="form-label" style={{ margin: 0 }}>GPS / Location on Record?</label>
+                            <input type="checkbox" checked={manualForm.has_gps} onChange={e => updateManual('has_gps', e.target.checked)} style={{ width: '18px', height: '18px', cursor: 'pointer' }} />
+                            <span style={{ fontSize: '0.85rem', color: 'var(--text-secondary)' }}>{manualForm.has_gps ? 'Yes — location available' : 'No — uncontactable risk (+7 pts)'}</span>
+                        </div>
+                    </div>
+                    <button className="btn btn-primary mt-2" onClick={runManualPredict} disabled={manualLoading}>
+                        {manualLoading ? '⏳ Classifying...' : '🤖 Run ML Classification'}
+                    </button>
+                    {manualResult && (
+                        <div className={`ml-result-box ${manualResult.risk_level.toLowerCase()}`}>
+                            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
+                                <div>
+                                    <div className="ml-result-title" style={{ color: riskColor(manualResult.risk_level) }}>{manualResult.risk_level === 'High' ? '🔴' : manualResult.risk_level === 'Medium' ? '🟡' : '🟢'} {manualResult.risk_level} Risk</div>
+                                    <p style={{ fontSize: '0.85rem', color: 'var(--text-secondary)', marginTop: '4px' }}>
+                                        {manualResult.risk_level === 'High' ? 'Immediate escalation required.' : manualResult.risk_level === 'Medium' ? 'Proactive engagement recommended.' : 'Minimal intervention needed.'}
+                                    </p>
+                                </div>
+                                <div style={{ textAlign: 'right' }}><div className="ml-result-score" style={{ color: riskColor(manualResult.risk_level) }}>{manualResult.risk_score}</div><div style={{ fontSize: '0.8rem', color: 'var(--text-secondary)' }}>/ 100</div></div>
+                            </div>
+                            <div style={{ margin: '14px 0 8px', height: '10px', background: 'rgba(0,0,0,0.1)', borderRadius: '99px', overflow: 'hidden' }}>
+                                <div style={{ width: manualResult.risk_score + '%', height: '100%', background: riskColor(manualResult.risk_level), borderRadius: '99px' }}></div>
+                            </div>
+                            <p style={{ fontSize: '0.85rem', fontWeight: 600, margin: '14px 0 8px' }}>📋 Recommended Strategies</p>
+                            <div className="ml-strategy-list">{manualResult.strategies.map((s, i) => <div key={i} className={`ml-strategy-item ${manualResult.risk_level.toLowerCase()}`}>{s}</div>)}</div>
+                        </div>
+                    )}
+                </div>
+            )}
+        </div>
+    );
+}
+
+// ==================== ADMIN PANEL ====================
+function AdminPanel({ user, onLogout, setPage }) {
+    const [tab, setTab] = useState('users');
+    const [users, setUsers] = useState([]);
+    const [borrowers, setBorrowers] = useState([]);
+    const [loans, setLoans] = useState([]);
+    const [payments, setPayments] = useState([]);
+    const [collectors, setCollectors] = useState([]);
+    const [assignments, setAssignments] = useState([]);
+    const [gpsBorrowers, setGpsBorrowers] = useState([]);
+    const [loanApps, setLoanApps] = useState([]);
+    const [showAssignModal, setShowAssignModal] = useState(false);
+    const [assignForm, setAssignForm] = useState({ collector_id: '', borrower_id: '' });
+    const [reviewModal, setReviewModal] = useState(null);
+    const [reviewForm, setReviewForm] = useState({ status: '', admin_notes: '', final_amount: '', final_interest_rate: '', final_due_date: '' });
+    const [msg, setMsg, clearMsg] = useMsg();
+    const [geocodingId, setGeocodingId] = useState(null);
+
+    useEffect(() => { loadData(); }, []);
+
+    const pendingApps = loanApps.filter(a => a.status === 'pending').length;
+    const pendingUsers = users.filter(u => u.status === 'pending').length;
+
+    const loadData = async () => {
+        try {
+            const [u, b, l, p, c, a, g, apps] = await Promise.all([
+                API.get('/api/users'), API.get('/api/borrowers'), API.get('/api/loans'),
+                API.get('/api/payments'), API.get('/api/collectors'), API.get('/api/assignments'),
+                API.get('/api/gps/borrowers'), API.get('/api/loan-applications')
+            ]);
+            setUsers(u.data); setBorrowers(b.data); setLoans(l.data);
+            setPayments(p.data); setCollectors(c.data); setAssignments(a.data);
+            setGpsBorrowers(g.data); setLoanApps(apps.data);
+        } catch (e) { setMsg('error', 'Failed to load data. Please refresh.'); }
+    };
+
+    const assignCollector = async (e) => {
+        e.preventDefault();
+        if (!assignForm.collector_id) return setMsg('error', 'Please select a collector');
+        if (!assignForm.borrower_id) return setMsg('error', 'Please select a borrower');
+        try { await API.post('/api/assignments', assignForm); setMsg('success', 'Collector assigned successfully!'); setShowAssignModal(false); loadData(); }
+        catch (e) { setMsg('error', e.response?.data?.error || 'Assignment failed'); }
+    };
+
+    const openReview = (app) => {
+        setReviewModal(app);
+        setReviewForm({ status: '', admin_notes: '', final_amount: app.requested_amount, final_interest_rate: app.requested_interest_rate, final_due_date: app.requested_due_date ? app.requested_due_date.slice(0,10) : '' });
+    };
+
+    const submitReview = async (e) => {
+        e.preventDefault();
+        if (!reviewForm.status) return setMsg('error', 'Please select Approve or Reject');
+        if (reviewForm.status === 'approved') {
+            if (!reviewForm.final_amount || parseFloat(reviewForm.final_amount) <= 0) return setMsg('error', 'Loan amount must be greater than 0');
+            if (parseFloat(reviewForm.final_interest_rate) < 0) return setMsg('error', 'Interest rate cannot be negative');
+            if (!reviewForm.final_due_date) return setMsg('error', 'Due date is required');
+            if (new Date(reviewForm.final_due_date) <= new Date()) return setMsg('error', 'Due date must be in the future');
+        }
+        try {
+            await API.put(`/api/loan-applications/${reviewModal.application_id}/review`, reviewForm);
+            setMsg('success', `Application ${reviewForm.status} successfully!`);
+            setReviewModal(null);
+            loadData();
+        } catch (e) { setMsg('error', e.response?.data?.error || 'Review failed'); }
+    };
+
+    const geocodeBorrower = async (borrowerId, name) => {
+        setGeocodingId(borrowerId);
+        try {
+            const res = await API.post('/api/gps/geocode-borrower', { borrower_id: borrowerId });
+            setMsg('success', `📍 ${name}: ${res.data.message}`);
+            loadData();
+        } catch (e) { setMsg('error', e.response?.data?.error || 'Geocoding failed'); }
+        finally { setGeocodingId(null); }
+    };
+
+    const tabs = [
+        { id: 'users', label: '👥 Users', badge: pendingUsers },
+        { id: 'applications', label: '📄 Loan Applications', badge: pendingApps },
+        { id: 'borrowers', label: '🏠 Borrowers' },
+        { id: 'loans', label: '💰 Loans' },
+        { id: 'payments', label: '💳 Payments' },
+        { id: 'assignments', label: '📋 Assignments' },
+        { id: 'gps', label: '📍 GPS' },
+        { id: 'ml', label: '🤖 ML Risk' },
+    ];
+
+    return (
+        <div>
+            <nav className="navbar">
+                <span className="navbar-brand">📍 Admin Panel</span>
+                <div className="navbar-actions">
+                    <button className="btn btn-outline btn-sm" onClick={() => setPage('dashboard')}>📊 Dashboard</button>
+                    <button className="btn btn-danger btn-sm" onClick={onLogout}>🚪 Logout</button>
+                </div>
+            </nav>
+            <div className="container">
+                {msg && <Alert type={msg.type} onDismiss={clearMsg}>{msg.text}</Alert>}
+
+                <div className="tabs">
+                    {tabs.map(t => (
+                        <button key={t.id} className={`tab ${tab === t.id ? 'active' : ''}`} onClick={() => setTab(t.id)}>
+                            {t.label}{t.badge > 0 && <span className="tab-badge">{t.badge}</span>}
+                        </button>
+                    ))}
+                </div>
+
+                {/* ── USERS ── */}
+                {tab === 'users' && (
+                    <div className="card">
+                        <div className="card-header flex flex-between">
+                            <span>User Management</span>
+                            <span className="text-muted" style={{fontSize:'0.85rem'}}>{users.length} total users</span>
+                        </div>
+                        <div className="table-container">
+                            <table className="table">
+                                <thead><tr><th>Name</th><th>Email</th><th>Role</th><th>Status</th><th>Address</th><th>GPS</th><th>Actions</th></tr></thead>
+                                <tbody>
+                                    {users.map(u => (
+                                        <tr key={u.user_id}>
+                                            <td><strong>{u.name}</strong></td>
+                                            <td style={{fontSize:'0.85rem'}}>{u.email}</td>
+                                            <td>
+                                                {u.email === 'admin@system.com' ? <span className="badge badge-purple">{u.role}</span> : (
+                                                    <select className="form-select" style={{padding:'4px 8px',fontSize:'0.8rem',width:'130px'}} value={u.role}
+                                                        onChange={async (e) => {
+                                                            try { await API.put(`/api/users/${u.user_id}/role`, { role: e.target.value }); setMsg('success', `Role updated to ${e.target.value}`); loadData(); }
+                                                            catch (err) { setMsg('error', err.response?.data?.error || 'Failed to update role'); }
+                                                        }}>
+                                                        <option value="pending_user">Pending User</option>
+                                                        <option value="borrower">Borrower</option>
+                                                        <option value="collector">Collector</option>
+                                                        <option value="admin">Admin</option>
+                                                    </select>
+                                                )}
+                                            </td>
+                                            <td><span className={`badge ${u.status==='approved'?'badge-success':u.status==='pending'?'badge-warning':'badge-danger'}`}>{u.status}</span></td>
+                                            <td style={{fontSize:'0.78rem'}}>{[u.street,u.barangay,u.city].filter(Boolean).join(', ')||'N/A'}</td>
+                                            <td>{u.latitude ? <span className="gps-indicator gps-active" style={{fontSize:'0.75rem'}}><span className="gps-dot active"></span>Yes</span> : <span className="gps-indicator gps-inactive" style={{fontSize:'0.75rem'}}><span className="gps-dot inactive"></span>No</span>}</td>
+                                            <td>
+                                                {u.email !== 'admin@system.com' && u.status === 'pending' && (
+                                                    <div style={{display:'flex',gap:'5px',flexDirection:'column'}}>
+                                                        <select id={`role-sel-${u.user_id}`} className="form-select" style={{padding:'4px 8px',fontSize:'0.75rem',width:'130px'}} defaultValue="borrower">
+                                                            <option value="borrower">As Borrower</option>
+                                                            <option value="collector">As Collector</option>
+                                                        </select>
+                                                        <div style={{display:'flex',gap:'4px'}}>
+                                                            <button className="btn btn-success btn-sm" onClick={async () => {
+                                                                const sel = document.getElementById(`role-sel-${u.user_id}`);
+                                                                try { const res = await API.put(`/api/users/${u.user_id}/status`, { status: 'approved', role: sel?.value||'borrower' }); setMsg('success', res.data.message||'User approved!'); loadData(); }
+                                                                catch (err) { setMsg('error', err.response?.data?.error||'Approval failed'); }
+                                                            }}>✅ Approve</button>
+                                                            <button className="btn btn-danger btn-sm" onClick={async () => {
+                                                                if (!window.confirm(`Reject ${u.name}?`)) return;
+                                                                try { await API.put(`/api/users/${u.user_id}/status`, { status: 'rejected' }); setMsg('success', 'User rejected'); loadData(); }
+                                                                catch (err) { setMsg('error', 'Failed to reject user'); }
+                                                            }}>❌</button>
+                                                        </div>
                                                     </div>
+                                                )}
+                                                {u.email !== 'admin@system.com' && u.status === 'rejected' && (
+                                                    <button className="btn btn-success btn-sm" onClick={async () => {
+                                                        const r = prompt('Assign role? (borrower/collector)', 'borrower');
+                                                        if (r && ['borrower','collector'].includes(r.toLowerCase())) {
+                                                            try { await API.put(`/api/users/${u.user_id}/status`, { status: 'approved', role: r.toLowerCase() }); setMsg('success', 'User re-approved!'); loadData(); }
+                                                            catch (err) { setMsg('error', err.response?.data?.error||'Failed'); }
+                                                        } else if (r) setMsg('error', 'Role must be borrower or collector');
+                                                    }}>🔄 Re-approve</button>
+                                                )}
+                                            </td>
+                                        </tr>
+                                    ))}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                )}
+
+                {/* ── LOAN APPLICATIONS ── */}
+                {tab === 'applications' && (
+                    <div className="card">
+                        <div className="card-header flex flex-between">
+                            <span>📄 Loan Applications from Borrowers</span>
+                            <span className="text-muted" style={{fontSize:'0.85rem'}}>{pendingApps} pending</span>
+                        </div>
+                        {loanApps.length === 0 ? <p className="text-muted">No loan applications yet.</p> : (
+                            <div className="table-container">
+                                <table className="table">
+                                    <thead><tr><th>Borrower</th><th>Amount</th><th>Interest</th><th>Due Date</th><th>Purpose</th><th>Status</th><th>Submitted</th><th>Action</th></tr></thead>
+                                    <tbody>
+                                        {loanApps.map(a => (
+                                            <tr key={a.application_id}>
+                                                <td><strong>{a.borrower_name}</strong><br/><span style={{fontSize:'0.78rem',color:'var(--text-secondary)'}}>{a.city}</span></td>
+                                                <td>{fmtCurrency(a.requested_amount)}</td>
+                                                <td>{parseFloat(a.requested_interest_rate)}%</td>
+                                                <td style={{fontSize:'0.85rem'}}>{fmtDate(a.requested_due_date)}</td>
+                                                <td style={{fontSize:'0.82rem',maxWidth:'120px'}}>{a.purpose || '—'}</td>
+                                                <td>
+                                                    <span className={`badge ${a.status==='approved'?'badge-success':a.status==='pending'?'badge-warning':'badge-danger'}`}>{a.status}</span>
+                                                    {a.admin_notes && <p style={{fontSize:'0.75rem',color:'var(--text-secondary)',marginTop:'3px'}}>📝 {a.admin_notes}</p>}
+                                                </td>
+                                                <td style={{fontSize:'0.82rem'}}>{fmtDate(a.created_at)}</td>
+                                                <td>
+                                                    {a.status === 'pending' && (
+                                                        <button className="btn btn-primary btn-sm" onClick={() => openReview(a)}>📋 Review</button>
+                                                    )}
                                                 </td>
                                             </tr>
                                         ))}
                                     </tbody>
                                 </table>
                             </div>
+                        )}
+                    </div>
+                )}
+
+                {/* ── BORROWERS ── */}
+                {tab === 'borrowers' && (
+                    <div className="card">
+                        <div className="flex flex-between mb-2">
+                            <div className="card-header" style={{margin:0}}>Borrowers</div>
+                            <button className="btn btn-warning btn-sm" onClick={() => { setAssignForm({collector_id:'',borrower_id:''}); setShowAssignModal(true); }}>👤 Assign Collector</button>
+                        </div>
+                        <div className="table-container">
+                            <table className="table">
+                                <thead><tr><th>Name</th><th>Address</th><th>GPS Status</th><th>Collector</th></tr></thead>
+                                <tbody>
+                                    {borrowers.map(b => (
+                                        <tr key={b.borrower_id}>
+                                            <td><strong>{b.full_name}</strong></td>
+                                            <td style={{fontSize:'0.82rem'}}>{[b.street,b.barangay,b.city].filter(Boolean).join(', ')||'N/A'}</td>
+                                            <td>
+                                                {b.latitude ? <span className="gps-indicator gps-active" style={{fontSize:'0.78rem'}}><span className="gps-dot active"></span> Live GPS</span>
+                                                    : b.geocoded_lat ? <span className="gps-indicator gps-geocoded" style={{fontSize:'0.78rem'}}><span className="gps-dot geocoded"></span> Geocoded</span>
+                                                    : (
+                                                        <div style={{display:'flex',alignItems:'center',gap:'6px'}}>
+                                                            <span className="gps-indicator gps-inactive" style={{fontSize:'0.78rem'}}><span className="gps-dot inactive"></span> No GPS</span>
+                                                            <button className="btn btn-outline btn-sm" style={{fontSize:'0.72rem',padding:'3px 8px'}} disabled={geocodingId === b.borrower_id} onClick={() => geocodeBorrower(b.borrower_id, b.full_name)}>
+                                                                {geocodingId === b.borrower_id ? '⏳' : '🗺️ Geocode'}
+                                                            </button>
+                                                        </div>
+                                                    )
+                                                }
+                                            </td>
+                                            <td>{b.collector_name || <span className="text-muted">Unassigned</span>}</td>
+                                        </tr>
+                                    ))}
+                                </tbody>
+                            </table>
                         </div>
                     </div>
-                </div>
-            );
-        }
+                )}
 
-        // ==================== BORROWER PANEL ====================
-        function BorrowerPanel({ user, onLogout, setPage }) {
-            const [loans, setLoans] = useState([]);
-            const [payments, setPayments] = useState([]);
-
-            useEffect(() => { loadData(); }, []);
-
-            const loadData = async () => {
-                try {
-                    const [l, p] = await Promise.all([API.get('/api/loans'), API.get('/api/payments')]);
-                    setLoans(l.data); setPayments(p.data);
-                } catch (e) { console.error(e); }
-            };
-
-            return (
-                <div>
-                    <nav className="navbar">
-                        <span className="navbar-brand">📍 My Loans</span>
-                        <div className="navbar-actions">
-                            <button className="btn btn-outline btn-sm" onClick={() => setPage('dashboard')}>📊 Dashboard</button>
-                            <button className="btn btn-danger btn-sm" onClick={onLogout}>🚪 Logout</button>
+                {/* ── LOANS ── */}
+                {tab === 'loans' && (
+                    <div className="card">
+                        <div className="card-header">Loan Records</div>
+                        <div className="table-container">
+                            <table className="table">
+                                <thead><tr><th>ID</th><th>Borrower</th><th>Amount</th><th>Interest</th><th>Balance</th><th>Due Date</th><th>Status</th></tr></thead>
+                                <tbody>
+                                    {loans.map(l => (
+                                        <tr key={l.loan_id}>
+                                            <td>#{l.loan_id}</td><td><strong>{l.borrower_name}</strong></td>
+                                            <td>{fmtCurrency(l.loan_amount)}</td>
+                                            <td>{l.interest_rate}%</td>
+                                            <td>{fmtCurrency(l.balance)}</td>
+                                            <td style={{fontSize:'0.85rem'}}>{fmtDate(l.due_date)}</td>
+                                            <td><span className={`badge ${l.status==='active'?'badge-info':l.status==='paid'?'badge-success':'badge-danger'}`}>{l.status}</span></td>
+                                        </tr>
+                                    ))}
+                                    {loans.length === 0 && <tr><td colSpan="7" style={{textAlign:'center',color:'var(--text-secondary)',padding:'20px'}}>No loans yet</td></tr>}
+                                </tbody>
+                            </table>
                         </div>
-                    </nav>
-                    <div className="container">
-                        <div className="card">
-                            <h3>My Loans</h3>
-                            <div className="table-container mt-2">
+                    </div>
+                )}
+
+                {/* ── PAYMENTS ── */}
+                {tab === 'payments' && (
+                    <div className="card">
+                        <div className="card-header">Payment Records</div>
+                        <div className="table-container">
+                            <table className="table">
+                                <thead><tr><th>Receipt</th><th>Borrower</th><th>Collector</th><th>Amount</th><th>GPS</th><th>Date</th></tr></thead>
+                                <tbody>
+                                    {payments.map(p => (
+                                        <tr key={p.payment_id}>
+                                            <td style={{fontSize:'0.78rem'}}>{p.receipt_number}</td>
+                                            <td>{p.borrower_name}</td><td>{p.collector_name||'—'}</td>
+                                            <td><strong>{fmtCurrency(p.amount)}</strong></td>
+                                            <td>{p.latitude ? '📍 Tracked' : '—'}</td>
+                                            <td style={{fontSize:'0.85rem'}}>{fmtDatetime(p.payment_date)}</td>
+                                        </tr>
+                                    ))}
+                                    {payments.length === 0 && <tr><td colSpan="6" style={{textAlign:'center',color:'var(--text-secondary)',padding:'20px'}}>No payments yet</td></tr>}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                )}
+
+                {/* ── ASSIGNMENTS ── */}
+                {tab === 'assignments' && (
+                    <div className="card">
+                        <div className="flex flex-between mb-2">
+                            <div className="card-header" style={{margin:0}}>Collection Assignments</div>
+                            <button className="btn btn-warning btn-sm" onClick={() => { setAssignForm({collector_id:'',borrower_id:''}); setShowAssignModal(true); }}>➕ New Assignment</button>
+                        </div>
+                        <div className="table-container">
+                            <table className="table">
+                                <thead><tr><th>Borrower</th><th>Collector</th><th>Status</th><th>Date</th></tr></thead>
+                                <tbody>
+                                    {assignments.map(a => (
+                                        <tr key={a.assignment_id}>
+                                            <td>{a.borrower_name}</td><td>{a.collector_name}</td>
+                                            <td><span className="badge badge-info">{a.status}</span></td>
+                                            <td style={{fontSize:'0.85rem'}}>{fmtDate(a.assigned_date)}</td>
+                                        </tr>
+                                    ))}
+                                    {assignments.length === 0 && <tr><td colSpan="4" style={{textAlign:'center',color:'var(--text-secondary)',padding:'20px'}}>No assignments yet</td></tr>}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                )}
+
+                {/* ── GPS ── */}
+                {tab === 'gps' && (
+                    <div className="card">
+                        <div className="card-header">📍 Borrower Location Map</div>
+                        <div className="alert alert-info mb-2" style={{fontSize:'0.85rem'}}>
+                            ℹ️ Borrowers who deny GPS sharing are automatically geocoded from their address. 🟢 = Live GPS &nbsp; 🔵 = Address-geocoded &nbsp; 🔴 = No location
+                        </div>
+                        <div className="grid grid-2">
+                            {gpsBorrowers.map(b => (
+                                <div key={b.borrower_id} className="card" style={{ background: '#f8f9fa', padding: '16px' }}>
+                                    <div style={{display:'flex',justifyContent:'space-between',alignItems:'flex-start'}}>
+                                        <strong>{b.full_name}</strong>
+                                        {b.location_source === 'gps' ? <span className="gps-indicator gps-active" style={{fontSize:'0.75rem'}}><span className="gps-dot active"></span>Live GPS</span>
+                                            : <span className="gps-indicator gps-geocoded" style={{fontSize:'0.75rem'}}><span className="gps-dot geocoded"></span>Geocoded</span>}
+                                    </div>
+                                    <p className="text-muted" style={{fontSize:'0.82rem',marginTop:'4px'}}>{[b.street,b.barangay,b.city].filter(Boolean).join(', ')}</p>
+                                    <p style={{fontSize:'0.82rem',marginTop:'4px'}}>📍 {parseFloat(b.latitude).toFixed(6)}, {parseFloat(b.longitude).toFixed(6)}</p>
+                                    {b.location_source === 'geocoded' && <p style={{fontSize:'0.75rem',color:'#1967d2',marginTop:'3px'}}>⚠️ Estimated from address — may not be exact</p>}
+                                    <a href={`https://www.google.com/maps?q=${b.latitude},${b.longitude}`} target="_blank" className="btn btn-outline btn-sm mt-1">🗺️ View on Map</a>
+                                </div>
+                            ))}
+                            {gpsBorrowers.length === 0 && <p className="text-muted">No borrower locations available yet.</p>}
+                        </div>
+                    </div>
+                )}
+
+                {/* ── ML ── */}
+                {tab === 'ml' && (
+                    <div className="card">
+                        <div className="card-header" style={{display:'flex',alignItems:'center',gap:'12px'}}>
+                            🤖 ML Risk Classification Engine
+                            <span style={{fontSize:'0.75rem',background:'#e8f0fe',color:'#1967d2',padding:'3px 10px',borderRadius:'20px',fontWeight:500}}>6-Factor Weighted Model</span>
+                        </div>
+                        <div className="alert alert-info" style={{marginBottom:'16px',fontSize:'0.85rem'}}>
+                            ℹ️ Risk scores: Days Past Due (28%), Loan Utilization (20%), Payment Frequency (18%), Overdue Loans (15%), Debt Load (12%), GPS Availability (7%).
+                        </div>
+                        <MLRiskDashboard />
+                    </div>
+                )}
+            </div>
+
+            {/* Review Modal */}
+            {reviewModal && (
+                <div className="modal-overlay active" onClick={e => { if (e.target === e.currentTarget) setReviewModal(null); }}>
+                    <div className="modal">
+                        <div className="modal-header">
+                            <h3>📋 Review Loan Application</h3>
+                            <button className="modal-close" onClick={() => setReviewModal(null)}>×</button>
+                        </div>
+                        <div style={{background:'#f8f9fa',borderRadius:'8px',padding:'14px',marginBottom:'16px'}}>
+                            <p><strong>Borrower:</strong> {reviewModal.borrower_name}</p>
+                            <p><strong>Requested Amount:</strong> {fmtCurrency(reviewModal.requested_amount)}</p>
+                            <p><strong>Requested Interest:</strong> {reviewModal.requested_interest_rate}%</p>
+                            <p><strong>Requested Due Date:</strong> {fmtDate(reviewModal.requested_due_date)}</p>
+                            {reviewModal.purpose && <p><strong>Purpose:</strong> {reviewModal.purpose}</p>}
+                        </div>
+                        {msg && <Alert type={msg.type} onDismiss={clearMsg}>{msg.text}</Alert>}
+                        <form onSubmit={submitReview}>
+                            <div className="form-group">
+                                <label className="form-label">Decision <span className="required">*</span></label>
+                                <div style={{display:'flex',gap:'12px'}}>
+                                    <label style={{display:'flex',alignItems:'center',gap:'8px',cursor:'pointer',padding:'10px 16px',border:'2px solid',borderColor: reviewForm.status==='approved'?'#0d904f':'var(--border)',borderRadius:'8px',flex:1,justifyContent:'center',background:reviewForm.status==='approved'?'#e6f4ea':'white'}}>
+                                        <input type="radio" name="decision" value="approved" checked={reviewForm.status==='approved'} onChange={()=>setReviewForm(f=>({...f,status:'approved'}))} /> ✅ Approve
+                                    </label>
+                                    <label style={{display:'flex',alignItems:'center',gap:'8px',cursor:'pointer',padding:'10px 16px',border:'2px solid',borderColor: reviewForm.status==='rejected'?'#c5221f':'var(--border)',borderRadius:'8px',flex:1,justifyContent:'center',background:reviewForm.status==='rejected'?'#fce8e6':'white'}}>
+                                        <input type="radio" name="decision" value="rejected" checked={reviewForm.status==='rejected'} onChange={()=>setReviewForm(f=>({...f,status:'rejected'}))} /> ❌ Reject
+                                    </label>
+                                </div>
+                            </div>
+                            {reviewForm.status === 'approved' && (
+                                <>
+                                    <p style={{fontSize:'0.82rem',color:'var(--text-secondary)',marginBottom:'12px'}}>You may adjust the final terms below:</p>
+                                    <div className="form-row">
+                                        <div className="form-group">
+                                            <label className="form-label">Final Amount (₱) <span className="required">*</span></label>
+                                            <input className="form-input" type="number" min="1" step="0.01" required value={reviewForm.final_amount} onChange={e=>setReviewForm(f=>({...f,final_amount:e.target.value}))} />
+                                        </div>
+                                        <div className="form-group">
+                                            <label className="form-label">Interest Rate (%) <span className="required">*</span></label>
+                                            <input className="form-input" type="number" min="0" max="100" step="0.01" required value={reviewForm.final_interest_rate} onChange={e=>setReviewForm(f=>({...f,final_interest_rate:e.target.value}))} />
+                                            <p className="form-hint">Must be 0–100%. Cannot be negative.</p>
+                                        </div>
+                                    </div>
+                                    <div className="form-group">
+                                        <label className="form-label">Due Date <span className="required">*</span></label>
+                                        <input className="form-input" type="date" required min={new Date().toISOString().split('T')[0]} value={reviewForm.final_due_date} onChange={e=>setReviewForm(f=>({...f,final_due_date:e.target.value}))} />
+                                    </div>
+                                </>
+                            )}
+                            <div className="form-group">
+                                <label className="form-label">Admin Notes {reviewForm.status === 'rejected' ? <span className="required">*</span> : <span className="text-muted">(optional)</span>}</label>
+                                <textarea className="form-textarea" placeholder={reviewForm.status === 'rejected' ? 'Reason for rejection...' : 'Any notes for the borrower...'} required={reviewForm.status === 'rejected'} value={reviewForm.admin_notes} onChange={e=>setReviewForm(f=>({...f,admin_notes:e.target.value}))} />
+                            </div>
+                            <div style={{display:'flex',gap:'10px'}}>
+                                <button className="btn btn-outline" type="button" onClick={()=>setReviewModal(null)}>Cancel</button>
+                                <button className={`btn ${reviewForm.status==='approved'?'btn-success':'btn-danger'} btn-block`} type="submit" disabled={!reviewForm.status}>
+                                    {reviewForm.status === 'approved' ? '✅ Approve & Create Loan' : reviewForm.status === 'rejected' ? '❌ Reject Application' : 'Select a decision first'}
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            )}
+
+            {/* Assign Collector Modal */}
+            <div className={`modal-overlay ${showAssignModal ? 'active' : ''}`} onClick={e => { if (e.target === e.currentTarget) setShowAssignModal(false); }}>
+                <div className="modal">
+                    <div className="modal-header"><h3>👤 Assign Collector</h3><button className="modal-close" onClick={() => setShowAssignModal(false)}>×</button></div>
+                    <form onSubmit={assignCollector}>
+                        <div className="form-group">
+                            <label className="form-label">Borrower <span className="required">*</span></label>
+                            <select className="form-select" value={assignForm.borrower_id} onChange={e => setAssignForm({...assignForm, borrower_id: e.target.value})} required>
+                                <option value="">Select borrower</option>
+                                {borrowers.filter(b => !b.collector_id).map(b => <option key={b.borrower_id} value={b.borrower_id}>{b.full_name} — {b.city||'No city'}</option>)}
+                            </select>
+                            {borrowers.filter(b => !b.collector_id).length === 0 && <p className="form-hint">All borrowers are already assigned.</p>}
+                        </div>
+                        <div className="form-group">
+                            <label className="form-label">Collector <span className="required">*</span></label>
+                            <select className="form-select" value={assignForm.collector_id} onChange={e => setAssignForm({...assignForm, collector_id: e.target.value})} required>
+                                <option value="">Select collector</option>
+                                {collectors.map(c => <option key={c.user_id} value={c.user_id}>{c.name}</option>)}
+                            </select>
+                            {collectors.length === 0 && <p className="form-hint" style={{color:'var(--danger)'}}>No approved collectors available. Approve a collector first.</p>}
+                        </div>
+                        <button className="btn btn-primary btn-block" type="submit" disabled={collectors.length === 0}>Assign Collector</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    );
+}
+
+// ==================== COLLECTOR PANEL ====================
+function CollectorPanel({ user, onLogout, setPage }) {
+    const [borrowers, setBorrowers] = useState([]);
+    const [loans, setLoans] = useState([]);
+    const [payAmount, setPayAmount] = useState({});
+    const [gps, setGps] = useState({});
+    const [msg, setMsg, clearMsg] = useMsg();
+
+    useEffect(() => { loadData(); }, []);
+
+    const loadData = async () => {
+        try {
+            const [b, l] = await Promise.all([API.get('/api/borrowers'), API.get('/api/loans')]);
+            setBorrowers(b.data); setLoans(l.data);
+        } catch (e) { setMsg('error', 'Failed to load data'); }
+    };
+
+    const recordPayment = async (loanId, balance) => {
+        const amount = payAmount[loanId];
+        if (!amount || amount.toString().trim() === '') return setMsg('error', 'Please enter a payment amount');
+        if (parseFloat(amount) <= 0) return setMsg('error', 'Payment amount must be greater than 0');
+        if (parseFloat(amount) > parseFloat(balance)) return setMsg('error', `Amount exceeds balance of ${fmtCurrency(balance)}`);
+        try {
+            const res = await API.post('/api/payments', { loan_id: loanId, amount: parseFloat(amount), latitude: gps.latitude, longitude: gps.longitude });
+            setMsg('success', `Payment recorded! Receipt: ${res.data.receipt}. New balance: ${fmtCurrency(res.data.newBalance)}`);
+            setPayAmount(p => ({...p, [loanId]: ''}));
+            loadData();
+        } catch (e) { setMsg('error', e.response?.data?.error || 'Payment failed'); }
+    };
+
+    const getGps = () => {
+        if (!navigator.geolocation) return setMsg('error', 'Geolocation not supported on this device');
+        navigator.geolocation.getCurrentPosition(
+            pos => { setGps({ latitude: pos.coords.latitude, longitude: pos.coords.longitude }); setMsg('success', 'GPS location acquired!'); },
+            err => {
+                const m = err.code === 1 ? 'GPS permission denied. Payment will be recorded without location.' : 'Could not get GPS location. Please try again.';
+                setMsg('warning', m);
+            },
+            { enableHighAccuracy: true, timeout: 10000 }
+        );
+    };
+
+    const activeLoans = loans.filter(l => l.status === 'active');
+
+    return (
+        <div>
+            <nav className="navbar">
+                <span className="navbar-brand">📍 Collector Panel</span>
+                <div className="navbar-actions">
+                    <span className={`gps-indicator ${gps.latitude ? 'gps-active' : 'gps-inactive'}`}>
+                        <span className={`gps-dot ${gps.latitude ? 'active' : 'inactive'}`}></span>
+                        {gps.latitude ? `GPS: ${gps.latitude.toFixed(4)}` : 'GPS Inactive'}
+                    </span>
+                    <button className="btn btn-outline btn-sm" onClick={getGps}>📍 Get GPS</button>
+                    <button className="btn btn-outline btn-sm" onClick={() => setPage('dashboard')}>📊 Dashboard</button>
+                    <button className="btn btn-danger btn-sm" onClick={onLogout}>🚪 Logout</button>
+                </div>
+            </nav>
+            <div className="container">
+                {msg && <Alert type={msg.type} onDismiss={clearMsg}>{msg.text}</Alert>}
+                {!gps.latitude && (
+                    <div className="alert alert-warning mb-2">
+                        ⚠️ GPS not active. Click "Get GPS" to tag payments with your location. Payments can still be recorded without GPS.
+                    </div>
+                )}
+                <div className="card">
+                    <div className="card-header">My Assigned Borrowers ({borrowers.length})</div>
+                    <div className="table-container">
+                        <table className="table">
+                            <thead><tr><th>Name</th><th>Address</th><th>Location</th><th>Map</th></tr></thead>
+                            <tbody>
+                                {borrowers.map(b => (
+                                    <tr key={b.borrower_id}>
+                                        <td><strong>{b.full_name}</strong></td>
+                                        <td style={{fontSize:'0.85rem'}}>{[b.street,b.barangay,b.city].filter(Boolean).join(', ')||'N/A'}</td>
+                                        <td>
+                                            {b.latitude ? <span className="gps-indicator gps-active" style={{fontSize:'0.78rem'}}><span className="gps-dot active"></span>Live GPS</span>
+                                                : b.geocoded_lat ? <span className="gps-indicator gps-geocoded" style={{fontSize:'0.78rem'}}><span className="gps-dot geocoded"></span>Addr. est.</span>
+                                                : <span className="gps-indicator gps-inactive" style={{fontSize:'0.78rem'}}><span className="gps-dot inactive"></span>None</span>}
+                                        </td>
+                                        <td>
+                                            {(b.latitude || b.geocoded_lat) && (
+                                                <a href={`https://www.google.com/maps?q=${b.latitude||b.geocoded_lat},${b.longitude||b.geocoded_lng}`} target="_blank" className="btn btn-outline btn-sm">🗺️ Map</a>
+                                            )}
+                                        </td>
+                                    </tr>
+                                ))}
+                                {borrowers.length === 0 && <tr><td colSpan="4" style={{textAlign:'center',color:'var(--text-secondary)',padding:'20px'}}>No assigned borrowers</td></tr>}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                <div className="card mt-3">
+                    <div className="card-header">Active Loans to Collect ({activeLoans.length})</div>
+                    <div className="table-container">
+                        <table className="table">
+                            <thead><tr><th>Borrower</th><th>Loan Amount</th><th>Balance</th><th>Due Date</th><th>Record Payment</th></tr></thead>
+                            <tbody>
+                                {activeLoans.map(l => {
+                                    const isOverdue = new Date(l.due_date) < new Date();
+                                    return (
+                                        <tr key={l.loan_id}>
+                                            <td><strong>{l.borrower_name}</strong></td>
+                                            <td>{fmtCurrency(l.loan_amount)}</td>
+                                            <td><strong style={{color: isOverdue ? '#c5221f' : 'inherit'}}>{fmtCurrency(l.balance)}</strong></td>
+                                            <td style={{fontSize:'0.85rem'}}>
+                                                {fmtDate(l.due_date)}
+                                                {isOverdue && <span className="badge badge-danger" style={{marginLeft:'6px',fontSize:'0.68rem'}}>OVERDUE</span>}
+                                            </td>
+                                            <td>
+                                                <div style={{display:'flex',gap:'8px',alignItems:'center'}}>
+                                                    <input type="number" className="form-input" style={{width:'110px',padding:'8px'}} placeholder="Amount" min="0.01" step="0.01" max={l.balance}
+                                                        value={payAmount[l.loan_id]||''} onChange={e => setPayAmount(p => ({...p, [l.loan_id]: e.target.value}))} />
+                                                    <button className="btn btn-success btn-sm" onClick={() => recordPayment(l.loan_id, l.balance)}>💰 Pay</button>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                    );
+                                })}
+                                {activeLoans.length === 0 && <tr><td colSpan="5" style={{textAlign:'center',color:'var(--text-secondary)',padding:'20px'}}>No active loans to collect</td></tr>}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    );
+}
+
+// ==================== BORROWER PANEL ====================
+function BorrowerPanel({ user, onLogout, setPage }) {
+    const [loans, setLoans] = useState([]);
+    const [applications, setApplications] = useState([]);
+    const [payments, setPayments] = useState([]);
+    const [tab, setTab] = useState('apply');
+    const [form, setForm] = useState({ requested_amount: '', requested_interest_rate: '', requested_due_date: '', purpose: '' });
+    const [msg, setMsg, clearMsg] = useMsg();
+    const [loading, setLoading] = useState(false);
+    const [gps, setGps] = useState({ latitude: null, longitude: null, status: 'idle' });
+
+    useEffect(() => { loadData(); tryGetLocation(); }, []);
+
+    const loadData = async () => {
+        try {
+            const [l, p, apps] = await Promise.all([API.get('/api/loans'), API.get('/api/payments'), API.get('/api/loan-applications')]);
+            setLoans(l.data); setPayments(p.data); setApplications(apps.data);
+        } catch (e) { setMsg('error', 'Failed to load your data'); }
+    };
+
+    const tryGetLocation = () => {
+        if (!navigator.geolocation) return;
+        setGps(g => ({...g, status: 'getting'}));
+        navigator.geolocation.getCurrentPosition(
+            async (pos) => {
+                const lat = pos.coords.latitude, lng = pos.coords.longitude;
+                setGps({ latitude: lat, longitude: lng, status: 'active' });
+                try { await API.put('/api/gps/update-location', { latitude: lat, longitude: lng }); }
+                catch (e) { /* silent fail */ }
+            },
+            () => { setGps(g => ({...g, status: 'denied'})); }
+        );
+    };
+
+    const validateForm = () => {
+        if (!form.requested_amount || parseFloat(form.requested_amount) <= 0) return 'Loan amount must be greater than 0';
+        if (parseFloat(form.requested_amount) > 10000000) return 'Loan amount cannot exceed ₱10,000,000';
+        const rate = form.requested_interest_rate === '' ? 0 : parseFloat(form.requested_interest_rate);
+        if (isNaN(rate) || rate < 0) return 'Interest rate cannot be negative';
+        if (rate > 100) return 'Interest rate cannot exceed 100%';
+        if (!form.requested_due_date) return 'Please select a repayment due date';
+        if (new Date(form.requested_due_date) <= new Date()) return 'Due date must be a future date';
+        return null;
+    };
+
+    const submitApplication = async (e) => {
+        e.preventDefault();
+        clearMsg();
+        const err = validateForm();
+        if (err) return setMsg('error', err);
+        setLoading(true);
+        try {
+            const payload = { ...form, requested_interest_rate: form.requested_interest_rate === '' ? 0 : parseFloat(form.requested_interest_rate) };
+            const res = await API.post('/api/loan-applications', payload);
+            setMsg('success', res.data.message || 'Application submitted! Waiting for admin review.');
+            setForm({ requested_amount: '', requested_interest_rate: '', requested_due_date: '', purpose: '' });
+            loadData();
+            setTab('applications');
+        } catch (e) { setMsg('error', e.response?.data?.error || 'Failed to submit application. Please try again.'); }
+        finally { setLoading(false); }
+    };
+
+    const hasPending = applications.some(a => a.status === 'pending');
+    const minDate = new Date(); minDate.setDate(minDate.getDate() + 1);
+    const minDateStr = minDate.toISOString().split('T')[0];
+
+    return (
+        <div>
+            <nav className="navbar">
+                <span className="navbar-brand">📍 My Loan Portal</span>
+                <div className="navbar-actions">
+                    <span className={`gps-indicator ${gps.status==='active'?'gps-active':gps.status==='denied'?'gps-inactive':'gps-geocoded'}`}>
+                        <span className={`gps-dot ${gps.status==='active'?'active':gps.status==='denied'?'inactive':'geocoded'}`}></span>
+                        {gps.status==='active' ? 'Location shared' : gps.status==='denied' ? 'Location denied — using address' : gps.status==='getting' ? 'Getting GPS...' : 'No GPS'}
+                    </span>
+                    <button className="btn btn-outline btn-sm" onClick={() => setPage('dashboard')}>📊 Dashboard</button>
+                    <button className="btn btn-danger btn-sm" onClick={onLogout}>🚪 Logout</button>
+                </div>
+            </nav>
+            <div className="container">
+                {msg && <Alert type={msg.type} onDismiss={clearMsg}>{msg.text}</Alert>}
+
+                {gps.status === 'denied' && (
+                    <div className="gps-fallback-box mb-2">
+                        <strong>📍 GPS not shared — your location is estimated from your address</strong>
+                        Your collector can still find you using your registered address. You can also enable location from your browser settings.
+                    </div>
+                )}
+
+                <div className="tabs">
+                    <button className={`tab ${tab==='apply'?'active':''}`} onClick={() => setTab('apply')}>📝 Apply for Loan</button>
+                    <button className={`tab ${tab==='applications'?'active':''}`} onClick={() => setTab('applications')}>📄 My Applications {applications.filter(a=>a.status==='pending').length > 0 && <span className="tab-badge">{applications.filter(a=>a.status==='pending').length}</span>}</button>
+                    <button className={`tab ${tab==='loans'?'active':''}`} onClick={() => setTab('loans')}>💰 My Loans</button>
+                    <button className={`tab ${tab==='payments'?'active':''}`} onClick={() => setTab('payments')}>💳 Payments</button>
+                </div>
+
+                {/* ── APPLY ── */}
+                {tab === 'apply' && (
+                    <div className="card">
+                        <div className="card-header">📝 Submit a Loan Application</div>
+                        {hasPending && (
+                            <div className="alert alert-warning">
+                                ⚠️ You already have a <strong>pending application</strong>. Please wait for admin review before submitting another one.
+                            </div>
+                        )}
+                        <form onSubmit={submitApplication}>
+                            <div className="form-row">
+                                <div className="form-group">
+                                    <label className="form-label">Loan Amount (₱) <span className="required">*</span></label>
+                                    <input className={`form-input ${form.requested_amount && parseFloat(form.requested_amount) <= 0 ? 'error' : ''}`} type="number" min="1" step="0.01" max="10000000" placeholder="e.g. 10000" required value={form.requested_amount} onChange={e => setForm(f => ({...f, requested_amount: e.target.value}))} disabled={hasPending} />
+                                    <p className="form-hint">Minimum: ₱1 | Maximum: ₱10,000,000</p>
+                                </div>
+                                <div className="form-group">
+                                    <label className="form-label">Proposed Interest Rate (%) <span style={{fontSize:'0.78rem',color:'var(--text-secondary)'}}>(optional)</span></label>
+                                    <input className={`form-input ${form.requested_interest_rate && parseFloat(form.requested_interest_rate) < 0 ? 'error' : ''}`} type="number" min="0" max="100" step="0.01" placeholder="e.g. 5 (or leave blank for 0%)" value={form.requested_interest_rate} onChange={e => setForm(f => ({...f, requested_interest_rate: e.target.value}))} disabled={hasPending} />
+                                    <p className="form-hint">Must be 0–100%. Admin may adjust the final rate.</p>
+                                </div>
+                            </div>
+                            <div className="form-group">
+                                <label className="form-label">Requested Repayment Date <span className="required">*</span></label>
+                                <input className="form-input" type="date" required min={minDateStr} value={form.requested_due_date} onChange={e => setForm(f => ({...f, requested_due_date: e.target.value}))} disabled={hasPending} />
+                                <p className="form-hint">Must be at least tomorrow or later. Admin may adjust the final date.</p>
+                            </div>
+                            <div className="form-group">
+                                <label className="form-label">Purpose / Reason <span style={{fontSize:'0.78rem',color:'var(--text-secondary)'}}>(optional)</span></label>
+                                <textarea className="form-textarea" placeholder="e.g. Medical expenses, school tuition, home repair..." value={form.purpose} onChange={e => setForm(f => ({...f, purpose: e.target.value}))} disabled={hasPending} />
+                            </div>
+                            <button className="btn btn-primary btn-block btn-lg" type="submit" disabled={loading || hasPending}>
+                                {loading ? '⏳ Submitting...' : hasPending ? '⏳ Application Pending Admin Review' : '📤 Submit Loan Application'}
+                            </button>
+                        </form>
+                    </div>
+                )}
+
+                {/* ── APPLICATIONS ── */}
+                {tab === 'applications' && (
+                    <div className="card">
+                        <div className="card-header">📄 My Loan Applications</div>
+                        {applications.length === 0 ? (
+                            <p className="text-muted">No applications yet. Go to "Apply for Loan" to get started.</p>
+                        ) : (
+                            applications.map(a => (
+                                <div key={a.application_id} className={`app-status-card ${a.status}`}>
+                                    <div style={{display:'flex',justifyContent:'space-between',alignItems:'flex-start'}}>
+                                        <div className="app-status-title">
+                                            {a.status === 'pending' ? '⏳' : a.status === 'approved' ? '✅' : '❌'} {fmtCurrency(a.requested_amount)} Loan
+                                        </div>
+                                        <span className={`badge ${a.status==='approved'?'badge-success':a.status==='pending'?'badge-warning':'badge-danger'}`}>{a.status.toUpperCase()}</span>
+                                    </div>
+                                    <div className="app-status-meta">
+                                        <span>Interest: {a.requested_interest_rate}%</span>
+                                        <span>Due: {fmtDate(a.requested_due_date)}</span>
+                                        <span>Submitted: {fmtDate(a.created_at)}</span>
+                                    </div>
+                                    {a.purpose && <p style={{fontSize:'0.82rem',marginTop:'6px',color:'var(--text-secondary)'}}>Purpose: {a.purpose}</p>}
+                                    {a.status === 'pending' && <p style={{fontSize:'0.82rem',marginTop:'8px',color:'#b06000'}}>⏳ Your application is under review. Please wait for admin approval.</p>}
+                                    {a.status === 'approved' && <p style={{fontSize:'0.82rem',marginTop:'8px',color:'#137333'}}>✅ Approved! Check "My Loans" to view the active loan.</p>}
+                                    {a.admin_notes && <p style={{fontSize:'0.82rem',marginTop:'6px',background:'white',padding:'8px',borderRadius:'6px'}}>📝 Admin note: {a.admin_notes}</p>}
+                                </div>
+                            ))
+                        )}
+                    </div>
+                )}
+
+                {/* ── LOANS ── */}
+                {tab === 'loans' && (
+                    <div className="card">
+                        <div className="card-header">💰 My Active Loans</div>
+                        {loans.length === 0 ? (
+                            <p className="text-muted">No loans yet. Submit an application to get started.</p>
+                        ) : (
+                            <div className="table-container">
                                 <table className="table">
-                                    <thead><tr><th>ID</th><th>Amount</th><th>Interest</th><th>Balance</th><th>Due Date</th><th>Status</th></tr></thead>
+                                    <thead><tr><th>Loan #</th><th>Amount</th><th>Interest</th><th>Balance</th><th>Due Date</th><th>Status</th></tr></thead>
                                     <tbody>
-                                        {loans.map(l => (
-                                            <tr key={l.loan_id}>
-                                                <td>{l.loan_id}</td>
-                                                <td>₱{parseFloat(l.loan_amount).toLocaleString()}</td>
-                                                <td>{l.interest_rate}%</td>
-                                                <td>₱{parseFloat(l.balance).toLocaleString()}</td>
-                                                <td>{new Date(l.due_date).toLocaleDateString()}</td>
-                                                <td><span className={`badge ${l.status === 'active' ? 'badge-info' : 'badge-success'}`}>{l.status}</span></td>
-                                            </tr>
-                                        ))}
+                                        {loans.map(l => {
+                                            const isOverdue = l.status === 'active' && new Date(l.due_date) < new Date();
+                                            return (
+                                                <tr key={l.loan_id}>
+                                                    <td>#{l.loan_id}</td>
+                                                    <td>{fmtCurrency(l.loan_amount)}</td>
+                                                    <td>{l.interest_rate}%</td>
+                                                    <td><strong style={{color:isOverdue?'#c5221f':'inherit'}}>{fmtCurrency(l.balance)}</strong></td>
+                                                    <td style={{fontSize:'0.85rem'}}>
+                                                        {fmtDate(l.due_date)}
+                                                        {isOverdue && <span className="badge badge-danger" style={{marginLeft:'6px',fontSize:'0.68rem'}}>OVERDUE</span>}
+                                                    </td>
+                                                    <td><span className={`badge ${l.status==='active'?'badge-info':'badge-success'}`}>{l.status}</span></td>
+                                                </tr>
+                                            );
+                                        })}
                                     </tbody>
                                 </table>
                             </div>
-                        </div>
-                        <div className="card mt-3">
-                            <h3>Payment History</h3>
-                            <div className="table-container mt-2">
+                        )}
+                    </div>
+                )}
+
+                {/* ── PAYMENTS ── */}
+                {tab === 'payments' && (
+                    <div className="card">
+                        <div className="card-header">💳 Payment History</div>
+                        {payments.length === 0 ? <p className="text-muted">No payments recorded yet.</p> : (
+                            <div className="table-container">
                                 <table className="table">
                                     <thead><tr><th>Receipt</th><th>Amount</th><th>Date</th></tr></thead>
                                     <tbody>
                                         {payments.map(p => (
                                             <tr key={p.payment_id}>
-                                                <td>{p.receipt_number}</td>
-                                                <td>₱{p.amount}</td>
-                                                <td>{new Date(p.payment_date).toLocaleString()}</td>
+                                                <td style={{fontSize:'0.82rem'}}>{p.receipt_number}</td>
+                                                <td><strong>{fmtCurrency(p.amount)}</strong></td>
+                                                <td style={{fontSize:'0.85rem'}}>{fmtDatetime(p.payment_date)}</td>
                                             </tr>
                                         ))}
                                     </tbody>
                                 </table>
                             </div>
-                        </div>
+                        )}
                     </div>
-                </div>
-            );
-        }
+                )}
+            </div>
+        </div>
+    );
+}
 
-        // ==================== RENDER ====================
-        ReactDOM.createRoot(document.getElementById('root')).render(<App />);
-    </script>
+ReactDOM.createRoot(document.getElementById('root')).render(<App />);
+</script>
 </body>
 </html>
