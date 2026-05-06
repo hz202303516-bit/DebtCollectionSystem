@@ -151,7 +151,7 @@ async function initializeDatabase() {
     console.log('✅ Database ready (PostgreSQL/Neon)');
 }
 
-// ── Middleware ────────────────────────────────────────────────────────────────
+// ── Middleware ───────────────────────────────────────────────────────────────
 app.use(cors());
 app.use(express.json({ limit: '10mb' }));
 app.use(express.static(__dirname));
@@ -347,7 +347,7 @@ app.get('/api/dashboard/stats', authenticateToken, async (req, res) => {
                 queryOne("SELECT COUNT(*) as c FROM borrowers"),
                 queryOne("SELECT COUNT(*) as c FROM users WHERE status='pending'"),
                 queryOne("SELECT COUNT(*) as c FROM loan_applications WHERE status='pending'"),
-                queryAll(`SELECT p.*, b.full_name as borrower, l.loan_amount FROM payments p JOIN loans l ON p.loan_id=l.loan_id JOIN borrowers b ON l.borrower_id=b.borrower_id ORDER BY p.payment_date DESC LIMIT 5`)
+                queryAll(`SELECT p.*, b.full_name as borrower, l.loan_amount FROM payments p JOIN loans l ON p.loan_id=l.loan_id JOIN borrowers b ON l.borrower_id=b.borrower_id ORDER BY p.payment_date DESC LIMIT 3`)
             ]);
             res.json({
                 totalLoans: parseInt(loans?.c)||0,
@@ -687,7 +687,7 @@ app.get('/api/loans', authenticateToken, async (req, res) => {
 // ==================== PAYMENTS ====================
 app.get('/api/payments', authenticateToken, async (req, res) => {
     try {
-        const payments = await queryAll("SELECT p.*, b.full_name as borrower_name, u.name as collector_name FROM payments p JOIN loans l ON p.loan_id=l.loan_id JOIN borrowers b ON l.borrower_id=b.borrower_id LEFT JOIN users u ON p.collector_id=u.user_id ORDER BY p.payment_date DESC LIMIT 50");
+        const payments = await queryAll("SELECT p.*, b.full_name as borrower_name, u.name as collector_name FROM payments p JOIN loans l ON p.loan_id=l.loan_id JOIN borrowers b ON l.borrower_id=b.borrower_id LEFT JOIN users u ON p.collector_id=u.user_id ORDER BY p.payment_date DESC");
         res.json(payments);
     } catch (e) {
         res.status(500).json({ error: 'Failed to fetch payments' });
@@ -758,7 +758,7 @@ app.post('/api/gps/log', authenticateToken, async (req, res) => {
 
 app.get('/api/gps/logs', authenticateToken, async (req, res) => {
     try {
-        const logs = await queryAll("SELECT g.*, b.full_name as borrower_name, u.name as collector_name FROM gps_logs g LEFT JOIN borrowers b ON g.borrower_id=b.borrower_id LEFT JOIN users u ON g.collector_id=u.user_id ORDER BY g.timestamp DESC LIMIT 100");
+        const logs = await queryAll("SELECT g.*, b.full_name as borrower_name, u.name as collector_name FROM gps_logs g LEFT JOIN borrowers b ON g.borrower_id=b.borrower_id LEFT JOIN users u ON g.collector_id=u.user_id ORDER BY g.timestamp DESC");
         res.json(logs);
     } catch (e) {
         res.status(500).json({ error: 'Failed to fetch GPS logs' });
