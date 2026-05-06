@@ -1320,6 +1320,7 @@ function CollectorPanel({ user, onLogout, setPage }) {
 }
 
 // ==================== BORROWER PANEL ====================
+// ==================== BORROWER PANEL ====================
 function BorrowerPanel({ user, onLogout, setPage }) {
     const [loans, setLoans] = useState([]);
     const [applications, setApplications] = useState([]);
@@ -1370,6 +1371,39 @@ function BorrowerPanel({ user, onLogout, setPage }) {
             },
             () => { setGps(g => ({...g, status: 'denied'})); }
         );
+    };
+
+    // Auto-calculate interest rate based on loan amount
+    const calculateAutoInterestRate = (amount) => {
+        const loanAmount = parseFloat(amount);
+        if (!loanAmount || loanAmount <= 0) return '0';
+        if (loanAmount <= 5000) return '5.0';
+        if (loanAmount <= 20000) return '4.0';
+        if (loanAmount <= 50000) return '3.5';
+        if (loanAmount <= 100000) return '3.0';
+        if (loanAmount <= 500000) return '2.5';
+        if (loanAmount <= 1000000) return '2.0';
+        return '1.5'; // For loans above 1,000,000
+    };
+
+    // Get interest rate description
+    const getInterestRateDescription = (amount) => {
+        const loanAmount = parseFloat(amount);
+        if (!loanAmount || loanAmount <= 0) return '';
+        if (loanAmount <= 5000) return 'Loans up to ₱5,000 = 5% interest';
+        if (loanAmount <= 20000) return 'Loans ₱5,001 - ₱20,000 = 4% interest';
+        if (loanAmount <= 50000) return 'Loans ₱20,001 - ₱50,000 = 3.5% interest';
+        if (loanAmount <= 100000) return 'Loans ₱50,001 - ₱100,000 = 3% interest';
+        if (loanAmount <= 500000) return 'Loans ₱100,001 - ₱500,000 = 2.5% interest';
+        if (loanAmount <= 1000000) return 'Loans ₱500,001 - ₱1,000,000 = 2% interest';
+        return 'Loans above ₱1,000,000 = 1.5% interest';
+    };
+
+    // Handle amount change with auto interest calculation
+    const handleAmountChange = (e) => {
+        const amount = e.target.value;
+        const autoRate = calculateAutoInterestRate(amount);
+        setForm(f => ({...f, requested_amount: amount, requested_interest_rate: autoRate}));
     };
 
     const validateForm = () => {
@@ -1443,27 +1477,102 @@ function BorrowerPanel({ user, onLogout, setPage }) {
                                 ⚠️ You already have a <strong>pending application</strong>. Please wait for admin review before submitting another one.
                             </div>
                         )}
-                        <form onSubmit={submitApplication}>
-                            <div className="form-row">
-                                <div className="form-group">
-                                    <label className="form-label">Loan Amount (₱) <span className="required">*</span></label>
-                                    <input className={`form-input ${form.requested_amount && parseFloat(form.requested_amount) <= 0 ? 'error' : ''}`} type="number" min="1" step="0.01" max="10000000" placeholder="e.g. 10000" required value={form.requested_amount} onChange={e => setForm(f => ({...f, requested_amount: e.target.value}))} disabled={hasPending} />
-                                    <p className="form-hint">Minimum: ₱1 | Maximum: ₱10,000,000</p>
-                                </div>
-                                <div className="form-group">
-                                    <label className="form-label">Proposed Interest Rate (%) <span style={{fontSize:'0.78rem',color:'var(--text-secondary)'}}>(optional)</span></label>
-                                    <input className={`form-input ${form.requested_interest_rate && parseFloat(form.requested_interest_rate) < 0 ? 'error' : ''}`} type="number" min="0" max="100" step="0.01" placeholder="e.g. 5 (or leave blank for 0%)" value={form.requested_interest_rate} onChange={e => setForm(f => ({...f, requested_interest_rate: e.target.value}))} disabled={hasPending} />
-                                    <p className="form-hint">Must be 0–100%. Admin may adjust the final rate.</p>
+                        
+                        {/* Interest Rate Table Info */}
+                        <div className="alert alert-info" style={{marginBottom: '20px'}}>
+                            <div style={{flex: 1}}>
+                                <strong>📊 Auto-Calculated Interest Rates Based on Loan Amount:</strong>
+                                <div style={{display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '4px', marginTop: '8px', fontSize: '0.85rem'}}>
+                                    <span>₱1 - ₱5,000:</span><span><strong>5.0%</strong></span>
+                                    <span>₱5,001 - ₱20,000:</span><span><strong>4.0%</strong></span>
+                                    <span>₱20,001 - ₱50,000:</span><span><strong>3.5%</strong></span>
+                                    <span>₱50,001 - ₱100,000:</span><span><strong>3.0%</strong></span>
+                                    <span>₱100,001 - ₱500,000:</span><span><strong>2.5%</strong></span>
+                                    <span>₱500,001 - ₱1,000,000:</span><span><strong>2.0%</strong></span>
+                                    <span>Above ₱1,000,000:</span><span><strong>1.5%</strong></span>
                                 </div>
                             </div>
+                        </div>
+                        
+                        <form onSubmit={submitApplication}>
+                            <div className="form-group">
+                                <label className="form-label">Loan Amount (₱) <span className="required">*</span></label>
+                                <input 
+                                    className={`form-input ${form.requested_amount && parseFloat(form.requested_amount) <= 0 ? 'error' : ''}`} 
+                                    type="number" 
+                                    min="1" 
+                                    step="0.01" 
+                                    max="10000000" 
+                                    placeholder="Enter loan amount (e.g. 10000)" 
+                                    required 
+                                    value={form.requested_amount} 
+                                    onChange={handleAmountChange}
+                                    disabled={hasPending} 
+                                />
+                                <p className="form-hint">Minimum: ₱1 | Maximum: ₱10,000,000</p>
+                            </div>
+                            
+                            {form.requested_amount && parseFloat(form.requested_amount) > 0 && (
+                                <div className="alert alert-success" style={{marginBottom: '16px'}}>
+                                    <div style={{flex: 1}}>
+                                        <strong>📊 Auto-Calculated Details:</strong>
+                                        <div style={{marginTop: '8px'}}>
+                                            <p><strong>Loan Amount:</strong> {fmtCurrency(form.requested_amount)}</p>
+                                            <p><strong>Interest Rate:</strong> <span style={{fontSize: '1.1rem', fontWeight: 700, color: '#137333'}}>{form.requested_interest_rate}%</span></p>
+                                            <p style={{fontSize: '0.85rem', color: '#5f6368', marginTop: '4px'}}>{getInterestRateDescription(form.requested_amount)}</p>
+                                            {parseFloat(form.requested_amount) > 0 && form.requested_interest_rate && (
+                                                <p style={{fontSize: '0.85rem', color: '#137333', marginTop: '4px'}}>
+                                                    Total to repay: {fmtCurrency(parseFloat(form.requested_amount) * (1 + parseFloat(form.requested_interest_rate) / 100))}
+                                                </p>
+                                            )}
+                                        </div>
+                                    </div>
+                                </div>
+                            )}
+                            
+                            <div className="form-group" style={{display: form.requested_amount ? 'block' : 'none'}}>
+                                <label className="form-label">
+                                    Interest Rate (%) 
+                                    <span style={{fontSize:'0.78rem',color:'#0d904f',marginLeft:'6px'}}>(Auto-calculated)</span>
+                                </label>
+                                <input 
+                                    className="form-input" 
+                                    type="number" 
+                                    min="0" 
+                                    max="100" 
+                                    step="0.01" 
+                                    value={form.requested_interest_rate} 
+                                    onChange={e => setForm(f => ({...f, requested_interest_rate: e.target.value}))}
+                                    disabled={hasPending}
+                                    style={{backgroundColor: '#f8f9fa'}}
+                                />
+                                <p className="form-hint" style={{color: '#0d904f'}}>
+                                    ℹ️ Interest rate is automatically set based on loan amount. You can adjust if needed.
+                                </p>
+                            </div>
+                            
                             <div className="form-group">
                                 <label className="form-label">Requested Repayment Date <span className="required">*</span></label>
-                                <input className="form-input" type="date" required min={minDateStr} value={form.requested_due_date} onChange={e => setForm(f => ({...f, requested_due_date: e.target.value}))} disabled={hasPending} />
+                                <input 
+                                    className="form-input" 
+                                    type="date" 
+                                    required 
+                                    min={minDateStr} 
+                                    value={form.requested_due_date} 
+                                    onChange={e => setForm(f => ({...f, requested_due_date: e.target.value}))} 
+                                    disabled={hasPending} 
+                                />
                                 <p className="form-hint">Must be at least tomorrow or later. Admin may adjust the final date.</p>
                             </div>
                             <div className="form-group">
                                 <label className="form-label">Purpose / Reason <span style={{fontSize:'0.78rem',color:'var(--text-secondary)'}}>(optional)</span></label>
-                                <textarea className="form-textarea" placeholder="e.g. Medical expenses, school tuition, home repair..." value={form.purpose} onChange={e => setForm(f => ({...f, purpose: e.target.value}))} disabled={hasPending} />
+                                <textarea 
+                                    className="form-textarea" 
+                                    placeholder="e.g. Medical expenses, school tuition, home repair..." 
+                                    value={form.purpose} 
+                                    onChange={e => setForm(f => ({...f, purpose: e.target.value}))} 
+                                    disabled={hasPending} 
+                                />
                             </div>
                             <button className="btn btn-primary btn-block btn-lg" type="submit" disabled={loading || hasPending}>
                                 {loading ? '⏳ Submitting...' : hasPending ? '⏳ Application Pending Admin Review' : '📤 Submit Loan Application'}
@@ -1562,7 +1671,6 @@ function BorrowerPanel({ user, onLogout, setPage }) {
         </div>
     );
 }
-
 ReactDOM.createRoot(document.getElementById('root')).render(<App />);
 </script>
 </body>
