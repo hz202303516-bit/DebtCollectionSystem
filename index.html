@@ -698,15 +698,59 @@ function AdminPanel({ user, onLogout, setPage }) {
 
     const loadData = async () => {
         try {
-            const [u, b, l, p, c, a, g, apps] = await Promise.all([
-                API.get('/api/users'), API.get('/api/borrowers'), API.get('/api/loans'),
-                API.get('/api/payments'), API.get('/api/collectors'), API.get('/api/assignments'),
-                API.get('/api/gps/borrowers'), API.get('/api/loan-applications')
-            ]);
-            setUsers(u.data); setBorrowers(b.data); setLoans(l.data);
-            setPayments(p.data); setCollectors(c.data); setAssignments(a.data);
-            setGpsBorrowers(g.data); setLoanApps(apps.data);
-        } catch (e) { setMsg('error', 'Failed to load data. Please refresh.'); }
+            // Load each endpoint separately with error handling
+            const usersRes = await API.get('/api/users').catch(err => {
+                console.error('Failed to load users:', err);
+                return { data: [] };
+            });
+            setUsers(usersRes.data);
+
+            const borrowersRes = await API.get('/api/borrowers').catch(err => {
+                console.error('Failed to load borrowers:', err);
+                return { data: [] };
+            });
+            setBorrowers(borrowersRes.data);
+
+            const loansRes = await API.get('/api/loans').catch(err => {
+                console.error('Failed to load loans:', err);
+                return { data: [] };
+            });
+            setLoans(loansRes.data);
+
+            const paymentsRes = await API.get('/api/payments').catch(err => {
+                console.error('Failed to load payments:', err);
+                return { data: [] };
+            });
+            setPayments(paymentsRes.data);
+
+            const collectorsRes = await API.get('/api/collectors').catch(err => {
+                console.error('Failed to load collectors:', err);
+                return { data: [] };
+            });
+            setCollectors(collectorsRes.data);
+
+            const assignmentsRes = await API.get('/api/assignments').catch(err => {
+                console.error('Failed to load assignments:', err);
+                return { data: [] };
+            });
+            setAssignments(assignmentsRes.data);
+
+            const gpsRes = await API.get('/api/gps/borrowers').catch(err => {
+                console.error('Failed to load GPS data:', err);
+                return { data: [] };
+            });
+            setGpsBorrowers(gpsRes.data);
+
+            const appsRes = await API.get('/api/loan-applications').catch(err => {
+                console.error('Failed to load loan applications:', err);
+                return { data: [] };
+            });
+            setLoanApps(appsRes.data);
+            
+        } catch (e) {
+            console.error('Data loading error:', e);
+            setMsg('error', 'Failed to load data. Please refresh the page.');
+        }
     };
 
     const assignCollector = async (e) => {
@@ -1145,9 +1189,22 @@ function CollectorPanel({ user, onLogout, setPage }) {
 
     const loadData = async () => {
         try {
-            const [b, l] = await Promise.all([API.get('/api/borrowers'), API.get('/api/loans')]);
-            setBorrowers(b.data); setLoans(l.data);
-        } catch (e) { setMsg('error', 'Failed to load data'); }
+            const borrowersRes = await API.get('/api/borrowers').catch(err => {
+                console.error('Failed to load borrowers:', err);
+                return { data: [] };
+            });
+            setBorrowers(borrowersRes.data);
+
+            const loansRes = await API.get('/api/loans').catch(err => {
+                console.error('Failed to load loans:', err);
+                return { data: [] };
+            });
+            setLoans(loansRes.data);
+            
+        } catch (e) {
+            console.error('Data loading error:', e);
+            setMsg('error', 'Failed to load data');
+        }
     };
 
     const recordPayment = async (loanId, balance) => {
@@ -1277,9 +1334,28 @@ function BorrowerPanel({ user, onLogout, setPage }) {
 
     const loadData = async () => {
         try {
-            const [l, p, apps] = await Promise.all([API.get('/api/loans'), API.get('/api/payments'), API.get('/api/loan-applications')]);
-            setLoans(l.data); setPayments(p.data); setApplications(apps.data);
-        } catch (e) { setMsg('error', 'Failed to load your data'); }
+            const loansRes = await API.get('/api/loans').catch(err => {
+                console.error('Failed to load loans:', err);
+                return { data: [] };
+            });
+            setLoans(loansRes.data);
+
+            const paymentsRes = await API.get('/api/payments').catch(err => {
+                console.error('Failed to load payments:', err);
+                return { data: [] };
+            });
+            setPayments(paymentsRes.data);
+
+            const appsRes = await API.get('/api/loan-applications').catch(err => {
+                console.error('Failed to load applications:', err);
+                return { data: [] };
+            });
+            setApplications(appsRes.data);
+            
+        } catch (e) {
+            console.error('Data loading error:', e);
+            setMsg('error', 'Failed to load your data');
+        }
     };
 
     const tryGetLocation = () => {
