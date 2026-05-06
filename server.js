@@ -58,6 +58,7 @@ function validateEmail(email) {
 
 // ── Initialize Database ───────────────────────────────────────────────────────
 async function initializeDatabase() {
+    // 1. Create users table first (no foreign keys)
     await query(`CREATE TABLE IF NOT EXISTS users (
         user_id SERIAL PRIMARY KEY,
         name TEXT NOT NULL,
@@ -71,6 +72,7 @@ async function initializeDatabase() {
         updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
     )`);
 
+    // 2. Create borrowers table (references users)
     await query(`CREATE TABLE IF NOT EXISTS borrowers (
         borrower_id SERIAL PRIMARY KEY,
         user_id INTEGER REFERENCES users(user_id),
@@ -83,6 +85,7 @@ async function initializeDatabase() {
         created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
     )`);
 
+    // 3. Create loan_applications BEFORE loans (loans references this)
     await query(`CREATE TABLE IF NOT EXISTS loan_applications (
         application_id SERIAL PRIMARY KEY,
         borrower_id INTEGER REFERENCES borrowers(borrower_id),
@@ -97,6 +100,7 @@ async function initializeDatabase() {
         created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
     )`);
 
+    // 4. Create loans table (references loan_applications which now exists)
     await query(`CREATE TABLE IF NOT EXISTS loans (
         loan_id SERIAL PRIMARY KEY,
         borrower_id INTEGER REFERENCES borrowers(borrower_id),
@@ -109,6 +113,7 @@ async function initializeDatabase() {
         created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
     )`);
 
+    // 5. Payments (references loans and users)
     await query(`CREATE TABLE IF NOT EXISTS payments (
         payment_id SERIAL PRIMARY KEY,
         loan_id INTEGER REFERENCES loans(loan_id),
@@ -119,6 +124,7 @@ async function initializeDatabase() {
         receipt_number TEXT UNIQUE
     )`);
 
+    // 6. GPS logs
     await query(`CREATE TABLE IF NOT EXISTS gps_logs (
         log_id SERIAL PRIMARY KEY,
         collector_id INTEGER REFERENCES users(user_id),
@@ -128,6 +134,7 @@ async function initializeDatabase() {
         timestamp TIMESTAMP DEFAULT CURRENT_TIMESTAMP
     )`);
 
+    // 7. Collection assignments
     await query(`CREATE TABLE IF NOT EXISTS collection_assignments (
         assignment_id SERIAL PRIMARY KEY,
         admin_id INTEGER REFERENCES users(user_id),
@@ -209,7 +216,6 @@ function computeRiskScore({ loans, payments, borrower }) {
     const overdueScore = overdueRatio * 15;
     const debtLoadScore = Math.min(12, (totalBalance / 500000) * 12);
 
-    // GPS: check both real GPS and geocoded fallback
     const hasLocation = borrower.latitude || borrower.geocoded_lat;
     const gpsScore = hasLocation ? 0 : 7;
 
@@ -542,17 +548,11 @@ app.get('/api/assignments', authenticateToken, authorize('admin'), async (req, r
     }
 });
 
-// ==================== LOAN APPLICATIONS (Borrower → Admin Approval) ====================
-
-/**
- * POST /api/loan-applications
- * Borrower submits a loan application. Admin must approve before a real loan is created.
- */
+// ==================== LOAN APPLICATIONS ====================
 app.post('/api/loan-applications', authenticateToken, authorize('borrower'), async (req, res) => {
     try {
         const { requested_amount, requested_interest_rate, requested_due_date, purpose } = req.body;
 
-        // Validations
         const amtErr = validateLoanAmount(requested_amount);
         if (amtErr) return res.status(400).json({ error: amtErr });
 
@@ -566,7 +566,6 @@ app.post('/api/loan-applications', authenticateToken, authorize('borrower'), asy
         const borrower = await queryOne("SELECT borrower_id FROM borrowers WHERE user_id=$1", [req.user.userId]);
         if (!borrower) return res.status(404).json({ error: 'Borrower profile not found. Contact admin.' });
 
-        // Check for existing pending application
         const pendingApp = await queryOne(
             "SELECT application_id FROM loan_applications WHERE borrower_id=$1 AND status='pending'",
             [borrower.borrower_id]
@@ -586,10 +585,6 @@ app.post('/api/loan-applications', authenticateToken, authorize('borrower'), asy
     }
 });
 
-/**
- * GET /api/loan-applications
- * Admin: all applications. Borrower: their own.
- */
 app.get('/api/loan-applications', authenticateToken, async (req, res) => {
     try {
         let apps;
@@ -618,11 +613,6 @@ app.get('/api/loan-applications', authenticateToken, async (req, res) => {
     }
 });
 
-/**
- * PUT /api/loan-applications/:id/review
- * Admin approves or rejects a loan application.
- * On approval: creates the actual loan record.
- */
 app.put('/api/loan-applications/:id/review', authenticateToken, authorize('admin'), async (req, res) => {
     try {
         const appId = parseInt(req.params.id);
@@ -633,16 +623,15 @@ app.put('/api/loan-applications/:id/review', authenticateToken, authorize('admin
         if (!status || !['approved', 'rejected'].includes(status))
             return res.status(400).json({ error: 'Decision must be "approved" or "rejected"' });
 
-        const app_record = await queryOne("SELECT * FROM loan_applications WHERE application_id=$1", [appId]);
-        if (!app_record) return res.status(404).json({ error: 'Loan application not found' });
-        if (app_record.status !== 'pending')
-            return res.status(409).json({ error: `This application has already been ${app_record.status}` });
+        const appRecord = await queryOne("SELECT * FROM loan_applications WHERE application_id=$1", [appId]);
+        if (!appRecord) return res.status(404).json({ error: 'Loan application not found' });
+        if (appRecord.status !== 'pending')
+            return res.status(409).json({ error: `This application has already been ${appRecord.status}` });
 
         if (status === 'approved') {
-            // Use final values if admin overrides, otherwise use requested
-            const loanAmount = final_amount || app_record.requested_amount;
-            const interestRate = final_interest_rate !== undefined ? final_interest_rate : app_record.requested_interest_rate;
-            const dueDate = final_due_date || app_record.requested_due_date;
+            const loanAmount = final_amount || appRecord.requested_amount;
+            const interestRate = final_interest_rate !== undefined && final_interest_rate !== '' ? final_interest_rate : appRecord.requested_interest_rate;
+            const dueDate = final_due_date || appRecord.requested_due_date;
 
             const amtErr = validateLoanAmount(loanAmount);
             if (amtErr) return res.status(400).json({ error: `Final amount error: ${amtErr}` });
@@ -654,7 +643,7 @@ app.put('/api/loan-applications/:id/review', authenticateToken, authorize('admin
             await query(
                 `INSERT INTO loans (borrower_id, application_id, loan_amount, interest_rate, due_date, balance, status)
                  VALUES ($1, $2, $3, $4, $5, $6, 'active')`,
-                [app_record.borrower_id, appId, parseFloat(loanAmount), parseFloat(interestRate), dueDate, parseFloat(loanAmount)]
+                [appRecord.borrower_id, appId, parseFloat(loanAmount), parseFloat(interestRate), dueDate, parseFloat(loanAmount)]
             );
         }
 
@@ -772,7 +761,6 @@ app.get('/api/gps/logs', authenticateToken, async (req, res) => {
 
 app.get('/api/gps/borrowers', authenticateToken, async (req, res) => {
     try {
-        // Returns borrowers with any location: GPS or geocoded fallback
         const borrowers = await queryAll(`
             SELECT borrower_id, full_name,
                    COALESCE(latitude, geocoded_lat) as latitude,
@@ -808,11 +796,6 @@ app.put('/api/gps/update-location', authenticateToken, async (req, res) => {
     }
 });
 
-/**
- * POST /api/gps/geocode-borrower
- * Fallback: geocode a borrower's address if they haven't shared GPS.
- * Uses OpenStreetMap Nominatim (free, no API key needed).
- */
 app.post('/api/gps/geocode-borrower', authenticateToken, authorize('admin', 'collector'), async (req, res) => {
     try {
         const { borrower_id } = req.body;
@@ -825,11 +808,9 @@ app.post('/api/gps/geocode-borrower', authenticateToken, authorize('admin', 'col
             return res.json({ message: 'Borrower already has GPS location', latitude: borrower.latitude, longitude: borrower.longitude, source: 'gps' });
         }
 
-        // Build address string for geocoding
         const addressParts = [borrower.street, borrower.barangay, borrower.city, borrower.province, 'Philippines'].filter(Boolean);
         const addressStr = addressParts.join(', ');
 
-        // Call Nominatim geocoding API
         const https = require('https');
         const encodedAddress = encodeURIComponent(addressStr);
 
@@ -861,7 +842,6 @@ app.post('/api/gps/geocode-borrower', authenticateToken, authorize('admin', 'col
         const geocodedLat = parseFloat(lat);
         const geocodedLng = parseFloat(lon);
 
-        // Save geocoded coordinates
         await query("UPDATE borrowers SET geocoded_lat=$1, geocoded_lng=$2 WHERE borrower_id=$3", [geocodedLat, geocodedLng, borrower_id]);
         await query("INSERT INTO gps_logs (collector_id, borrower_id, latitude, longitude, source) VALUES ($1,$2,$3,$4,'geocoded')",
             [req.user.userId, borrower_id, geocodedLat, geocodedLng]);
